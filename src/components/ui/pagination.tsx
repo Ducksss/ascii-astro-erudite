@@ -139,7 +139,7 @@ const PaginationComponent: React.FC<PaginationProps> = ({
   }
 
   return (
-    <Pagination className={cn(isImmersive && 'justify-start')}>
+    <Pagination className={cn(isImmersive)}>
       <PaginationContent className={cn('flex-wrap', isImmersive && 'gap-2')}>
         <PaginationItem>
           <PaginationPrevious

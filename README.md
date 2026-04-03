@@ -1,15 +1,26 @@
 # Chai Pin Zheng
 
-Personal portfolio and writing site built with Astro 6, Tailwind CSS 4, and MDX.
-This repository powers a content-driven site with an immersive landing page,
-case-study style about page, project showcase, and technical writing archive.
+Portfolio and writing site for case studies, shipped work, and technical
+reflections, built with Astro 6, Tailwind CSS 4, and MDX.
 
-![Site preview](./public/static/twitter-card.png)
+This repository powers a custom monochrome portfolio experience with an
+immersive landing page, a case-study-driven about page, and a writing archive
+for project notes, hackathon writeups, and implementation retrospectives. The
+current site is a substantial theme, content, and information-architecture
+rewrite of `astro-erudite`.
+
+![Homepage preview](./public/static/readme-home.png)
+
+<p>
+  <img src="./public/static/readme-about.png" alt="About page preview" width="49%" />
+  <img src="./public/static/readme-blog.png" alt="Blog index preview" width="49%" />
+</p>
 
 ## Highlights
 
-- Portfolio-first experience with a custom landing page, about page, writing
-  archive, project listings, author pages, and tag pages
+- Portfolio-first experience with an immersive monochrome landing page,
+  case-study about page, writing archive, project listings, author pages, and
+  tag pages
 - MDX-powered publishing workflow for blog posts, project entries, and author
   profiles
 - SEO-friendly setup with canonical URLs, sitemap generation, RSS output, Open
@@ -139,6 +150,11 @@ draft: false
 ---
 ```
 
+Legacy posts carried over from the original `astro-erudite` template can stay in
+the repo as writing or implementation references. Mark those entries with
+`draft: true` so they are excluded from blog listings, RSS, and generated static
+paths until you intentionally republish them.
+
 Example author profile frontmatter:
 
 ```yml
@@ -172,9 +188,10 @@ Before deploying:
 
 ## Credits
 
-This site started from
-[astro-erudite](https://github.com/jktrn/astro-erudite) and has since been
-adapted into a personal portfolio and writing site.
+This site started from [astro-erudite](https://github.com/jktrn/astro-erudite)
+by [jktrn](https://github.com/jktrn). The current repository is an extensive
+theme, content, and information-architecture rewrite tailored to Chai Pin
+Zheng's portfolio and writing archive.
 
 ## License
 

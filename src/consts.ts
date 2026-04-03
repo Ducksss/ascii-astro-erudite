@@ -216,7 +216,7 @@ export const PROFILE: Profile = {
       degree: 'Bachelor of Computing in Computer Science',
       period: 'Aug 2025 - Aug 2028',
       details: [
-        'GPA 4.6/5.00.',
+        'GPA 4.60/5.00.',
         'Stephen Riady Young Entrepreneur Scholarship recipient.',
       ],
     },
