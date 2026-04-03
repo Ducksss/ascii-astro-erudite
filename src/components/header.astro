@@ -79,15 +79,17 @@ const linkedInLink =
           ))
         }
       </nav>
-      {isAtmospheric && (
-        <Link
-          href={linkedInLink}
-          external
-          class="hidden min-h-11 items-center rounded-full border border-white/12 px-4 py-2 font-mono text-[0.68rem] tracking-[0.24em] text-white/74 uppercase transition-colors hover:border-white/22 hover:bg-white/[0.04] hover:text-white min-[640px]:inline-flex"
-        >
-          LinkedIn
-        </Link>
-      )}
+      {
+        isAtmospheric && (
+          <Link
+            href={linkedInLink}
+            external
+            class="hidden min-h-11 items-center rounded-full border border-white/12 px-4 py-2 font-mono text-[0.68rem] tracking-[0.24em] text-white/74 uppercase transition-colors hover:border-white/22 hover:bg-white/[0.04] hover:text-white min-[640px]:inline-flex"
+          >
+            LinkedIn
+          </Link>
+        )
+      }
       {!isAtmospheric && <ThemeToggle transition:persist />}
     </div>
   </div>
