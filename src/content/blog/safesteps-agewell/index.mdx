@@ -1,77 +1,101 @@
 ---
-title: 'SafeStep, AgeWell, And Building For Dignity'
-description: 'A Hack4Good elderly-care build that tried to reduce caregiver anxiety without turning care into surveillance.'
+title: 'Building SafeStep Without Turning Care Into Surveillance'
+description: 'Why this elderly-care hackathon build stayed with me, what I learned building the backend in Node, and why the product philosophy mattered more than the AI.'
 date: 2026-04-02
+image: './assets/banner.png'
 tags: ['hackathons', 'social-impact', 'computer-vision', 'react']
 authors: ['chai-pin-zheng']
+draft: true
 ---
 
-Some hackathon projects are mostly about speed. Others stay with you because the underlying problem is hard in a human way, not just a technical way. SafeStep was one of those.
+SafeStep was one of those hackathon projects that stayed in my head after the deadline ended. Not because the stack was especially flashy, but because the product question underneath it was genuinely hard.
 
-The public Devpost submission framed the project as **SafeStep**, while the linked repository later described the same direction as **AgeWell**. Either way, the core idea was consistent: build an elderly-care companion that gives caregivers reassurance without reducing the care recipient to a live surveillance feed.
+The public submission called it **SafeStep**. The repo and PRD later called it **AgeWell**. The name changed, but the core idea did not: build an elderly-care system that reduces caregiver anxiety without turning the care recipient into someone who feels watched all day.
 
-That product framing is what made the project interesting to me. The goal was not constant monitoring. It was a quieter kind of support that preserved dignity, autonomy, and calm.
+I like that tension a lot. It is easy to build something that is technically capable and emotionally clumsy. It is much harder to build something useful that still preserves dignity.
 
-## The problem we were trying to solve
+<div class="overflow-hidden rounded-lg border [&_img,p]:m-0">
+![AgeWell landing page](assets/landing.png)
+</div>
 
-The strongest part of the public writeup is its description of caregiver friction. Elder care can easily turn into a loop of anxious questions:
+## The problem felt human before it felt technical
+
+The strongest part of the Devpost write-up was not the AI section. It was the description of what caregiving can feel like when everything slowly collapses into checking:
 
 - Did you eat?
 - Did you take your medication?
 - Where are you?
 - Are you safe?
 
-Those questions are understandable, but over time they can wear down both sides of the relationship. The project tried to move that burden from repeated human checking into a system that could verify routine events, surface the right alerts, and otherwise stay out of the way.
+Those are reasonable questions, but repeated often enough they start to reshape the relationship itself. Care becomes supervision. Concern becomes friction. The senior feels nagged. The caregiver feels guilty and exhausted.
 
-That is a product problem I care about a lot: not just making a system more powerful, but making it less invasive while still doing something useful.
+That was the real problem we were trying to solve.
 
-## What the system covered
+What made SafeStep interesting to me was that it was not pitching "more monitoring" as the answer. It was trying to shift the burden away from repeated human checking and toward quieter forms of support: verify routines automatically, raise alerts when something actually matters, and otherwise get out of the way.
 
-Between the Devpost description and the GitHub README, the project scope was broad:
+## The product thesis was the real feature
 
-- fall detection and emergency escalation
+This was submitted together with **Anton Ang**, **Ivan Chua**, and **Faith Lee**, and I think the best part of the project was that the feature set actually served one coherent idea instead of feeling like a pile of hackathon tricks.
+
+The system covered a broad but believable care loop:
+
+- fall detection with emergency escalation
 - navigation support for seniors who might get lost
-- daily checklist tracking for meals, hydration, and medication
-- automated voice reminders
+- checklist tracking for meals, hydration, and medication
+- voice reminders that nudged instead of scolding
 - caregiver dashboards and medical summaries
 
-What I like about that surface area is that it was not one flashy demo feature pretending to be a product. It was trying to model the actual routine of care: movement, reminders, exceptions, and communication.
+What I liked was that these were not random "AI features." They were all trying to answer the same product question: how do you support independence without forcing the caregiver to manually track everything?
 
-## How it was built
+The split between the two main surfaces mattered too. The senior-facing interface had to be clear, high-contrast, and low-friction. The caregiver-facing dashboard had to be richer in context. If both users were given the same surface, the product would have failed immediately.
 
-The public materials point to a fairly serious full-stack setup for a hackathon build:
+<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 [&_img,p]:m-0">
+  <div class="overflow-hidden rounded-lg border">
+    ![Patient-facing dashboard](assets/patient-dashboard.png)
+  </div>
+  <div class="overflow-hidden rounded-lg border">
+    ![Caregiver dashboard](assets/caregiver-dashboard.png)
+  </div>
+</div>
 
-- **React 18 + Tailwind CSS** for the web interface
-- **Node.js** for backend and API logic
-- **Python** services for AI and computer vision
-- **MongoDB Atlas** for persistence
-- **YOLOv8**, **MediaPipe**, and **Tesseract** for activity recognition, pose estimation, and OCR
-- **Leaflet/OpenStreetMap** for navigation
+## I worked on the backend, and it was my first real Node project
 
-The writeup also emphasizes the split between the senior-facing interface and the caregiver-facing dashboard. That matters. A project like this fails if it treats every user as if they need the same level of complexity.
+I worked on the backend for SafeStep, and this was my first time seriously using **Node.js**. That was a little intimidating at the time, which is honestly part of why I still remember the build so clearly.
 
-One side needed clarity, accessibility, and reassurance. The other needed context and timely updates.
+What made it interesting was that the backend was not just a boring CRUD layer. Even in prototype form, it had to hold the logic that made the product feel like an actual care system:
 
-## Why the philosophy mattered
+- receive AI-detected activities from the Python service
+- log events into an activity timeline
+- auto-complete the right daily tasks when meals, hydration, or medication were detected
+- expose patient status and progress to the caregiver dashboard
+- accept location updates and fall alerts
+- generate weekly summary data
 
-The line I kept coming back to in the repo README was the idea of care being delivered when needed, not constantly imposed. That is the difference between a system that helps and a system that quietly becomes oppressive.
+That meant wiring together a simple **Express** API with a separate **Python** service that handled the computer-vision side using **YOLOv8** and **MediaPipe**. For a hackathon project, that was enough moving parts to feel very real very quickly.
 
-The best part of this build was not any single model. It was the philosophy behind the architecture:
+I learned a lot from that. Not just about Node itself, but about how backend work changes when the job is to preserve trust. If the data is stale, the caregiver panics for no reason. If the alerts are noisy, the whole system becomes annoying. If the logic is unclear, the product starts feeling fake.
 
-- use automation to reduce cognitive load
-- only escalate when the situation really calls for it
-- keep people informed without demanding constant checking
-- preserve independence wherever possible
+<div class="overflow-hidden rounded-lg border [&_img,p]:m-0">
+![Camera and activity-detection view](assets/camera-view.png)
+</div>
 
-That is the kind of constraint that makes a technical project more than a demo.
+## The hard part was not adding more AI
 
-## What I took away from it
+The repo's core philosophy said it well: care should be delivered when needed, not constantly imposed.
 
-SafeStep felt meaningful because it pushed beyond the usual hackathon instinct to maximize visible features. The more important challenge was balancing usefulness with dignity.
+That line stuck with me because it captures the actual difficulty here. A project like this does not become better just because it can detect more things. In fact, it can become worse. If the system escalates too aggressively, it becomes oppressive. If it is too passive, it misses real danger. If it is too visible, it undermines the independence it claims to protect.
 
-I learned that social-impact products often live or die on this balance. If the system is too passive, it misses real risk. If it is too aggressive, it creates a different kind of harm. Building in that middle ground is much harder, and much more interesting, than just wiring up more alerts.
+So the real design challenge was not "how much AI can we fit in?" It was how to make the technology recede into the background until it was genuinely needed.
 
-That is also why I wanted this project in the blog. It sits close to the same themes that later showed up in Resumify and in other product work: give people more agency, not less, even when the system is doing a lot behind the scenes.
+That is why the quieter features mattered as much as the dramatic ones. Fall detection gets the headline, but automatic meal verification, gentle reminders, and useful summaries are what actually turn the product from a demo into something that could change the emotional texture of care.
+
+## What stayed with me
+
+SafeStep stuck with me because it reminded me that social-impact software lives or dies on the quality of its restraint.
+
+The easy version of elderly-care tech is surveillance with a nicer interface. The harder version is a system that gives caregivers reassurance while still letting the person being cared for feel capable. That second version is much more interesting to build, and much more worth building.
+
+It also marked an early moment where I felt myself getting pulled toward product work that sits right between technical capability and human dignity. The backend taught me a lot, the hackathon pressure was fun in the usual chaotic way, but the thing I still remember most is the philosophy: build support that helps people feel less controlled, not more.
 
 ## Project links
 

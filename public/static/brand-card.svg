@@ -45,29 +45,50 @@
 
   <text
     x="86"
-    y="284"
+    y="280"
     fill="#FAFAF9"
     font-size="72"
     font-weight="700"
     font-family="Helvetica Neue, Arial, sans-serif"
-    letter-spacing="-2"
+    letter-spacing="-2.5"
   >
-    Chai Pin Zheng
+    Chai Pin
   </text>
   <text
     x="86"
-    y="346"
+    y="364"
+    fill="#FAFAF9"
+    font-size="72"
+    font-weight="700"
+    font-family="Helvetica Neue, Arial, sans-serif"
+    letter-spacing="-2.5"
+  >
+    Zheng
+  </text>
+  <text
+    x="86"
+    y="434"
     fill="#D6D3D1"
-    font-size="30"
+    font-size="28"
     font-weight="500"
     font-family="Helvetica Neue, Arial, sans-serif"
   >
-    Product engineering, developer tooling, and operational systems.
+    Product engineering, developer tooling,
+  </text>
+  <text
+    x="86"
+    y="470"
+    fill="#D6D3D1"
+    font-size="28"
+    font-weight="500"
+    font-family="Helvetica Neue, Arial, sans-serif"
+  >
+    and operational systems.
   </text>
 
   <text
     x="86"
-    y="438"
+    y="518"
     fill="#A8A29E"
     font-size="21"
     font-weight="600"
@@ -78,18 +99,28 @@
   </text>
   <text
     x="86"
-    y="485"
+    y="556"
     fill="#78716C"
     font-size="22"
     font-weight="500"
     font-family="Helvetica Neue, Arial, sans-serif"
   >
-    Singapore-based software engineer and NUS Computer Science student.
+    Singapore-based software engineer and
+  </text>
+  <text
+    x="86"
+    y="586"
+    fill="#78716C"
+    font-size="22"
+    font-weight="500"
+    font-family="Helvetica Neue, Arial, sans-serif"
+  >
+    NUS Computer Science student.
   </text>
 
   <text
     x="86"
-    y="570"
+    y="612"
     fill="#E7E5E4"
     font-size="18"
     font-weight="600"

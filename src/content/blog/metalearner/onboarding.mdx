@@ -1,49 +1,78 @@
 ---
 title: 'Building self-serve onboarding inside MetaLearner'
-description: 'How guided onboarding, in-product docs, and i18n-aware guidance helped turn a complex product into something easier to enter.'
+description: 'How guided onboarding, a 4-category User Guide, and i18n-aware guidance reduced the amount of interpretation customers needed in a supply chain forecasting product built on ERP data.'
 date: 2026-04-03
 tags: ['projects', 'product-engineering', 'fastapi', 'redis', 'data-visualization']
 authors: ['chai-pin-zheng']
 order: 1
 ---
 
-The most important product question during the internship was not "what else can this system do?" It was "how does a customer get from zero to useful without needing constant intervention?"
+The highest-ROI problem in MetaLearner was first-time-user clarity.
 
-That is the point where a lot of technically strong products lose people. The capability is there, but the first few steps are expensive. Someone has to explain where to begin, how the workflow is structured, what a good input looks like, and which parts of the interface matter first.
+That was the framing I used in the handoff deck, and after looking back through the implemented work, I still think it is the right one. This was not only a UX problem. If product value stays hidden behind vague first steps, adoption slows down, demos get weaker, and the team spends more time translating the product than extending it.
 
-## Why onboarding mattered so much
+For context, the product asked users to understand ERP-backed forecasting surfaces, KPI dashboards, chart interactions, and an AI assistant for asking and extracting data. That is a lot of value, but it is also a lot of surface area to drop on someone too early.
 
-MetaLearner had enough depth that weak onboarding would not fail loudly. It would fail quietly:
+## Problem framing
 
-- customers would hesitate at setup
-- feature entry points would feel ambiguous
-- support and field engineers would need to do more interpretive work than they should
-- documentation would feel external rather than part of the product
+MetaLearner had enough surface area that weak onboarding would not fail in one dramatic way. It would fail gradually:
 
-That is why I treated onboarding as part of product quality, not just as a support layer sitting beside it.
+- setup would feel heavier than it needed to
+- feature entry points would feel more ambiguous than they really were
+- customers would need more hand-holding to become productive
+- support and field engineers would absorb explanatory work that should have been designed out
+- documentation would live outside the workflow instead of helping users move through it
 
-## What I shipped in this track
+That is why I think of onboarding here as infrastructure, not as a support layer sitting beside the product.
 
-A lot of the work here was about making the product more self-serve:
+## What I actually shipped
 
-- a guided onboarding workflow to create a clearer first path through setup
-- documentation and user-guide material implemented inside the MetaLearner frontend repo
-- guidance around feature entry points so the product felt less "blank" at first contact
-- prompt-writing support to help users understand what good product interaction looked like
-- i18n-aware structure so the support material had a more realistic path for broader customer use
+The work in this track was more concrete than "better onboarding" makes it sound.
 
-What mattered most to me was that these pieces were not independent. A guided flow without good in-product explanation still leaves people stranded. Documentation without the right feature entry points still asks the user to guess where to apply what they just learned.
+The onboarding flow itself included:
+
+- an onboarding modal with **swipe gestures** and **step navigation**
+- explanations tied to the **BI dashboard** and key product surfaces
+- **"Find out more"** links into deeper guidance
+- clearer sequencing so users could connect interface elements to product value
+- implementation prepared to work alongside MetaLearner's language support
+
+That then expanded into a fuller **User Guide system** inside the frontend repo. The guide was organized into four categories:
+
+- **Dashboard Overview**
+- **Drill Down into the Details**
+- **Ask and Extract Your Data**
+- **Settings**
+
+What made the guide more than a static help page was that it also included:
+
+- suggested questions for first-time usage
+- examples of stronger and weaker prompts
+- multi-turn conversation guidance for deeper extraction work
+- content structured with i18n support in mind
+
+The point was not only to explain the product. It was to reduce the amount of interpretation the user had to do before the product became useful.
+
+<div class="border [&_img,p]:m-0">
+![Guided onboarding modal inside the MetaLearner BI dashboard](assets/onboarding-modal.png)
+</div>
+
+_A real onboarding capture from the frontend: the BI dashboard remains visible in the background while the modal explains where to start and how to read the product._
 
 ## Why keeping the guidance in-product matters
 
-One lesson I keep coming back to is that documentation becomes much more effective when it sits close to the decision it is trying to support.
+One of the strongest lessons in this internship was that documentation gets dramatically better when it sits close to the decision it is trying to support.
 
-If the user has to leave the workflow, open another document, map the terminology manually, and return to the interface, that is already a form of friction. In a complex product, enough small frictions stack into avoidance.
+If a user has to pause, leave the workflow, open a separate document, map the terminology back to the interface, and then return, that is already friction. In a complex product, enough small frictions turn into avoidance.
 
-So the value of this work was not only that it "explained the product." It reduced the distance between confusion and help.
+So the real value here was not that I "wrote docs." It was that the distance between confusion and help got shorter.
 
-## What I took from this part of the internship
+## Why this still feels like the core of the internship
 
-The onboarding work reinforced a product instinct I care about a lot: the first-use experience is infrastructure. It determines how much trust a user gives the product, how much support load the team has to absorb, and how much of the system's actual power ever gets reached.
+This track clarified why I like this kind of work. It is not flashy in the way a brand-new feature can be, but it changes whether the rest of the product has a fair chance to succeed.
 
-That is also why this track still feels important to me in retrospect. It was not flashy work, but it was the kind of work that changes whether the rest of the product can succeed.
+The best validation line from the handoff deck still captures it well:
+
+> "I like the flow, especially the addition of user guide..."
+
+That matters because it points to the real outcome. The work was not just visible. It was useful.

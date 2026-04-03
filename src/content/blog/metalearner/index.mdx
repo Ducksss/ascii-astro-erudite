@@ -1,49 +1,75 @@
 ---
 title: 'MetaLearner And The Work Of Reducing Product Friction'
-description: 'A case study on guided onboarding, chart usability, redesign direction, and architecture handoff inside a complex technical product.'
+description: 'How I made MetaLearner, an AI-native supply chain forecasting and planning product built on ERP data, easier to enter and extend through onboarding, charts, redesign work, and handoff.'
 date: 2026-04-03
 image: './poster.svg'
 tags: ['projects', 'product-engineering', 'fastapi', 'redis', 'data-visualization']
 authors: ['chai-pin-zheng']
 ---
 
-MetaLearner was one of the clearest examples of the kind of product engineering work I want to keep doing. The product itself had depth, but that also meant the user experience could become expensive very quickly. If onboarding was vague, if feature discovery depended on human guidance, or if charts were hard to inspect, then the product's power did not fully translate into adoption.
+**9 demos. 4 guide categories. 3 locales. 1 real-time research repo.**
 
-That was the throughline across my internship. I was not just shipping isolated features. I was working on the layer between technical capability and real product usability: how users start, how they learn, how they inspect information, and how the team leaves behind work that other people can actually extend.
+That is the cleanest way I know to introduce my MetaLearner internship now.
 
-Rather than flatten everything into one long retrospective, I wanted to structure this case study the same way I structured [`mobile-nav-and-subposts`](/blog/mobile-nav-and-subposts): one parent post for the overview, then subposts for the parts that carry enough substance to stand on their own.
+Not because the internship can be reduced to four numbers, but because those numbers make the real shape of the work harder to flatten into "a few scattered tasks." The more I look back through the handoff site, the repo, the chart demo, and the redesign file, the clearer the throughline becomes: I was working on the layer between technical capability and actual product adoption.
 
-## A product-adoption internship, not one feature
+MetaLearner had depth. That was the opportunity, but it was also the risk. A product like that can quietly lose people if the first path is unclear, if charts explain too little, or if too much product knowledge lives in the heads of support or field engineers instead of in the product itself. That is why my work ended up spanning guided onboarding, in-product docs, chart tooling, responsive frontend work, redesign exploration, and technical handoff. Different surfaces, same problem.
 
-MetaLearner had the kind of surface area where value only shows up if users can cross a few thresholds:
+<div class="border [&_img,p]:m-0">
+![Overview slide from the MetaLearner internship handoff deck](assets/overview-slide.png)
+</div>
 
-- they need a clear first path
-- they need guidance close to the workflow
-- they need charts that support inspection, not just display
-- they need interfaces that hold together on smaller screens
-- they need future-facing technical work to be documented well enough for someone else to pick up later
+_This overview slide from the handoff deck is still the cleanest summary of the internship: product clarity, onboarding, and decision-making UX were the real center of gravity of the work._
 
-That is why the internship ended up spanning onboarding, documentation, chart tooling, mobile-friendly layout work, redesign exploration, architecture prototyping, and handoff material. On paper those can look like different tracks. In practice they were all parts of the same product problem.
+## What MetaLearner actually is
 
-## The four tracks in this case study
+For context, the main product story in MetaLearner is supply chain forecasting and planning. It is an AI-native product built on top of ERP data, with the goal of turning messy operational data into clearer forecasts, sharper demand planning, and faster supply chain decisions without asking teams to fight through spreadsheets, SQL, or extra technical overhead first.
 
-This writeup breaks into four subposts:
+In practical terms, that means MetaLearner combines ERP-connected forecasting surfaces, KPI dashboards, planning views, and AI agents that help teams ask questions, extract meaning from live data, and act earlier on operational risks.
 
-1. **Self-serve onboarding and documentation**: the work around guided onboarding, in-product guidance, prompt-writing support, and i18n-aware customer help.
-2. **Charts and responsive interface work**: the public `/graphs/*` gallery, interaction patterns like zoom and hover inspection, and the mobile-friendly layout improvements around that work.
-3. **Redesign direction in Figma**: the current-state review, responsive explorations, design-system development, and chart/data visualization direction.
-4. **Research, handoff, and future-facing references**: the Socket.IO prototype, the handoff site, and the search research I passed along for future use.
+That mission matters because it explains why the internship work clustered the way it did. If the product is supposed to make enterprise systems feel smarter and easier to use, then onboarding, documentation, chart quality, responsive layouts, and product direction are not side quests. They are part of whether the product's value becomes visible at all.
 
-I also put together a public [handoff site / presentation](https://metalearner-internship-logs.vercel.app/) that sits alongside this written case study. That site leans more toward wrap-up and reflection. This post is the more product-engineering version of the same internship.
+## Overview
+
+The strongest way to tell this story is the same way I told it in the handoff deck: **ROI first, not chronology first**.
+
+The internship made the most sense when ordered by company value:
+
+1. **Highest immediate ROI**: onboarding and User Guide work that improved first-time-user clarity
+2. **Most visible delivery**: a chart gallery that made MetaLearner's data surfaces more legible
+3. **Longer-term direction**: Figma and UX work that gave the frontend a stronger system
+4. **Future reuse**: research and handoff artifacts that reduced future ramp-up cost
+
+That framing mattered because it let me explain the internship honestly. I was not only ticking off features. I was improving clarity, learnability, and reusability across design, implementation, and handoff.
+
+## Why I split this into subposts
+
+I did not want to compress MetaLearner into one neat retrospective and accidentally sand away the parts that make it credible. The archive already has a strong pattern for this in [`mobile-nav-and-subposts`](/blog/mobile-nav-and-subposts): a parent post that frames the work, then subposts that go deeper where the work actually deserves depth.
+
+MetaLearner had enough substance to need the same treatment.
+
+### 1. [Building self-serve onboarding inside MetaLearner](/blog/metalearner/onboarding)
+
+This covers the guided onboarding flow, the User Guide, prompt-writing support, and why I think first-time-user clarity was the highest-ROI problem in the internship.
+
+### 2. [Making MetaLearner charts easier to inspect](/blog/metalearner/charts)
+
+This covers the `/graphs/*` gallery, the interaction layer around zoom and hover inspection, and the responsive frontend work that made the data experience hold up better across devices.
+
+### 3. [Using Figma to explore a clearer MetaLearner frontend](/blog/metalearner/redesign)
+
+This covers the redesign file, responsive explorations, chart direction, and the developing design system around components, typography, colours, primitives, and icons.
+
+### 4. [Prototyping real-time ideas and leaving a usable handoff](/blog/metalearner/handoff)
+
+This covers the Socket.IO research repo, the handoff site, the future-only search references, and why I think a clean handoff is one of the last real deliverables of an internship.
 
 ## What held the work together
 
-The shortest summary is that I kept trying to lower cognitive load.
+The shortest version is that I kept trying to lower cognitive load.
 
-The onboarding work tried to reduce the amount of outside help needed to get started. The documentation work tried to move explanations closer to the point of use. The chart gallery and interaction work tried to make data feel more inspectable and trustworthy. The Figma redesign work tried to give those improvements a stronger long-term visual system. The research and handoff work tried to make future implementation paths legible instead of leaving the team with vague ideas.
+The onboarding work made the first path clearer. The User Guide turned that into repeatable product learning. The chart gallery made data surfaces more inspectable and more teachable. The Figma work gave those improvements a stronger long-term shape. The research repo and handoff assets made sure the future-facing parts of the internship would survive my exit.
 
-That combination matters to me because it is a good example of what "product engineering" looks like in a technical environment. It is not just building the thing. It is making the thing easier to enter, easier to reason about, and easier for the next person to continue.
+That combination matters to me because it is one of the better examples I have of what product engineering looks like in a technical environment. It is not just building what the system can do. It is shaping how people enter it, read it, trust it, and pick it up after you are gone.
 
-## Go ahead and read the subposts
-
-On desktop, the subposts sit in the right-hand sidebar. On mobile, they appear in the sticky navigation layer above the table of contents. I wanted the MetaLearner material to work this way because there was too much real content here to compress into one neat summary without losing the details that actually make the internship interesting.
+I also put together a separate public [handoff site / presentation](https://metalearner-internship-logs.vercel.app/) for the internship. That site is closer to a wrap-up document with reflections and links. This series is the version that tries to explain the product and engineering judgment behind the work.

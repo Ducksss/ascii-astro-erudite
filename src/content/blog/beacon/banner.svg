@@ -1,0 +1,131 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="110" y1="82" x2="1094" y2="566" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#080808" />
+      <stop offset="0.5" stop-color="#0D0B09" />
+      <stop offset="1" stop-color="#130D08" />
+    </linearGradient>
+    <radialGradient id="glowLeft" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(236 150) rotate(44.4) scale(320 248)">
+      <stop stop-color="#FFBF6B" stop-opacity="0.24" />
+      <stop offset="1" stop-color="#FFBF6B" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glowRight" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(912 304) rotate(90) scale(236 318)">
+      <stop stop-color="#C86F2F" stop-opacity="0.28" />
+      <stop offset="1" stop-color="#C86F2F" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="wire" x1="653" y1="315" x2="1010" y2="166" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFBF6B" stop-opacity="0.72" />
+      <stop offset="1" stop-color="#FFE0B6" stop-opacity="0.18" />
+    </linearGradient>
+    <linearGradient id="panelStroke" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="white" stop-opacity="0.22" />
+      <stop offset="1" stop-color="white" stop-opacity="0.05" />
+    </linearGradient>
+    <filter id="softBlur" x="-120" y="-120" width="1440" height="870" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="42" />
+    </filter>
+    <filter id="cardShadow" x="0" y="0" width="1200" height="630" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="22" stdDeviation="26" flood-color="#000000" flood-opacity="0.4" />
+    </filter>
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse">
+      <path d="M36 0H0V36" stroke="white" stroke-opacity="0.05" />
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <rect width="1200" height="630" fill="url(#grid)" opacity="0.62" />
+
+  <g filter="url(#softBlur)">
+    <circle cx="246" cy="140" r="168" fill="url(#glowLeft)" />
+    <circle cx="926" cy="286" r="184" fill="url(#glowRight)" />
+  </g>
+
+  <path d="M0 470C166 426 258 405 396 421C579 442 651 540 845 534C989 529 1084 503 1200 438V630H0V470Z" fill="white" fill-opacity="0.02" />
+
+  <g opacity="0.9">
+    <rect x="64" y="60" width="244" height="38" rx="19" fill="white" fill-opacity="0.04" stroke="url(#panelStroke)" />
+    <text x="87" y="84" fill="#FFBF6B" font-family="Geist Mono, Geist, Arial, sans-serif" font-size="13" letter-spacing="4">STUDENT LIFE TRACK HACKATHON 2026</text>
+
+    <rect x="932" y="60" width="204" height="38" rx="19" fill="#FFBF6B" fill-opacity="0.09" stroke="#FFBF6B" stroke-opacity="0.24" />
+    <text x="960" y="84" fill="#FFE0B6" font-family="Geist Mono, Geist, Arial, sans-serif" font-size="13" letter-spacing="3.5">BUILT IN 1 HOUR</text>
+  </g>
+
+  <g transform="translate(72 132)">
+    <text x="0" y="0" fill="#FFBF6B" font-family="Geist Mono, Geist, Arial, sans-serif" font-size="13" letter-spacing="6">TELEGRAM OUTREACH SYSTEM</text>
+    <text x="0" y="108" fill="#F7F2E8" font-family="Geist, Arial, sans-serif" font-size="110" font-weight="700" letter-spacing="-5">BEACON</text>
+    <text x="0" y="160" fill="#F7F2E8" fill-opacity="0.76" font-family="Geist, Arial, sans-serif" font-size="30" letter-spacing="-1">One message. Every house chat. No chaos.</text>
+    <text x="0" y="210" fill="white" fill-opacity="0.5" font-family="Geist, Arial, sans-serif" font-size="22">RC committees, broadcasts, polls,</text>
+    <text x="0" y="238" fill="white" fill-opacity="0.5" font-family="Geist, Arial, sans-serif" font-size="22">and centralized coordination.</text>
+  </g>
+
+  <g transform="translate(72 428)" filter="url(#cardShadow)">
+    <rect width="340" height="134" rx="26" fill="#0F0F0F" fill-opacity="0.9" stroke="url(#panelStroke)" />
+    <text x="28" y="34" fill="#FFBF6B" font-family="Geist Mono, Geist, Arial, sans-serif" font-size="12" letter-spacing="3.5">CONTROL SURFACE</text>
+    <text x="28" y="68" fill="#F7F2E8" font-family="Geist, Arial, sans-serif" font-size="28" font-weight="600">Compose once.</text>
+    <text x="28" y="96" fill="white" fill-opacity="0.62" font-family="Geist, Arial, sans-serif" font-size="18">Push announcements and interest-check polls</text>
+    <text x="28" y="118" fill="white" fill-opacity="0.62" font-family="Geist, Arial, sans-serif" font-size="18">across decentralized RC house chats.</text>
+
+    <rect x="246" y="26" width="66" height="34" rx="17" fill="#FFBF6B" />
+    <text x="265" y="48" fill="#1C140B" font-family="Geist Mono, Geist, Arial, sans-serif" font-size="12" letter-spacing="2.5">SEND</text>
+  </g>
+
+  <g filter="url(#cardShadow)">
+    <circle cx="706" cy="312" r="64" fill="#120D09" stroke="#FFBF6B" stroke-opacity="0.45" stroke-width="2" />
+    <circle cx="706" cy="312" r="47" fill="#FFBF6B" fill-opacity="0.12" />
+    <text x="688" y="321" fill="#F7F2E8" font-family="Geist, Arial, sans-serif" font-size="34" font-weight="700" letter-spacing="1">B</text>
+    <text x="655" y="391" fill="#FFE0B6" font-family="Geist Mono, Geist, Arial, sans-serif" font-size="12" letter-spacing="3">CENTRALIZED OUTREACH</text>
+  </g>
+
+  <g stroke="url(#wire)" stroke-width="2">
+    <path d="M412 496C516 500 582 458 646 364" />
+    <path d="M760 274C807 230 862 198 930 178" />
+    <path d="M768 312C844 314 913 316 1004 322" />
+    <path d="M752 352C807 397 870 425 931 448" />
+    <path d="M680 247C665 217 651 183 640 143" />
+  </g>
+
+  <g filter="url(#cardShadow)">
+    <g transform="translate(887 118)">
+      <rect width="236" height="112" rx="24" fill="#101010" fill-opacity="0.94" stroke="url(#panelStroke)" />
+      <text x="22" y="30" fill="#FFBF6B" font-family="Geist Mono, Geist, Arial, sans-serif" font-size="11" letter-spacing="3">HOUSE CHAT A</text>
+      <rect x="22" y="48" width="132" height="12" rx="6" fill="#F7F2E8" fill-opacity="0.85" />
+      <rect x="22" y="69" width="168" height="8" rx="4" fill="white" fill-opacity="0.18" />
+      <rect x="22" y="85" width="110" height="8" rx="4" fill="white" fill-opacity="0.12" />
+      <circle cx="203" cy="78" r="11" fill="#FFBF6B" fill-opacity="0.22" />
+      <path d="M199 78L203 72L208 80L204 79L201 84L202 79L199 78Z" fill="#FFBF6B" />
+    </g>
+
+    <g transform="translate(923 267)">
+      <rect width="214" height="104" rx="24" fill="#111111" fill-opacity="0.94" stroke="url(#panelStroke)" />
+      <text x="20" y="28" fill="#FFBF6B" font-family="Geist Mono, Geist, Arial, sans-serif" font-size="11" letter-spacing="3">HOUSE CHAT B</text>
+      <rect x="20" y="46" width="144" height="10" rx="5" fill="#F7F2E8" fill-opacity="0.86" />
+      <rect x="20" y="64" width="82" height="22" rx="11" fill="#FFBF6B" fill-opacity="0.16" stroke="#FFBF6B" stroke-opacity="0.28" />
+      <text x="37" y="79" fill="#FFE0B6" font-family="Geist Mono, Geist, Arial, sans-serif" font-size="11" letter-spacing="2">POLL LIVE</text>
+      <circle cx="180" cy="75" r="6" fill="#FFBF6B" />
+      <circle cx="195" cy="75" r="6" fill="#F7F2E8" fill-opacity="0.24" />
+    </g>
+
+    <g transform="translate(876 413)">
+      <rect width="248" height="116" rx="24" fill="#0F0F0F" fill-opacity="0.94" stroke="url(#panelStroke)" />
+      <text x="22" y="31" fill="#FFBF6B" font-family="Geist Mono, Geist, Arial, sans-serif" font-size="11" letter-spacing="3">HOUSE CHAT C</text>
+      <rect x="22" y="52" width="176" height="10" rx="5" fill="#F7F2E8" fill-opacity="0.82" />
+      <rect x="22" y="72" width="192" height="7" rx="3.5" fill="white" fill-opacity="0.16" />
+      <rect x="22" y="88" width="124" height="7" rx="3.5" fill="white" fill-opacity="0.11" />
+      <text x="22" y="105" fill="white" fill-opacity="0.42" font-family="Geist Mono, Geist, Arial, sans-serif" font-size="10" letter-spacing="2.2">SYNCED UPDATE</text>
+    </g>
+
+    <g transform="translate(564 70)">
+      <rect width="174" height="94" rx="22" fill="#0F0F0F" fill-opacity="0.9" stroke="url(#panelStroke)" />
+      <text x="19" y="28" fill="#FFBF6B" font-family="Geist Mono, Geist, Arial, sans-serif" font-size="10.5" letter-spacing="2.8">COMMITTEE VIEW</text>
+      <rect x="19" y="45" width="96" height="9" rx="4.5" fill="#F7F2E8" fill-opacity="0.82" />
+      <rect x="19" y="61" width="137" height="6" rx="3" fill="white" fill-opacity="0.15" />
+      <rect x="19" y="74" width="84" height="6" rx="3" fill="white" fill-opacity="0.12" />
+    </g>
+  </g>
+
+  <g opacity="0.95">
+    <path d="M470 470C531 461 583 438 624 401" stroke="#FFBF6B" stroke-opacity="0.28" stroke-width="2" stroke-dasharray="6 8" />
+    <circle cx="471" cy="470" r="4" fill="#FFBF6B" />
+    <circle cx="624" cy="401" r="4" fill="#FFBF6B" />
+  </g>
+</svg>
