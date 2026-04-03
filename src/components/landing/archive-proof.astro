@@ -1,0 +1,236 @@
+---
+import LandingAsciiField from '@/components/landing/ascii-field.astro'
+import Link from '@/components/link.astro'
+import { formatDate } from '@/lib/utils'
+import type { CollectionEntry } from 'astro:content'
+
+interface Props {
+  title: string
+  intro: string
+  featuredPost: CollectionEntry<'blog'> | null
+  supportingPosts: CollectionEntry<'blog'>[]
+  stats: {
+    postCount: number
+    tagCount: number
+    yearSpan: string
+  }
+}
+
+const { title, intro, featuredPost, supportingPosts, stats } = Astro.props
+---
+
+<section class="relative border-b border-white/10 bg-[#040404]">
+  <LandingAsciiField variant="ambient" class="opacity-[0.14]" />
+  <div class="mx-auto max-w-[1400px] px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
+    <div
+      class="flex flex-col gap-5 pb-8 lg:flex-row lg:items-end lg:justify-between"
+    >
+      <div class="max-w-2xl">
+        <p class="landing-section-label">Archive proof</p>
+        <h2 class="landing-section-title mt-4 max-w-2xl">{title}</h2>
+        <p class="mt-6 max-w-2xl text-base leading-7 text-white/58 sm:text-lg">
+          {intro}
+        </p>
+      </div>
+      <Link
+        href="/blog"
+        class="font-mono text-[0.72rem] tracking-[0.26em] text-white/52 uppercase transition-colors hover:text-white"
+      >
+        Open full archive
+      </Link>
+    </div>
+
+    <div
+      class="mt-10 grid gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(22rem,0.92fr)]"
+    >
+      {
+        featuredPost ? (
+          <article class="landing-archive-feature">
+            <p class="landing-archive-feature__meta">
+              <span>{formatDate(featuredPost.data.date)}</span>
+              <span>
+                {featuredPost.data.tags?.slice(0, 2).join(' / ') ??
+                  'latest note'}
+              </span>
+            </p>
+            <h3 class="landing-archive-feature__title">
+              {featuredPost.data.title}
+            </h3>
+            <p class="landing-archive-feature__description">
+              {featuredPost.data.description}
+            </p>
+            <Link
+              href={`/blog/${featuredPost.id}`}
+              class="landing-archive-feature__link"
+            >
+              Enter the note
+            </Link>
+          </article>
+        ) : (
+          <div class="landing-archive-feature text-white/52">
+            No published writing yet. The archive section is ready when the
+            first post lands.
+          </div>
+        )
+      }
+
+      <div class="space-y-6">
+        <div class="grid grid-cols-3 gap-px border border-white/10 bg-white/5">
+          <div class="landing-archive-stat">
+            <span class="landing-archive-stat__value">
+              {String(stats.postCount).padStart(2, '0')}
+            </span>
+            <span class="landing-archive-stat__label">Posts</span>
+          </div>
+          <div class="landing-archive-stat">
+            <span class="landing-archive-stat__value">
+              {String(stats.tagCount).padStart(2, '0')}
+            </span>
+            <span class="landing-archive-stat__label">Tags</span>
+          </div>
+          <div class="landing-archive-stat">
+            <span class="landing-archive-stat__value">{stats.yearSpan}</span>
+            <span class="landing-archive-stat__label">Timeline</span>
+          </div>
+        </div>
+
+        <div class="border border-white/10 bg-white/[0.02]">
+          {
+            supportingPosts.map((post) => (
+              <article class="landing-archive-row">
+                <Link href={`/blog/${post.id}`} class="block">
+                  <p class="landing-archive-row__meta">
+                    {formatDate(post.data.date)}
+                  </p>
+                  <h4 class="landing-archive-row__title">{post.data.title}</h4>
+                  <p class="landing-archive-row__description">
+                    {post.data.description}
+                  </p>
+                </Link>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .landing-archive-feature {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background:
+      linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.04),
+        rgba(255, 255, 255, 0.015)
+      ),
+      rgba(0, 0, 0, 0.56);
+    padding: 1.5rem;
+  }
+
+  .landing-archive-feature__meta,
+  .landing-archive-row__meta,
+  .landing-archive-stat__label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.42);
+  }
+
+  .landing-archive-feature__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+  }
+
+  .landing-archive-feature__title {
+    margin-top: 1.4rem;
+    max-width: 16ch;
+    font-size: clamp(2.2rem, 4vw, 4rem);
+    line-height: 0.94;
+    letter-spacing: -0.07em;
+    font-weight: 600;
+    color: white;
+  }
+
+  .landing-archive-feature__description {
+    margin-top: 1.25rem;
+    max-width: 36rem;
+    font-size: 1rem;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .landing-archive-feature__link {
+    margin-top: 2rem;
+    width: fit-content;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.24);
+    padding-bottom: 0.2rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: white;
+  }
+
+  .landing-archive-stat {
+    display: flex;
+    min-height: 8rem;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 0.55rem;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 1rem;
+  }
+
+  .landing-archive-stat:last-child {
+    border-right: 0;
+  }
+
+  .landing-archive-stat__value {
+    font-size: clamp(1.3rem, 2vw, 1.8rem);
+    line-height: 1;
+    letter-spacing: -0.05em;
+    font-weight: 600;
+    color: white;
+  }
+
+  .landing-archive-row {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 1rem 1.1rem;
+    transition: background-color 0.3s ease;
+  }
+
+  .landing-archive-row:first-child {
+    border-top: 0;
+  }
+
+  .landing-archive-row:hover {
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .landing-archive-row__title {
+    margin-top: 0.75rem;
+    font-size: 1.3rem;
+    line-height: 1.15;
+    letter-spacing: -0.04em;
+    font-weight: 500;
+    color: white;
+  }
+
+  .landing-archive-row__description {
+    margin-top: 0.7rem;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.54);
+  }
+
+  @media (max-width: 767px) {
+    .landing-archive-stat {
+      min-height: 6.5rem;
+      padding: 0.85rem;
+    }
+  }
+</style>

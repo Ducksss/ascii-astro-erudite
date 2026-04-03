@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="88" y1="74" x2="1111" y2="558" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F0C16" />
+      <stop offset="1" stop-color="#030304" />
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(834 220) rotate(117.538) scale(318.894 404.115)">
+      <stop stop-color="#B69AFF" stop-opacity=".7" />
+      <stop offset="1" stop-color="#B69AFF" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <rect x="46" y="46" width="1108" height="538" rx="28" stroke="rgba(255,255,255,.12)" />
+  <path d="M85 130H1115" stroke="rgba(255,255,255,.08)" />
+  <rect x="110" y="176" width="374" height="250" rx="22" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.1)" />
+  <path d="M148 222H446" stroke="rgba(255,255,255,.12)" />
+  <path d="M148 270H446" stroke="rgba(255,255,255,.12)" />
+  <path d="M148 318H446" stroke="rgba(255,255,255,.12)" />
+  <path d="M148 366H446" stroke="rgba(255,255,255,.12)" />
+  <rect x="148" y="252" width="146" height="18" rx="9" fill="rgba(182,154,255,.26)" />
+  <rect x="148" y="300" width="204" height="18" rx="9" fill="rgba(182,154,255,.18)" />
+  <rect x="148" y="348" width="176" height="18" rx="9" fill="rgba(182,154,255,.18)" />
+  <rect x="634" y="176" width="436" height="128" rx="18" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.1)" />
+  <rect x="634" y="332" width="436" height="138" rx="18" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.1)" />
+  <path d="M682 236H1018" stroke="rgba(255,255,255,.14)" />
+  <path d="M682 384H1018" stroke="rgba(255,255,255,.14)" />
+  <path d="M692 430L760 390L820 412L910 360L1018 386" stroke="#B69AFF" stroke-width="4" stroke-linecap="round" />
+  <circle cx="760" cy="390" r="7" fill="#B69AFF" />
+  <circle cx="910" cy="360" r="7" fill="#B69AFF" />
+  <rect x="688" y="214" width="62" height="52" rx="12" fill="rgba(182,154,255,.24)" />
+  <rect x="772" y="198" width="62" height="68" rx="12" fill="rgba(182,154,255,.18)" />
+  <rect x="856" y="182" width="62" height="84" rx="12" fill="rgba(182,154,255,.3)" />
+  <rect x="940" y="208" width="62" height="58" rx="12" fill="rgba(182,154,255,.18)" />
+  <rect x="634" y="176" width="436" height="294" fill="url(#glow)" />
+  <text x="110" y="104" fill="rgba(255,255,255,.5)" font-family="Geist Mono, ui-monospace, monospace" font-size="18" letter-spacing="6">GOVTECH / PLATFORM DELIVERY</text>
+  <text x="110" y="492" fill="white" font-family="Geist, ui-sans-serif, sans-serif" font-size="74" font-weight="700" letter-spacing="-3">platform tooling</text>
+  <text x="110" y="538" fill="rgba(255,255,255,.64)" font-family="Geist Mono, ui-monospace, monospace" font-size="24" letter-spacing="2">cli / seo / cypress / ci pipeline / developer portal delivery</text>
+  <text x="148" y="214" fill="rgba(255,255,255,.72)" font-family="Geist Mono, ui-monospace, monospace" font-size="18" letter-spacing="2">DEVELOPER PORTAL INDEXING</text>
+</svg>

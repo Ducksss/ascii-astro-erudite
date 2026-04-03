@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="85" y1="72" x2="1114" y2="564" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#130D09" />
+      <stop offset="1" stop-color="#040404" />
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(818 250) rotate(106.149) scale(326.192 417.85)">
+      <stop stop-color="#FFC777" stop-opacity=".68" />
+      <stop offset="1" stop-color="#FFC777" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <rect x="46" y="46" width="1108" height="538" rx="28" stroke="rgba(255,255,255,.12)" />
+  <path d="M85 130H1115" stroke="rgba(255,255,255,.08)" />
+  <g opacity=".28" stroke="rgba(255,255,255,.12)">
+    <path d="M635 180H1070V470H635z" />
+    <path d="M705 180V470" />
+    <path d="M775 180V470" />
+    <path d="M845 180V470" />
+    <path d="M915 180V470" />
+    <path d="M985 180V470" />
+    <path d="M635 230H1070" />
+    <path d="M635 280H1070" />
+    <path d="M635 330H1070" />
+    <path d="M635 380H1070" />
+    <path d="M635 430H1070" />
+  </g>
+  <circle cx="852" cy="324" r="134" stroke="#FFC777" stroke-width="2" />
+  <circle cx="852" cy="324" r="92" stroke="rgba(255,255,255,.26)" stroke-width="2" />
+  <circle cx="852" cy="324" r="50" stroke="rgba(255,255,255,.18)" stroke-width="2" />
+  <circle cx="852" cy="324" r="12" fill="#FFC777" />
+  <path d="M852 324L964 260" stroke="#FFC777" stroke-width="3" stroke-linecap="round" />
+  <path d="M852 324L776 394" stroke="#FFC777" stroke-width="3" stroke-linecap="round" />
+  <path d="M852 324L911 428" stroke="rgba(255,255,255,.38)" stroke-width="2" stroke-linecap="round" />
+  <circle cx="964" cy="260" r="10" fill="#FFC777" />
+  <circle cx="776" cy="394" r="10" fill="#FFC777" />
+  <circle cx="911" cy="428" r="10" fill="rgba(255,255,255,.68)" />
+  <rect x="110" y="178" width="402" height="236" rx="22" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.1)" />
+  <path d="M150 224H472" stroke="rgba(255,255,255,.12)" />
+  <path d="M150 272H420" stroke="rgba(255,255,255,.12)" />
+  <path d="M150 320H446" stroke="rgba(255,255,255,.12)" />
+  <path d="M150 368H390" stroke="rgba(255,255,255,.12)" />
+  <rect x="150" y="250" width="80" height="18" rx="9" fill="rgba(255,199,119,.22)" />
+  <rect x="150" y="298" width="172" height="18" rx="9" fill="rgba(255,199,119,.22)" />
+  <rect x="150" y="346" width="228" height="18" rx="9" fill="rgba(255,199,119,.22)" />
+  <rect x="635" y="180" width="435" height="290" fill="url(#glow)" />
+  <text x="110" y="104" fill="rgba(255,255,255,.5)" font-family="Geist Mono, ui-monospace, monospace" font-size="18" letter-spacing="6">SINGAPORE ARMED FORCES / READINESS</text>
+  <text x="110" y="492" fill="white" font-family="Geist, ui-sans-serif, sans-serif" font-size="74" font-weight="700" letter-spacing="-3">readiness systems</text>
+  <text x="110" y="538" fill="rgba(255,255,255,.64)" font-family="Geist Mono, ui-monospace, monospace" font-size="24" letter-spacing="2">fault injection / operator drills / incident response / public OSINT game</text>
+  <text x="150" y="214" fill="rgba(255,255,255,.72)" font-family="Geist Mono, ui-monospace, monospace" font-size="18" letter-spacing="2">TACTICAL TRAINING PLAN</text>
+</svg>

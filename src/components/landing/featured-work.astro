@@ -1,0 +1,385 @@
+---
+import LandingAsciiField from '@/components/landing/ascii-field.astro'
+import Link from '@/components/link.astro'
+import { Image } from 'astro:assets'
+import type { CollectionEntry } from 'astro:content'
+
+interface Props {
+  title: string
+  intro: string
+  projects: CollectionEntry<'projects'>[]
+}
+
+const { title, intro, projects } = Astro.props
+const [leadProject, ...secondaryProjects] = projects
+---
+
+<section class="relative overflow-hidden border-b border-white/10 bg-[#050505]">
+  <LandingAsciiField variant="ambient" class="opacity-[0.2] mix-blend-screen" />
+  <div
+    class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_46%)]"
+  >
+  </div>
+  <div class="mx-auto max-w-[1400px] px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
+    <div class="max-w-3xl">
+      <p class="landing-section-label">Featured work</p>
+      <h2 class="landing-section-title mt-4 max-w-2xl">{title}</h2>
+      <p class="mt-6 max-w-2xl text-base leading-7 text-white/58 sm:text-lg">
+        {intro}
+      </p>
+    </div>
+
+    <div class="mt-12 grid gap-4 lg:grid-cols-12">
+      {
+        leadProject && (
+          <article
+            data-work-card
+            class="landing-work-card landing-work-card--lead lg:col-span-7"
+            style={`--landing-accent:${leadProject.data.accent ?? '#d8d8d8'}`}
+          >
+            <div class="landing-work-card__haze" />
+            <div class="landing-work-card__grain" />
+            <div class="landing-work-card__copy">
+              <div class="landing-work-card__meta">
+                <span>{leadProject.data.role ?? 'Role in progress'}</span>
+                <span>{leadProject.data.status ?? 'Placeholder track'}</span>
+              </div>
+              <h3 class="landing-work-card__title">{leadProject.data.name}</h3>
+              <p class="landing-work-card__description">
+                {leadProject.data.description}
+              </p>
+              <p class="landing-work-card__proof-label">Anchored outcome</p>
+              <p class="landing-work-card__outcome">
+                {leadProject.data.outcome ??
+                  'Structured as a richer case-study surface with room for process, outcomes, and references.'}
+              </p>
+              <div class="landing-work-card__tags">
+                {leadProject.data.tags.map((tag) => (
+                  <span class="landing-work-card__tag">{tag}</span>
+                ))}
+              </div>
+              <Link
+                href={leadProject.data.link}
+                class="landing-work-card__link"
+                external={leadProject.data.link.startsWith('http')}
+              >
+                Open case study
+              </Link>
+            </div>
+            <div class="landing-work-card__image-shell">
+              <Image
+                src={leadProject.data.image}
+                alt={leadProject.data.name}
+                width={1200}
+                height={630}
+                class="landing-work-card__image"
+              />
+            </div>
+          </article>
+        )
+      }
+
+      <div class="grid gap-4 lg:col-span-5">
+        {
+          secondaryProjects.map((project) => (
+            <article
+              data-work-card
+              class="landing-work-card landing-work-card--compact"
+              style={`--landing-accent:${project.data.accent ?? '#d8d8d8'}`}
+            >
+              <div class="landing-work-card__haze" />
+              <div class="landing-work-card__grain" />
+              <div class="landing-work-card__copy">
+                <div class="landing-work-card__meta">
+                  <span>{project.data.role ?? 'Role in progress'}</span>
+                  <span>{project.data.status ?? 'Placeholder track'}</span>
+                </div>
+                <h3 class="landing-work-card__title">{project.data.name}</h3>
+                <p class="landing-work-card__description">
+                  {project.data.description}
+                </p>
+                <p class="landing-work-card__proof-label">Anchored outcome</p>
+                <p class="landing-work-card__outcome">
+                  {project.data.outcome ??
+                    'Prepared as a future case study with stronger metadata and annotated visual direction.'}
+                </p>
+                <div class="landing-work-card__tags">
+                  {project.data.tags.map((tag) => (
+                    <span class="landing-work-card__tag">{tag}</span>
+                  ))}
+                </div>
+                <Link
+                  href={project.data.link}
+                  class="landing-work-card__link"
+                  external={project.data.link.startsWith('http')}
+                >
+                  Open case study
+                </Link>
+              </div>
+              <div class="landing-work-card__image-shell landing-work-card__image-shell--compact">
+                <Image
+                  src={project.data.image}
+                  alt={project.data.name}
+                  width={1200}
+                  height={630}
+                  class="landing-work-card__image"
+                />
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<script is:inline data-astro-rerun>
+  ;(() => {
+    const script = document.currentScript
+    const root = script?.previousElementSibling
+    if (!(root instanceof HTMLElement)) return
+
+    const reducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches
+    if (reducedMotion) return
+
+    const cards = [...root.querySelectorAll('[data-work-card]')]
+
+    const onMove = (card, event) => {
+      const rect = card.getBoundingClientRect()
+      const x = (event.clientX - rect.left) / rect.width
+      const y = (event.clientY - rect.top) / rect.height
+      card.style.setProperty('--work-x', `${x}`)
+      card.style.setProperty('--work-y', `${y}`)
+    }
+
+    const onLeave = (card) => {
+      card.style.setProperty('--work-x', '0.5')
+      card.style.setProperty('--work-y', '0.5')
+    }
+
+    const cleanups = []
+
+    cards.forEach((card) => {
+      card.style.setProperty('--work-x', '0.5')
+      card.style.setProperty('--work-y', '0.5')
+
+      const handleMove = (event) => onMove(card, event)
+      const handleLeave = () => onLeave(card)
+
+      card.addEventListener('pointermove', handleMove)
+      card.addEventListener('pointerleave', handleLeave)
+      cleanups.push(() => {
+        card.removeEventListener('pointermove', handleMove)
+        card.removeEventListener('pointerleave', handleLeave)
+      })
+    })
+
+    const cleanup = () => cleanups.forEach((teardown) => teardown())
+    document.addEventListener('astro:before-swap', cleanup, { once: true })
+    window.addEventListener('pagehide', cleanup, { once: true })
+  })()
+</script>
+
+<style>
+  .landing-work-card {
+    --work-x: 0.5;
+    --work-y: 0.5;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background:
+      linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.04),
+        rgba(255, 255, 255, 0.015)
+      ),
+      rgba(0, 0, 0, 0.58);
+    transition:
+      border-color 0.35s ease,
+      transform 0.35s ease,
+      background-color 0.35s ease;
+    min-height: 27rem;
+    transform: perspective(900px) rotateX(calc((var(--work-y) - 0.5) * -4deg))
+      rotateY(calc((var(--work-x) - 0.5) * 6deg)) translateZ(0);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.32);
+  }
+
+  .landing-work-card:hover {
+    border-color: rgba(255, 255, 255, 0.24);
+  }
+
+  .landing-work-card__haze {
+    position: absolute;
+    inset: auto auto -10% -10%;
+    width: 18rem;
+    height: 18rem;
+    background: radial-gradient(circle, var(--landing-accent), transparent 72%);
+    filter: blur(18px);
+    opacity: 0.18;
+    pointer-events: none;
+  }
+
+  .landing-work-card__grain {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 13px,
+        rgba(255, 255, 255, 0.03) 14px
+      ),
+      radial-gradient(circle, rgba(255, 255, 255, 0.12) 1px, transparent 1.5px);
+    background-size:
+      100% 14px,
+      12px 12px;
+    mask-image: linear-gradient(180deg, black, transparent);
+    opacity: 0.16;
+    pointer-events: none;
+  }
+
+  .landing-work-card__copy {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.2rem;
+    padding: 1.4rem;
+  }
+
+  .landing-work-card--lead .landing-work-card__copy {
+    padding: 1.6rem;
+  }
+
+  .landing-work-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.46);
+  }
+
+  .landing-work-card__title {
+    max-width: 18ch;
+    font-size: clamp(1.9rem, 4vw, 3.4rem);
+    line-height: 0.92;
+    letter-spacing: -0.07em;
+    font-weight: 600;
+    color: white;
+    text-wrap: balance;
+  }
+
+  .landing-work-card--compact .landing-work-card__title {
+    font-size: clamp(1.8rem, 2vw, 2.5rem);
+  }
+
+  .landing-work-card__description {
+    max-width: 36rem;
+    font-size: 1rem;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.62);
+  }
+
+  .landing-work-card__proof-label {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.32);
+  }
+
+  .landing-work-card__outcome {
+    max-width: 32rem;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.56);
+  }
+
+  .landing-work-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .landing-work-card__tag {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 0.45rem 0.6rem;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.48);
+  }
+
+  .landing-work-card__link {
+    width: fit-content;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+    padding-bottom: 0.18rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: white;
+  }
+
+  .landing-work-card__image-shell {
+    position: absolute;
+    right: -6%;
+    bottom: -5%;
+    width: min(54%, 30rem);
+    transform: translate3d(
+      calc((var(--work-x) - 0.5) * 18px),
+      calc((var(--work-y) - 0.5) * 14px),
+      0
+    );
+    transition: transform 0.35s ease;
+    opacity: 0.26;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .landing-work-card__image-shell--compact {
+    width: min(44%, 14rem);
+    right: -4%;
+    bottom: -4%;
+    opacity: 0.18;
+  }
+
+  .landing-work-card__image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    filter: saturate(0.45) contrast(1.08);
+    mix-blend-mode: screen;
+  }
+
+  @media (max-width: 1023px) {
+    .landing-work-card {
+      transform: none;
+      min-height: 24rem;
+    }
+
+    .landing-work-card__image-shell {
+      width: min(56%, 18rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .landing-work-card {
+      transform: none;
+      transition: border-color 0.35s ease;
+    }
+
+    .landing-work-card__image-shell {
+      transform: none;
+      transition: none;
+    }
+  }
+</style>

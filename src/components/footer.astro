@@ -1,26 +1,100 @@
 ---
-import { Separator } from '@/components/ui/separator'
-import { SOCIAL_LINKS } from '@/consts'
-import Link from './link.astro'
-import SocialIcons from './social-icons.astro'
+import Link from '@/components/link.astro'
+import { FOOTER } from '@/consts'
+const isExternalLink = (href: string) =>
+  href.startsWith('http://') ||
+  href.startsWith('https://') ||
+  href.startsWith('mailto:')
 ---
 
 <footer
-  class="mx-auto mb-8 flex w-full max-w-3xl flex-col items-center justify-center gap-y-2 px-4 sm:mb-4 sm:flex-row sm:justify-between"
+  transition:persist
+  class="relative isolate w-full overflow-hidden border-t border-white/10 bg-[#050505] text-white"
 >
-  <div class="flex flex-wrap items-center justify-center gap-x-2 text-center">
-    <span class="text-muted-foreground text-sm">
-      &copy; {new Date().getFullYear()} All rights reserved.
-    </span>
-    <Separator orientation="vertical" className="hidden h-4! sm:block" />
-    <p class="text-muted-foreground text-sm">
-      Made with 🤍 by <Link
-        href="https://github.com/jktrn"
-        class="text-foreground"
-        external
-        underline>enscribe</Link
-      >!
-    </p>
+  <div
+    class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.06),transparent_30%),linear-gradient(180deg,rgba(255,255,255,0.015),transparent_18%)]"
+  >
   </div>
-  <SocialIcons links={SOCIAL_LINKS} />
+  <div
+    class="relative mx-auto w-full max-w-[1400px] px-4 py-12 sm:px-6 sm:py-14 lg:px-8 lg:py-16"
+  >
+    <div
+      class="grid gap-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(300px,0.92fr)] lg:gap-10"
+    >
+      <div class="max-w-3xl">
+        <p
+          class="font-mono text-[0.72rem] tracking-[0.34em] text-white/34 uppercase"
+        >
+          {FOOTER.eyebrow}
+        </p>
+        <h2
+          class="mt-6 max-w-[13ch] text-[clamp(2.5rem,5vw,4.4rem)] leading-[0.94] font-semibold tracking-[-0.075em] text-balance text-white/94"
+        >
+          {FOOTER.headline}
+        </h2>
+        <p
+          class="mt-6 max-w-xl text-base leading-7 text-white/54 sm:text-[1.02rem]"
+        >
+          {FOOTER.copy}
+        </p>
+        <Link
+          href={FOOTER.primaryContact.href}
+          external={isExternalLink(FOOTER.primaryContact.href)}
+          class="mt-8 inline-flex max-w-full items-center rounded-full border border-white/12 bg-white/[0.04] px-4 py-2.5 text-sm font-medium tracking-[-0.02em] text-white/84 transition-all duration-300 hover:border-white/18 hover:bg-white/[0.06] hover:text-white"
+        >
+          <span class="truncate">{FOOTER.primaryContact.label}</span>
+        </Link>
+      </div>
+
+      <div class="border-l-0 border-white/10 lg:pl-12">
+        <div class="space-y-9 lg:border-l lg:border-white/10 lg:pl-12">
+          <section class="space-y-3">
+            <p
+              class="font-mono text-[0.72rem] tracking-[0.34em] text-white/30 uppercase"
+            >
+              {FOOTER.baseLabel}
+            </p>
+            <p
+              class="text-[1.4rem] leading-none tracking-[-0.05em] text-white/78 sm:text-[1.7rem]"
+            >
+              {FOOTER.baseValue}
+            </p>
+          </section>
+
+          <section class="space-y-3">
+            <p
+              class="font-mono text-[0.72rem] tracking-[0.34em] text-white/30 uppercase"
+            >
+              {FOOTER.linksLabel}
+            </p>
+            <div class="border-t border-white/8">
+              {
+                FOOTER.contactLinks.map((item) => (
+                  <Link
+                    href={item.href}
+                    external={isExternalLink(item.href)}
+                    class="group flex items-center justify-between gap-4 border-b border-white/8 py-3.5 font-mono text-[0.76rem] tracking-[0.28em] text-white/58 uppercase transition-colors duration-300 hover:text-white/84"
+                  >
+                    <span>{item.label}</span>
+                    <span
+                      aria-hidden="true"
+                      class="text-white/18 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-white/42"
+                    >
+                      &rarr;
+                    </span>
+                  </Link>
+                ))
+              }
+            </div>
+          </section>
+        </div>
+
+        <p
+          class="mt-10 font-mono text-[0.68rem] tracking-[0.34em] text-white/20 uppercase"
+        >
+          {FOOTER.signature}
+        </p>
+      </div>
+    </div>
+  </div>
 </footer>

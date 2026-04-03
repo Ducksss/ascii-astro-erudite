@@ -1,5 +1,5 @@
 ---
-import Breadcrumbs from '@/components/breadcrumbs.astro'
+import AsciiEyeField from '@/components/404/ascii-eye-field.astro'
 import Link from '@/components/link.astro'
 import PageHead from '@/components/page-head.astro'
 import { buttonVariants } from '@/components/ui/button'
@@ -7,23 +7,179 @@ import Layout from '@/layouts/layout.astro'
 import { cn } from '@/lib/utils'
 ---
 
-<Layout class="max-w-3xl">
-  <PageHead slot="head" title="404" />
-  <Breadcrumbs items={[{ label: '???', icon: 'lucide:circle-help' }]} />
+<Layout variant="immersive">
+  <PageHead
+    slot="head"
+    title="404"
+    description="The requested page could not be found."
+    noindex
+  />
 
-  <section
-    class="flex flex-col items-center justify-center gap-y-4 text-center"
-  >
-    <div class="max-w-md">
-      <h1 class="mb-4 text-3xl font-medium">404: Page not found</h1>
-      <p class="prose">Oops! The page you're looking for doesn't exist.</p>
+  <section class="error-eye-hero">
+    <AsciiEyeField class="error-eye-hero__field" />
+
+    <div class="error-eye-hero__top-fade"></div>
+    <div class="error-eye-hero__left-fade"></div>
+    <div class="error-eye-hero__right-grid"></div>
+
+    <div class="error-eye-hero__inner">
+      <div class="error-eye-copy" transition:name="page-intro">
+        <p class="landing-section-label">404</p>
+        <h1 class="error-eye-copy__title">
+          The archive is still looking for that route.
+        </h1>
+        <p class="error-eye-copy__body">
+          This address is gone, but the rest of the system is still live if you
+          want a clean way back in.
+        </p>
+
+        <div class="error-eye-copy__actions">
+          <Link
+            href="/"
+            class={cn(
+              buttonVariants({ variant: 'outline' }),
+              'group border-white/12 bg-white/[0.03] text-white hover:border-white/24 hover:bg-white/[0.08] hover:text-white',
+            )}
+          >
+            <span class="transition-transform group-hover:-translate-x-1"
+              >&larr;</span
+            >
+            Return home
+          </Link>
+        </div>
+
+        <div class="error-eye-copy__links">
+          <Link href="/blog" class="immersive-chip"> Writing archive </Link>
+          <Link href="/about" class="immersive-chip"> About </Link>
+          <Link href="/tags" class="immersive-chip"> Tags </Link>
+          <Link href="/authors" class="immersive-chip"> Authors </Link>
+        </div>
+      </div>
     </div>
-    <Link
-      href="/"
-      class={cn(buttonVariants({ variant: 'outline' }), 'flex gap-x-1.5 group')}
-    >
-      <span class="transition-transform group-hover:-translate-x-1">&larr;</span
-      > Go to home page
-    </Link>
   </section>
 </Layout>
+
+<style>
+  .error-eye-hero {
+    position: relative;
+    min-height: calc(100svh - 4.7rem);
+    overflow: hidden;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: #020202;
+  }
+
+  .error-eye-hero__field,
+  .error-eye-hero__top-fade,
+  .error-eye-hero__left-fade,
+  .error-eye-hero__right-grid {
+    position: absolute;
+    inset: 0;
+  }
+
+  .error-eye-hero__field {
+    inset: 0;
+  }
+
+  .error-eye-hero__top-fade {
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.72) 0%,
+      rgba(0, 0, 0, 0.18) 18%,
+      rgba(0, 0, 0, 0) 38%
+    );
+  }
+
+  .error-eye-hero__left-fade {
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 18% 58%, rgba(0, 0, 0, 0.88), transparent 32%),
+      linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.8),
+        rgba(0, 0, 0, 0.12) 32%,
+        transparent 52%
+      );
+  }
+
+  .error-eye-hero__right-grid {
+    pointer-events: none;
+    opacity: 0.22;
+    background-image: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.2) 1px,
+      transparent 1.6px
+    );
+    background-size: 14px 14px;
+    mask-image: linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 46%,
+      black 72%
+    );
+  }
+
+  .error-eye-hero__inner {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    min-height: calc(100svh - 4.7rem);
+    align-items: flex-end;
+  }
+
+  .error-eye-copy {
+    width: min(100%, 34rem);
+    padding: 2.5rem 1rem 3rem;
+  }
+
+  .error-eye-copy__title {
+    margin-top: 1rem;
+    max-width: 12ch;
+    font-size: clamp(2.8rem, 7vw, 5.8rem);
+    line-height: 0.92;
+    letter-spacing: -0.08em;
+    font-weight: 600;
+    color: white;
+    text-wrap: balance;
+  }
+
+  .error-eye-copy__body {
+    margin-top: 1.25rem;
+    max-width: 30rem;
+    font-size: 1rem;
+    line-height: 1.85;
+    color: rgba(255, 255, 255, 0.66);
+  }
+
+  .error-eye-copy__actions {
+    margin-top: 1.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .error-eye-copy__links {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .error-eye-copy {
+      padding: 3rem 1.5rem 3.6rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .error-eye-copy {
+      padding: 3.5rem 2rem 4rem 4rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .error-eye-hero__right-grid {
+      opacity: 0.16;
+    }
+  }
+</style>

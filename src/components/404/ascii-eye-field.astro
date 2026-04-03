@@ -1,0 +1,638 @@
+---
+import { cn } from '@/lib/utils'
+
+interface Props {
+  class?: string
+  interactive?: boolean
+}
+
+const { class: className, interactive = true } = Astro.props
+---
+
+<div
+  data-ascii-eye-field
+  data-interactive={interactive ? 'true' : 'false'}
+  class={cn('ascii-eye-field', className)}
+  aria-hidden="true"
+>
+  <canvas data-eye-webgl class="ascii-eye-field__webgl"></canvas>
+  <canvas data-eye-ascii class="ascii-eye-field__ascii"></canvas>
+  <div class="ascii-eye-field__vignette"></div>
+  <div class="ascii-eye-field__scan"></div>
+  <div class="ascii-eye-field__glow ascii-eye-field__glow--left"></div>
+  <div class="ascii-eye-field__glow ascii-eye-field__glow--right"></div>
+</div>
+
+<script is:inline data-astro-rerun>
+  ;(() => {
+    const script = document.currentScript
+    const root = script?.previousElementSibling
+    if (!(root instanceof HTMLDivElement)) return
+    if (root.dataset.eyeFieldMounted === 'true') return
+    root.dataset.eyeFieldMounted = 'true'
+
+    const webglCanvas = root.querySelector('[data-eye-webgl]')
+    const asciiCanvas = root.querySelector('[data-eye-ascii]')
+    if (
+      !(webglCanvas instanceof HTMLCanvasElement) ||
+      !(asciiCanvas instanceof HTMLCanvasElement)
+    ) {
+      return
+    }
+
+    const asciiCtx = asciiCanvas.getContext('2d')
+    if (!asciiCtx) return
+
+    const interactive = root.dataset.interactive !== 'false'
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const glyphs = [' ', '.', ':', '-', '=', '+', '*', '#', '%', '@']
+    const bufferCanvas = document.createElement('canvas')
+    const bufferCtx = bufferCanvas.getContext('2d', {
+      willReadFrequently: true,
+    })
+    if (!bufferCtx) return
+
+    const clamp = (value, min, max) => Math.min(max, Math.max(min, value))
+    const smoothstep = (edge0, edge1, x) => {
+      const t = clamp((x - edge0) / (edge1 - edge0), 0, 1)
+      return t * t * (3 - 2 * t)
+    }
+
+    let rafId = 0
+    let destroyed = false
+    let gl = null
+    let program = null
+    let uniforms = null
+    let positionBuffer = null
+    let webglReady = false
+
+    const state = {
+      width: 0,
+      height: 0,
+      dpr: 1,
+      pointerX: 0,
+      pointerY: 0,
+      gazeX: 0,
+      gazeY: 0,
+      lastPointerAt: 0,
+      cell: 14,
+      cols: 0,
+      rows: 0,
+    }
+
+    const vertexSource = `
+      attribute vec2 a_position;
+      varying vec2 v_uv;
+
+      void main() {
+        v_uv = a_position * 0.5 + 0.5;
+        gl_Position = vec4(a_position, 0.0, 1.0);
+      }
+    `
+
+    const fragmentSource = `
+      precision mediump float;
+
+      varying vec2 v_uv;
+
+      uniform vec2 u_resolution;
+      uniform float u_time;
+      uniform vec2 u_gaze;
+      uniform float u_motion;
+
+      float hash(vec2 p) {
+        return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+      }
+
+      float noise(vec2 p) {
+        vec2 i = floor(p);
+        vec2 f = fract(p);
+        float a = hash(i);
+        float b = hash(i + vec2(1.0, 0.0));
+        float c = hash(i + vec2(0.0, 1.0));
+        float d = hash(i + vec2(1.0, 1.0));
+        vec2 u = f * f * (3.0 - 2.0 * f);
+        return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+      }
+
+      float eyeCurve(float x) {
+        float width = clamp(1.0 - abs(x) / 1.22, 0.0, 1.0);
+        return 0.14 + 0.26 * pow(width, 0.82);
+      }
+
+      void main() {
+        vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+        vec2 p = uv * 2.0 - 1.0;
+        p.x *= u_resolution.x / u_resolution.y;
+
+        vec2 center = vec2(0.32, 0.01);
+        float time = u_time * 0.42;
+        vec2 warp = vec2(
+          noise(p * 3.4 + vec2(time * 0.31, -time * 0.22)) - 0.5,
+          noise(p * 4.1 + vec2(-time * 0.24, time * 0.18)) - 0.5
+        ) * 0.03 * u_motion;
+
+        vec2 q = p - center + warp;
+        float arc = eyeCurve(q.x);
+        float widthMask = 1.0 - smoothstep(1.18, 1.42, abs(q.x));
+        float lid = 1.0 - smoothstep(arc - 0.018, arc + 0.022, abs(q.y));
+        float eyeMask = lid * widthMask;
+
+        vec3 color = vec3(0.012, 0.012, 0.014);
+        float vignette = smoothstep(1.65, 0.22, length(p * vec2(0.92, 1.05)));
+        float backgroundNoise =
+          noise(uv * vec2(8.0, 12.0) + vec2(time * 0.2, -time * 0.18)) - 0.5;
+        color += vec3(backgroundNoise * 0.028 * vignette);
+
+        float halo = (1.0 - smoothstep(0.0, 0.22, abs(abs(q.y) - arc))) * widthMask;
+        color += vec3(0.03, 0.03, 0.034) * halo * 0.7;
+
+        vec2 gaze = u_gaze * vec2(0.36, 0.12);
+        vec2 irisCenter = center + gaze;
+        vec2 irisVec = p - irisCenter + warp * 0.6;
+        float irisDist = length(vec2(irisVec.x * 0.92, irisVec.y * 1.08));
+
+        if (eyeMask > 0.001) {
+          float scleraShade =
+            0.76 - 0.17 * length(vec2(q.x * 0.78, q.y * 1.52)) +
+            (noise(q * 5.5 + vec2(time * 0.55, -time * 0.44)) - 0.5) * 0.065;
+
+          vec3 sclera = vec3(scleraShade);
+
+          float irisMask = 1.0 - smoothstep(0.19, 0.34, irisDist);
+          float irisRing = smoothstep(0.34, 0.16, irisDist);
+          float irisTexture =
+            sin(atan(irisVec.y, irisVec.x) * 12.0 + time * 3.1) * 0.5 +
+            0.5;
+          irisTexture += (noise(irisVec * 13.0 + time * 0.8) - 0.5) * 0.65;
+
+          vec3 iris = mix(
+            vec3(0.16, 0.18, 0.2),
+            vec3(0.7, 0.76, 0.82),
+            clamp(irisRing * 0.65 + irisTexture * 0.22, 0.0, 1.0)
+          );
+
+          float pupil = 1.0 - smoothstep(0.048, 0.092, irisDist);
+          float pupilHalo = 1.0 - smoothstep(0.09, 0.16, irisDist);
+
+          vec2 highlightOffset = irisVec - vec2(-0.05, -0.04);
+          float highlight = 1.0 - smoothstep(0.0, 0.085, length(highlightOffset));
+
+          float lidShadow = smoothstep(-arc * 0.2, arc, q.y);
+          float lowerShadow = smoothstep(arc, -arc * 0.4, q.y) * 0.28;
+
+          vec3 eye = sclera;
+          eye = mix(eye, iris, irisMask);
+          eye = mix(eye, vec3(0.02, 0.02, 0.024), pupil);
+          eye += vec3(0.85) * highlight * 0.62;
+          eye += vec3(0.18, 0.18, 0.2) * pupilHalo * 0.18;
+          eye -= vec3(0.12) * lidShadow * 0.26;
+          eye -= vec3(0.05) * lowerShadow;
+
+          color = mix(color, eye, eyeMask);
+        }
+
+        float scan = 0.94 + 0.06 * sin(gl_FragCoord.y * 0.065 + u_time * 1.2);
+        color *= scan;
+
+        gl_FragColor = vec4(color, 1.0);
+      }
+    `
+
+    const createShader = (type, source) => {
+      const shader = gl.createShader(type)
+      if (!shader) return null
+      gl.shaderSource(shader, source)
+      gl.compileShader(shader)
+
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        gl.deleteShader(shader)
+        return null
+      }
+
+      return shader
+    }
+
+    const initWebGL = () => {
+      gl =
+        webglCanvas.getContext('webgl', {
+          alpha: true,
+          antialias: true,
+          premultipliedAlpha: false,
+        }) || webglCanvas.getContext('experimental-webgl')
+
+      if (!gl) return false
+
+      const vertexShader = createShader(gl.VERTEX_SHADER, vertexSource)
+      const fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentSource)
+
+      if (!vertexShader || !fragmentShader) return false
+
+      program = gl.createProgram()
+      if (!program) return false
+
+      gl.attachShader(program, vertexShader)
+      gl.attachShader(program, fragmentShader)
+      gl.linkProgram(program)
+
+      gl.deleteShader(vertexShader)
+      gl.deleteShader(fragmentShader)
+
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        gl.deleteProgram(program)
+        return false
+      }
+
+      const positionLocation = gl.getAttribLocation(program, 'a_position')
+      uniforms = {
+        resolution: gl.getUniformLocation(program, 'u_resolution'),
+        time: gl.getUniformLocation(program, 'u_time'),
+        gaze: gl.getUniformLocation(program, 'u_gaze'),
+        motion: gl.getUniformLocation(program, 'u_motion'),
+      }
+
+      positionBuffer = gl.createBuffer()
+      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
+        gl.STATIC_DRAW,
+      )
+
+      gl.useProgram(program)
+      gl.enableVertexAttribArray(positionLocation)
+      gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0)
+
+      return true
+    }
+
+    const resize = () => {
+      const rect = root.getBoundingClientRect()
+      state.width = Math.max(1, Math.floor(rect.width))
+      state.height = Math.max(1, Math.floor(rect.height))
+      state.dpr = Math.min(window.devicePixelRatio || 1, 2)
+
+      webglCanvas.width = Math.max(1, Math.floor(state.width * state.dpr))
+      webglCanvas.height = Math.max(1, Math.floor(state.height * state.dpr))
+      asciiCanvas.width = Math.max(1, Math.floor(state.width * state.dpr))
+      asciiCanvas.height = Math.max(1, Math.floor(state.height * state.dpr))
+
+      webglCanvas.style.width = `${state.width}px`
+      webglCanvas.style.height = `${state.height}px`
+      asciiCanvas.style.width = `${state.width}px`
+      asciiCanvas.style.height = `${state.height}px`
+
+      asciiCtx.setTransform(state.dpr, 0, 0, state.dpr, 0, 0)
+      asciiCtx.textAlign = 'center'
+      asciiCtx.textBaseline = 'middle'
+
+      state.cell = clamp(Math.round(state.width / 88), 10, 18)
+      state.cols = Math.max(14, Math.floor(state.width / state.cell))
+      state.rows = Math.max(8, Math.floor(state.height / state.cell))
+      bufferCanvas.width = state.cols
+      bufferCanvas.height = state.rows
+
+      if (webglReady) {
+        gl.viewport(0, 0, webglCanvas.width, webglCanvas.height)
+      }
+    }
+
+    const updateGaze = (time) => {
+      const seconds = time * 0.001
+      const reducedMotion = motionQuery.matches
+      const idleX = reducedMotion
+        ? 0.12
+        : Math.sin(seconds * 0.52) * 0.44 + Math.cos(seconds * 0.18) * 0.08
+      const idleY = reducedMotion
+        ? -0.04
+        : Math.sin(seconds * 0.31) * 0.17 + Math.cos(seconds * 0.24) * 0.04
+
+      const pointerWeight =
+        interactive &&
+        !reducedMotion &&
+        performance.now() - state.lastPointerAt < 1800
+          ? 0.72
+          : 0
+
+      const targetX = clamp(
+        idleX * (1 - pointerWeight) + state.pointerX * pointerWeight,
+        -0.72,
+        0.72,
+      )
+      const targetY = clamp(
+        idleY * (1 - pointerWeight) + state.pointerY * pointerWeight * 0.68,
+        -0.42,
+        0.42,
+      )
+      const ease = reducedMotion ? 0.24 : 0.085
+
+      state.gazeX += (targetX - state.gazeX) * ease
+      state.gazeY += (targetY - state.gazeY) * ease
+    }
+
+    const renderAsciiOverlay = () => {
+      asciiCtx.clearRect(0, 0, state.width, state.height)
+
+      if (state.width < 2 || state.height < 2) return
+
+      if (webglReady) {
+        bufferCtx.clearRect(0, 0, state.cols, state.rows)
+        bufferCtx.drawImage(webglCanvas, 0, 0, state.cols, state.rows)
+      }
+
+      const imageData = webglReady
+        ? bufferCtx.getImageData(0, 0, state.cols, state.rows).data
+        : null
+
+      asciiCtx.font = `${state.cell * 0.8}px "Geist Mono", monospace`
+
+      for (let row = 0; row < state.rows; row += 1) {
+        for (let col = 0; col < state.cols; col += 1) {
+          const x = col * state.cell + state.cell * 0.52
+          const y = row * state.cell + state.cell * 0.56
+          let brightness = 0
+
+          if (imageData) {
+            const index = (row * state.cols + col) * 4
+            const r = imageData[index]
+            const g = imageData[index + 1]
+            const b = imageData[index + 2]
+            brightness = (r * 0.299 + g * 0.587 + b * 0.114) / 255
+          } else {
+            const nx = col / Math.max(1, state.cols - 1)
+            const ny = row / Math.max(1, state.rows - 1)
+            const px = nx * 2 - 1
+            const py = ny * 2 - 1
+            const aspect = state.width / state.height
+            const p = {
+              x: px * aspect,
+              y: py,
+            }
+            const center = { x: 0.32, y: 0.01 }
+            const q = {
+              x: p.x - center.x,
+              y: p.y - center.y,
+            }
+            const eyeCurve = () => {
+              const width = clamp(1 - Math.abs(q.x) / 1.22, 0, 1)
+              return 0.14 + 0.26 * Math.pow(width, 0.82)
+            }
+            const arc = eyeCurve()
+            const widthMask = 1 - smoothstep(1.18, 1.42, Math.abs(q.x))
+            const lid = 1 - smoothstep(arc - 0.018, arc + 0.022, Math.abs(q.y))
+            const eyeMask = lid * widthMask
+
+            const irisCenter = {
+              x: center.x + 0.1,
+              y: center.y - 0.02,
+            }
+            const irisVec = {
+              x: p.x - irisCenter.x,
+              y: p.y - irisCenter.y,
+            }
+            const irisDist = Math.hypot(irisVec.x * 0.92, irisVec.y * 1.08)
+            const irisMask = 1 - smoothstep(0.19, 0.34, irisDist)
+            const pupil = 1 - smoothstep(0.048, 0.092, irisDist)
+
+            brightness = clamp(
+              0.04 +
+                eyeMask * 0.68 +
+                irisMask * 0.18 -
+                pupil * 0.52 -
+                Math.hypot(px * 0.65, py * 0.9) * 0.12,
+              0,
+              1,
+            )
+          }
+
+          if (brightness < 0.08) continue
+
+          const glyphIndex = clamp(
+            Math.floor(brightness * (glyphs.length - 1)),
+            0,
+            glyphs.length - 1,
+          )
+          const alpha = clamp(0.12 + brightness * 0.88, 0, 1)
+          asciiCtx.fillStyle = `rgba(244, 245, 247, ${alpha})`
+          asciiCtx.fillText(glyphs[glyphIndex], x, y)
+        }
+      }
+    }
+
+    const renderWebGL = (time) => {
+      if (!webglReady || !gl || !program || !uniforms) return
+
+      gl.useProgram(program)
+      gl.viewport(0, 0, webglCanvas.width, webglCanvas.height)
+      gl.uniform2f(uniforms.resolution, webglCanvas.width, webglCanvas.height)
+      gl.uniform1f(uniforms.time, time * 0.001)
+      gl.uniform2f(uniforms.gaze, state.gazeX, state.gazeY)
+      gl.uniform1f(uniforms.motion, motionQuery.matches ? 0 : 1)
+      gl.drawArrays(gl.TRIANGLES, 0, 6)
+    }
+
+    const renderFrame = (time = 0) => {
+      if (destroyed) return
+
+      updateGaze(time)
+      renderWebGL(time)
+      renderAsciiOverlay()
+
+      if (!motionQuery.matches && webglReady) {
+        rafId = window.requestAnimationFrame(renderFrame)
+      }
+    }
+
+    const drawFallback = () => {
+      webglCanvas.style.display = 'none'
+      asciiCtx.clearRect(0, 0, state.width, state.height)
+      renderAsciiOverlay()
+    }
+
+    const handlePointerMove = (event) => {
+      const rect = root.getBoundingClientRect()
+      if (!rect.width || !rect.height) return
+
+      const normalizedX = ((event.clientX - rect.left) / rect.width - 0.5) * 2
+      const normalizedY = ((event.clientY - rect.top) / rect.height - 0.5) * 2
+
+      state.pointerX = clamp(normalizedX, -1, 1)
+      state.pointerY = clamp(normalizedY, -1, 1)
+      state.lastPointerAt = performance.now()
+    }
+
+    const handleResize = () => {
+      resize()
+
+      if (motionQuery.matches) {
+        if (webglReady) {
+          renderFrame(0)
+        } else {
+          drawFallback()
+        }
+      }
+    }
+
+    const handleMotionChange = () => {
+      window.cancelAnimationFrame(rafId)
+
+      if (interactive) {
+        window.removeEventListener('pointermove', handlePointerMove)
+      }
+
+      if (motionQuery.matches) {
+        if (webglReady) {
+          renderFrame(0)
+        } else {
+          drawFallback()
+        }
+        return
+      }
+
+      if (webglReady) {
+        if (interactive) {
+          window.addEventListener('pointermove', handlePointerMove, {
+            passive: true,
+          })
+        }
+        rafId = window.requestAnimationFrame(renderFrame)
+      }
+    }
+
+    const cleanup = () => {
+      destroyed = true
+      window.cancelAnimationFrame(rafId)
+      window.removeEventListener('resize', handleResize)
+      window.removeEventListener('pointermove', handlePointerMove)
+      motionQuery.removeEventListener('change', handleMotionChange)
+
+      if (gl && positionBuffer) {
+        gl.deleteBuffer(positionBuffer)
+      }
+      if (gl && program) {
+        gl.deleteProgram(program)
+      }
+
+      delete root.dataset.eyeFieldMounted
+    }
+
+    webglReady = initWebGL()
+    resize()
+
+    if (webglReady) {
+      renderFrame(0)
+    } else {
+      drawFallback()
+    }
+
+    window.addEventListener('resize', handleResize)
+    if (interactive && !motionQuery.matches) {
+      window.addEventListener('pointermove', handlePointerMove, {
+        passive: true,
+      })
+    }
+    motionQuery.addEventListener('change', handleMotionChange)
+    document.addEventListener('astro:before-swap', cleanup, { once: true })
+    window.addEventListener('pagehide', cleanup, { once: true })
+  })()
+</script>
+
+<style>
+  .ascii-eye-field {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background:
+      radial-gradient(
+        circle at 70% 50%,
+        rgba(255, 255, 255, 0.04),
+        transparent 28%
+      ),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.015), transparent 18%),
+      #020202;
+  }
+
+  .ascii-eye-field__webgl,
+  .ascii-eye-field__ascii {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .ascii-eye-field__webgl {
+    opacity: 0.9;
+  }
+
+  .ascii-eye-field__ascii {
+    mix-blend-mode: screen;
+    opacity: 0.88;
+  }
+
+  .ascii-eye-field__vignette,
+  .ascii-eye-field__scan,
+  .ascii-eye-field__glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .ascii-eye-field__vignette {
+    background:
+      radial-gradient(circle at 18% 48%, rgba(0, 0, 0, 0.8), transparent 32%),
+      radial-gradient(circle at 88% 44%, rgba(0, 0, 0, 0.55), transparent 26%),
+      linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.7),
+        transparent 24%,
+        transparent 76%,
+        rgba(0, 0, 0, 0.35)
+      );
+  }
+
+  .ascii-eye-field__scan {
+    opacity: 0.24;
+    background-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 11px,
+      rgba(255, 255, 255, 0.04) 12px
+    );
+    background-size: 100% 12px;
+  }
+
+  .ascii-eye-field__glow {
+    inset: auto;
+    width: 28rem;
+    height: 28rem;
+    filter: blur(32px);
+    opacity: 0.22;
+  }
+
+  .ascii-eye-field__glow--left {
+    top: 10%;
+    left: 28%;
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.14),
+      transparent 70%
+    );
+  }
+
+  .ascii-eye-field__glow--right {
+    right: -8rem;
+    bottom: -8rem;
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.08),
+      transparent 72%
+    );
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ascii-eye-field__scan,
+    .ascii-eye-field__glow {
+      opacity: 0.16;
+    }
+  }
+</style>

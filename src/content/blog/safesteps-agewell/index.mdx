@@ -1,0 +1,79 @@
+---
+title: 'SafeStep, AgeWell, And Building For Dignity'
+description: 'A Hack4Good elderly-care build that tried to reduce caregiver anxiety without turning care into surveillance.'
+date: 2026-04-02
+tags: ['hackathons', 'social-impact', 'computer-vision', 'react']
+authors: ['chai-pin-zheng']
+---
+
+Some hackathon projects are mostly about speed. Others stay with you because the underlying problem is hard in a human way, not just a technical way. SafeStep was one of those.
+
+The public Devpost submission framed the project as **SafeStep**, while the linked repository later described the same direction as **AgeWell**. Either way, the core idea was consistent: build an elderly-care companion that gives caregivers reassurance without reducing the care recipient to a live surveillance feed.
+
+That product framing is what made the project interesting to me. The goal was not constant monitoring. It was a quieter kind of support that preserved dignity, autonomy, and calm.
+
+## The problem we were trying to solve
+
+The strongest part of the public writeup is its description of caregiver friction. Elder care can easily turn into a loop of anxious questions:
+
+- Did you eat?
+- Did you take your medication?
+- Where are you?
+- Are you safe?
+
+Those questions are understandable, but over time they can wear down both sides of the relationship. The project tried to move that burden from repeated human checking into a system that could verify routine events, surface the right alerts, and otherwise stay out of the way.
+
+That is a product problem I care about a lot: not just making a system more powerful, but making it less invasive while still doing something useful.
+
+## What the system covered
+
+Between the Devpost description and the GitHub README, the project scope was broad:
+
+- fall detection and emergency escalation
+- navigation support for seniors who might get lost
+- daily checklist tracking for meals, hydration, and medication
+- automated voice reminders
+- caregiver dashboards and medical summaries
+
+What I like about that surface area is that it was not one flashy demo feature pretending to be a product. It was trying to model the actual routine of care: movement, reminders, exceptions, and communication.
+
+## How it was built
+
+The public materials point to a fairly serious full-stack setup for a hackathon build:
+
+- **React 18 + Tailwind CSS** for the web interface
+- **Node.js** for backend and API logic
+- **Python** services for AI and computer vision
+- **MongoDB Atlas** for persistence
+- **YOLOv8**, **MediaPipe**, and **Tesseract** for activity recognition, pose estimation, and OCR
+- **Leaflet/OpenStreetMap** for navigation
+
+The writeup also emphasizes the split between the senior-facing interface and the caregiver-facing dashboard. That matters. A project like this fails if it treats every user as if they need the same level of complexity.
+
+One side needed clarity, accessibility, and reassurance. The other needed context and timely updates.
+
+## Why the philosophy mattered
+
+The line I kept coming back to in the repo README was the idea of care being delivered when needed, not constantly imposed. That is the difference between a system that helps and a system that quietly becomes oppressive.
+
+The best part of this build was not any single model. It was the philosophy behind the architecture:
+
+- use automation to reduce cognitive load
+- only escalate when the situation really calls for it
+- keep people informed without demanding constant checking
+- preserve independence wherever possible
+
+That is the kind of constraint that makes a technical project more than a demo.
+
+## What I took away from it
+
+SafeStep felt meaningful because it pushed beyond the usual hackathon instinct to maximize visible features. The more important challenge was balancing usefulness with dignity.
+
+I learned that social-impact products often live or die on this balance. If the system is too passive, it misses real risk. If it is too aggressive, it creates a different kind of harm. Building in that middle ground is much harder, and much more interesting, than just wiring up more alerts.
+
+That is also why I wanted this project in the blog. It sits close to the same themes that later showed up in Resumify and in other product work: give people more agency, not less, even when the system is doing a lot behind the scenes.
+
+## Project links
+
+- [Devpost submission](https://devpost.com/software/safesteps-9x4o7i)
+- [GitHub repository](https://github.com/Ducksss/hack4good)

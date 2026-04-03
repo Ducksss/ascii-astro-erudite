@@ -1,27 +1,79 @@
 ---
 import AuthorCard from '@/components/author-card.astro'
-import Breadcrumbs from '@/components/breadcrumbs.astro'
+import ImmersivePageIntro from '@/components/immersive-page-intro.astro'
 import PageHead from '@/components/page-head.astro'
 import Layout from '@/layouts/layout.astro'
-import { getAllAuthors } from '@/lib/data-utils'
+import { getAllAuthors, getAllPosts } from '@/lib/data-utils'
 
 const authors = await getAllAuthors()
+const posts = await getAllPosts()
 ---
 
-<Layout class="max-w-3xl">
-  <PageHead slot="head" title="Authors" />
-  <Breadcrumbs items={[{ label: 'Authors', icon: 'lucide:users' }]} />
-  {
-    authors.length > 0 ? (
-      <ul class="flex flex-col gap-4">
-        {authors.map((author) => (
-          <li>
-            <AuthorCard author={author} />
-          </li>
-        ))}
-      </ul>
-    ) : (
-      <p class="text-muted-foreground text-center">No authors found.</p>
-    )
-  }
+<Layout variant="immersive">
+  <PageHead
+    slot="head"
+    title="Authors"
+    description="Profiles attached to the writing archive and the wider site surface."
+  />
+
+  <ImmersivePageIntro
+    items={[{ label: 'Authors', icon: 'lucide:users' }]}
+    label="Authors"
+    title="The people attached to this archive now live inside the same immersive shell."
+    description="Profiles, bylines, and author routes now read like part of the editorial surface rather than a detached utility index."
+  >
+    <div slot="aside">
+      <p class="immersive-eyebrow">Directory status</p>
+      <div
+        class="mt-6 grid grid-cols-2 gap-px border border-white/10 bg-white/[0.03]"
+      >
+        <div class="p-4">
+          <p
+            class="text-2xl leading-none font-semibold tracking-[-0.06em] text-white"
+          >
+            {String(authors.length).padStart(2, '0')}
+          </p>
+          <p
+            class="mt-2 font-mono text-[0.66rem] tracking-[0.24em] text-white/38 uppercase"
+          >
+            Profiles
+          </p>
+        </div>
+        <div class="border-l border-white/10 p-4">
+          <p
+            class="text-2xl leading-none font-semibold tracking-[-0.06em] text-white"
+          >
+            {String(posts.length).padStart(2, '0')}
+          </p>
+          <p
+            class="mt-2 font-mono text-[0.66rem] tracking-[0.24em] text-white/38 uppercase"
+          >
+            Published notes
+          </p>
+        </div>
+      </div>
+    </div>
+  </ImmersivePageIntro>
+
+  <section class="border-b border-white/10">
+    <div class="mx-auto max-w-[1400px] px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
+      {
+        authors.length > 0 ? (
+          <div class="flex flex-col">
+            {authors.map((author) => (
+              <AuthorCard author={author} variant="immersive" />
+            ))}
+          </div>
+        ) : (
+          <div class="immersive-panel p-6 sm:p-8">
+            <p class="landing-section-label">No authors yet</p>
+            <p class="immersive-copy mt-4 max-w-xl text-base leading-7">
+              Author profiles will appear here once writing is connected to
+              registered author entries.
+            </p>
+          </div>
+        )
+      }
+    </div>
+  </section>
 </Layout>

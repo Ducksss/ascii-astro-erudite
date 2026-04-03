@@ -24,22 +24,21 @@ import Favicons from './favicons.astro'
 
   <meta
     name="theme-color"
-    content="#121212"
+    content="#050505"
     media="(prefers-color-scheme: dark)"
   />
   <meta
     name="theme-color"
-    content="#121212"
+    content="#050505"
     media="(prefers-color-scheme: light)"
   />
 
   <link rel="sitemap" href="/sitemap-index.xml" />
-  <link rel="manifest" href="/site.webmanifest" />
   <link
     rel="alternate"
     type="application/rss+xml"
     title={SITE.title}
-    href={new URL('rss.xml', Astro.site)}
+    href={new URL('rss.xml', SITE.href)}
   />
 
   <Favicons />

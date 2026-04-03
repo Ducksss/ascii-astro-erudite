@@ -1,0 +1,68 @@
+---
+title: 'Daybreak And The Work Of Building Calm'
+description: 'An early Android project about meditation, focus, and translating user research into an app that felt steady instead of noisy.'
+date: 2026-04-01
+tags: ['projects', 'android', 'java', 'firebase']
+authors: ['chai-pin-zheng']
+---
+
+Daybreak was an early project, but it still says a lot about the kind of work I like. The app started from a simple problem: staying focused is hard, mental overhead accumulates quietly, and most "wellness" apps either feel generic or too shallow to be useful.
+
+Our team eventually chose to build a meditation app because the idea resonated with all of us. In the public writeup that I shipped alongside the project, I described how we had considered other directions first, then landed on a calmer, more intentional product after user research showed how common distraction and low focus had become.
+
+## What the app was trying to do
+
+Daybreak was meant to help users stay mindful, refocus, and build calmer routines around work and daily life. Even in the codebase, that intent shows up everywhere:
+
+- onboarding, login, signup, and email verification flows
+- a home surface and an explore surface
+- meditation series, ambient mixes, stories, and recommendations
+- timer flows for guided sessions
+- Firebase-backed auth and data services
+
+The app also included hooks for premium and payment-related experiences, which made the project feel closer to a real product instead of just a static classroom demo.
+
+## The part that mattered most: product thinking before code
+
+What I still like about Daybreak is that it was not built from code outward. The public project page walked through a more product-shaped process first:
+
+- user studies to understand the problem
+- personas to make the pain points more concrete
+- a moodboard and color palette built around calm rather than intensity
+- flow diagrams before implementation
+
+That sequence matters. Meditation and focus products are easy to make visually busy, morally preachy, or structurally confusing. If the product is supposed to reduce noise, the interface has to do the same.
+
+So a lot of the early work was really about tone: what should this app feel like, what kind of visual language supports the purpose, and how do we avoid building something that talks about calm while behaving like a distraction?
+
+## What I learned from the Android build
+
+The repo shows a classic Android stack for the time:
+
+- **Java** in Android Studio
+- **Material Design** patterns
+- **Firebase Auth** and **Firebase Realtime Database**
+- view binding, navigation components, and multi-screen flows
+- Stripe and ads dependencies for monetization experiments
+
+The engineering lesson was straightforward but valuable: mobile products force you to think carefully about screen-to-screen continuity. Every extra step in onboarding, every overly dense layout, every awkward transition becomes obvious very quickly on a phone.
+
+That made Daybreak a useful training ground for:
+
+- structuring flows cleanly
+- keeping interfaces legible
+- thinking about state across authentication and navigation
+- making a product feel coherent, not just functional
+
+## Why I still keep it around
+
+Daybreak is not the most technically advanced project in the archive, but it is one of the clearest early examples of me caring about product clarity, user emotion, and the shape of an experience from first screen to repeat use.
+
+It also explains part of the throughline behind later work. Even when the domain changed from meditation to internal tooling or cyber operations, I kept being drawn to the same question: how do you make a system feel more usable, more trustworthy, and less mentally expensive?
+
+That question was already there in Daybreak. The tools were just smaller.
+
+## Project links
+
+- [Public project writeup](https://ducksss.github.io/Chai-Pin-Zheng/#/Chai-Pin-Zheng/Daybreak)
+- [GitHub repository](https://github.com/Ducksss/Daybreak)

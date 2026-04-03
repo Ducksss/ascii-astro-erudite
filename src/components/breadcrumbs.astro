@@ -7,6 +7,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
+import { cn } from '@/lib/utils'
 import { Icon } from 'astro-icon/components'
 
 export interface BreadcrumbItem {
@@ -17,15 +18,17 @@ export interface BreadcrumbItem {
 
 interface Props {
   items: BreadcrumbItem[]
+  variant?: 'default' | 'immersive'
 }
 
-const { items } = Astro.props
+const { items, variant = 'default' } = Astro.props
+const isImmersive = variant === 'immersive'
 ---
 
-<Breadcrumb>
+<Breadcrumb className={cn(isImmersive && 'immersive-breadcrumb')}>
   <BreadcrumbList>
     <BreadcrumbItem>
-      <BreadcrumbLink href="/">
+      <BreadcrumbLink href="/" className={cn(isImmersive && 'text-white/52')}>
         <Icon name="lucide:home" class="size-4 shrink-0" />
       </BreadcrumbLink>
     </BreadcrumbItem>
@@ -35,7 +38,7 @@ const { items } = Astro.props
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             {index === items.length - 1 ? (
-              <BreadcrumbPage>
+              <BreadcrumbPage className={cn(isImmersive && 'text-white')}>
                 <span class="flex items-center gap-x-2">
                   {item.icon && (
                     <Icon name={item.icon} class="size-4 shrink-0" />
@@ -44,7 +47,10 @@ const { items } = Astro.props
                 </span>
               </BreadcrumbPage>
             ) : (
-              <BreadcrumbLink href={item.href}>
+              <BreadcrumbLink
+                href={item.href}
+                className={cn(isImmersive && 'text-white/52 hover:text-white')}
+              >
                 <span class="flex items-center gap-x-2">
                   {item.icon && (
                     <Icon name={item.icon} class="size-4 shrink-0" />

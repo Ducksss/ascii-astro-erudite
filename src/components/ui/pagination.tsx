@@ -128,7 +128,9 @@ const PaginationComponent: React.FC<PaginationProps> = ({
   currentPage,
   totalPages,
   baseUrl,
+  variant = 'default',
 }) => {
+  const isImmersive = variant === 'immersive'
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1)
 
   const getPageUrl = (page: number) => {
@@ -137,12 +139,16 @@ const PaginationComponent: React.FC<PaginationProps> = ({
   }
 
   return (
-    <Pagination>
-      <PaginationContent className="flex-wrap">
+    <Pagination className={cn(isImmersive)}>
+      <PaginationContent className={cn('flex-wrap', isImmersive && 'gap-2')}>
         <PaginationItem>
           <PaginationPrevious
             href={currentPage > 1 ? getPageUrl(currentPage - 1) : undefined}
             isDisabled={currentPage === 1}
+            className={cn(
+              isImmersive &&
+                'rounded-none border border-white/12 bg-white/[0.02] font-mono text-[0.68rem] tracking-[0.22em] text-white/62 uppercase hover:border-white/22 hover:bg-white/[0.05] hover:text-white',
+            )}
           />
         </PaginationItem>
 
@@ -151,6 +157,13 @@ const PaginationComponent: React.FC<PaginationProps> = ({
             <PaginationLink
               href={getPageUrl(page)}
               isActive={page === currentPage}
+              className={cn(
+                isImmersive &&
+                  'rounded-none border border-white/12 bg-white/[0.02] font-mono text-[0.72rem] tracking-[0.2em] text-white/62 hover:border-white/22 hover:bg-white/[0.05] hover:text-white',
+                isImmersive &&
+                  page === currentPage &&
+                  'border-white/24 bg-white/[0.08] text-white',
+              )}
             >
               {page}
             </PaginationLink>
@@ -159,7 +172,9 @@ const PaginationComponent: React.FC<PaginationProps> = ({
 
         {totalPages > 5 && (
           <PaginationItem>
-            <PaginationEllipsis />
+            <PaginationEllipsis
+              className={cn(isImmersive && 'text-white/34')}
+            />
           </PaginationItem>
         )}
 
@@ -169,6 +184,10 @@ const PaginationComponent: React.FC<PaginationProps> = ({
               currentPage < totalPages ? getPageUrl(currentPage + 1) : undefined
             }
             isDisabled={currentPage === totalPages}
+            className={cn(
+              isImmersive &&
+                'rounded-none border border-white/12 bg-white/[0.02] font-mono text-[0.68rem] tracking-[0.22em] text-white/62 uppercase hover:border-white/22 hover:bg-white/[0.05] hover:text-white',
+            )}
           />
         </PaginationItem>
       </PaginationContent>
@@ -180,6 +199,7 @@ interface PaginationProps {
   currentPage: number
   totalPages: number
   baseUrl: string
+  variant?: 'default' | 'immersive'
 }
 
 export default PaginationComponent

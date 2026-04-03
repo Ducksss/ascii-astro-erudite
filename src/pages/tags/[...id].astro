@@ -1,9 +1,10 @@
 ---
 import BlogCard from '@/components/blog-card.astro'
-import Breadcrumbs from '@/components/breadcrumbs.astro'
+import ImmersivePageIntro from '@/components/immersive-page-intro.astro'
 import PageHead from '@/components/page-head.astro'
 import Layout from '@/layouts/layout.astro'
 import { getAllTags, getPostsByTag } from '@/lib/data-utils'
+import { formatDate } from '@/lib/utils'
 
 export async function getStaticPaths() {
   const tagMap = await getAllTags()
@@ -24,29 +25,99 @@ export async function getStaticPaths() {
 }
 
 const { tag, posts } = Astro.props
+const latestPost = posts[0]
+const earliestPost = posts[posts.length - 1]
 ---
 
-<Layout class="max-w-3xl">
+<Layout variant="immersive">
   <PageHead
     slot="head"
     title={`Posts tagged with "${tag}"`}
     description={`A collection of posts tagged with ${tag}.`}
     noindex
   />
-  <Breadcrumbs
+
+  <ImmersivePageIntro
     items={[
       { href: '/tags', label: 'Tags', icon: 'lucide:tags' },
       { label: tag, icon: 'lucide:tag' },
     ]}
-  />
+    label="Tag"
+    title={`#${tag}`}
+    description={`A filtered archive surface for posts tagged with ${tag}.`}
+  >
+    <div slot="aside">
+      <p class="immersive-eyebrow">Tag details</p>
+      <div class="immersive-rule-list mt-6">
+        <div class="space-y-2">
+          <p
+            class="font-mono text-[0.66rem] tracking-[0.26em] text-white/34 uppercase"
+          >
+            Matching notes
+          </p>
+          <p class="text-base text-white/68">
+            {String(posts.length).padStart(2, '0')}
+          </p>
+        </div>
+        {
+          latestPost && (
+            <div class="space-y-2">
+              <p class="font-mono text-[0.66rem] tracking-[0.26em] text-white/34 uppercase">
+                Latest entry
+              </p>
+              <p class="text-base text-white/68">
+                {formatDate(latestPost.data.date)}
+              </p>
+            </div>
+          )
+        }
+        {
+          earliestPost && (
+            <div class="space-y-2">
+              <p class="font-mono text-[0.66rem] tracking-[0.26em] text-white/34 uppercase">
+                Archive span
+              </p>
+              <p class="text-base text-white/68">
+                {formatDate(earliestPost.data.date)} {'->'}{' '}
+                {formatDate(latestPost.data.date)}
+              </p>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </ImmersivePageIntro>
 
-  <ul class="flex flex-col gap-y-4">
-    {
-      posts.map((post) => (
-        <li>
-          <BlogCard entry={post} />
-        </li>
-      ))
-    }
-  </ul>
+  <section class="border-b border-white/10">
+    <div class="mx-auto max-w-[1400px] px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+      <div class="max-w-3xl border-b border-white/10 pb-8">
+        <p class="landing-section-label">Tagged notes</p>
+        <h2 class="landing-section-title mt-4 max-w-3xl">
+          Archive entries carrying this tag.
+        </h2>
+        <p class="immersive-copy mt-6 max-w-2xl text-base leading-7">
+          The list below uses the same immersive archive rows as the main blog
+          index, filtered down to one taxonomy thread.
+        </p>
+      </div>
+
+      {
+        posts.length > 0 ? (
+          <div class="mt-8 flex flex-col">
+            {posts.map((post) => (
+              <BlogCard entry={post} variant="immersive" />
+            ))}
+          </div>
+        ) : (
+          <div class="immersive-panel mt-8 p-6 sm:p-8">
+            <p class="landing-section-label">No notes yet</p>
+            <p class="immersive-copy mt-4 max-w-xl text-base leading-7">
+              This tag exists in the archive directory, but no published posts
+              currently resolve to it.
+            </p>
+          </div>
+        )
+      }
+    </div>
+  </section>
 </Layout>

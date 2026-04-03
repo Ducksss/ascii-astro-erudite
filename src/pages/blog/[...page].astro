@@ -23,36 +23,120 @@ const postsByYear = groupPostsByYear(page.data)
 const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a))
 ---
 
-<Layout class="max-w-3xl">
-  <PageHead slot="head" title="Blog" />
-  <Breadcrumbs
-    items={[
-      { label: 'Blog', href: '/blog', icon: 'lucide:library-big' },
-      { label: `Page ${page.currentPage}`, icon: 'lucide:book-copy' },
-    ]}
+<Layout variant="immersive">
+  <PageHead
+    slot="head"
+    title="Blog"
+    description="Project retrospectives, hackathon writeups, and technical notes by Chai Pin Zheng."
   />
 
-  <div class="flex min-h-[calc(100vh-18rem)] flex-col gap-y-8">
-    {
-      years.map((year) => (
-        <section class="flex flex-col gap-y-4">
-          <div class="font-medium">{year}</div>
-          <ul class="flex flex-col gap-4">
-            {postsByYear[year].map((post) => (
-              <li>
-                <BlogCard entry={post} />
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))
-    }
-  </div>
+  <section
+    class="relative overflow-hidden border-b border-white/10 bg-black/30"
+  >
+    <div class="mx-auto max-w-[1400px] px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+      <Breadcrumbs
+        variant="immersive"
+        items={[
+          { label: 'Blog', href: '/blog', icon: 'lucide:library-big' },
+          { label: `Page ${page.currentPage}`, icon: 'lucide:book-copy' },
+        ]}
+      />
 
-  <PaginationComponent
-    currentPage={page.currentPage}
-    totalPages={page.lastPage}
-    baseUrl="/blog/"
-    client:load
-  />
+      <div
+        class="mt-8 grid gap-8 xl:grid-cols-[minmax(0,1.08fr)_minmax(280px,0.92fr)] xl:items-start"
+      >
+        <div
+          class="immersive-animate-in max-w-4xl"
+          transition:name="page-intro"
+        >
+          <p class="landing-section-label">Blog index</p>
+          <h1 class="landing-section-title mt-4 max-w-3xl">
+            Project notes, hackathon writeups, and technical reflections.
+          </h1>
+          <p
+            class="immersive-copy mt-6 max-w-2xl text-base leading-7 sm:text-lg sm:leading-8"
+          >
+            This archive is where shipped work gets unpacked: what the project
+            was trying to do, what actually got built, and what was worth
+            learning from the result.
+          </p>
+        </div>
+
+        <aside class="immersive-panel immersive-animate-in self-start">
+          <p class="immersive-eyebrow">Archive status</p>
+          <div
+            class="mt-6 grid grid-cols-3 gap-px border border-white/10 bg-white/[0.03]"
+          >
+            <div class="p-4">
+              <p
+                class="text-2xl leading-none font-semibold tracking-[-0.06em] text-white"
+              >
+                {String(page.data.length).padStart(2, '0')}
+              </p>
+              <p
+                class="mt-2 font-mono text-[0.66rem] tracking-[0.24em] text-white/38 uppercase"
+              >
+                On page
+              </p>
+            </div>
+            <div class="border-x border-white/10 p-4">
+              <p
+                class="text-2xl leading-none font-semibold tracking-[-0.06em] text-white"
+              >
+                {String(years.length).padStart(2, '0')}
+              </p>
+              <p
+                class="mt-2 font-mono text-[0.66rem] tracking-[0.24em] text-white/38 uppercase"
+              >
+                Year groups
+              </p>
+            </div>
+            <div class="p-4">
+              <p
+                class="text-2xl leading-none font-semibold tracking-[-0.06em] text-white"
+              >
+                {String(page.currentPage).padStart(2, '0')}
+              </p>
+              <p
+                class="mt-2 font-mono text-[0.66rem] tracking-[0.24em] text-white/38 uppercase"
+              >
+                Active page
+              </p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-b border-white/10">
+    <div class="mx-auto max-w-[1400px] px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
+      <div class="flex min-h-[calc(100vh-18rem)] flex-col gap-y-10">
+        {
+          years.map((year) => (
+            <section class="grid gap-4 border-t border-white/10 pt-6 xl:grid-cols-[9rem_minmax(0,1fr)] xl:gap-10">
+              <div class="font-mono text-[1.5rem] tracking-[0.18em] text-white/26 uppercase">
+                {year}
+              </div>
+              <div class="flex flex-col">
+                {postsByYear[year].map((post) => (
+                  <BlogCard entry={post} variant="immersive" />
+                ))}
+              </div>
+            </section>
+          ))
+        }
+      </div>
+
+      <div class="mt-10 border-t border-white/10 pt-8">
+        <PaginationComponent
+          currentPage={page.currentPage}
+          totalPages={page.lastPage}
+          baseUrl="/blog/"
+          variant="immersive"
+          client:load
+        />
+      </div>
+    </div>
+  </section>
 </Layout>

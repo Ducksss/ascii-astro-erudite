@@ -1,0 +1,154 @@
+---
+import { cn } from '@/lib/utils'
+
+interface Props {
+  class?: string
+  variant?: 'hero' | 'ambient' | 'panel'
+}
+
+const { class: className, variant = 'hero' } = Astro.props
+---
+
+<div
+  data-ascii-variant={variant}
+  class={cn('pointer-events-none absolute inset-0 overflow-hidden', className)}
+  aria-hidden="true"
+>
+  <canvas class="h-full w-full opacity-80"></canvas>
+</div>
+
+<script is:inline data-astro-rerun>
+  ;(() => {
+    const script = document.currentScript
+    const root = script?.previousElementSibling
+    if (!(root instanceof HTMLDivElement)) return
+
+    const canvas = root.querySelector('canvas')
+    if (!(canvas instanceof HTMLCanvasElement)) return
+
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    const variant = root.dataset.asciiVariant || 'hero'
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const config = {
+      hero: {
+        glyphs: ['.', ':', '+', '*', '#', 'x', '='],
+        cellMin: 14,
+        cellMax: 22,
+        alpha: 0.92,
+        speed: 1,
+        interactive: true,
+      },
+      ambient: {
+        glyphs: ['.', ':', '+', 'x'],
+        cellMin: 18,
+        cellMax: 28,
+        alpha: 0.55,
+        speed: 0.52,
+        interactive: false,
+      },
+      panel: {
+        glyphs: ['.', ':', '=', 'x'],
+        cellMin: 16,
+        cellMax: 24,
+        alpha: 0.72,
+        speed: 0.7,
+        interactive: false,
+      },
+    }[variant]
+    const pointer = { x: 0.78, y: 0.32 }
+
+    let frameId = 0
+    let rafActive = true
+
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2)
+      const { width, height } = root.getBoundingClientRect()
+
+      canvas.width = Math.max(1, Math.floor(width * dpr))
+      canvas.height = Math.max(1, Math.floor(height * dpr))
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    }
+
+    const draw = (time = 0) => {
+      const width = canvas.clientWidth
+      const height = canvas.clientHeight
+      const reducedMotion = motionQuery.matches
+      const seconds = time * 0.001 * config.speed
+      const cell = Math.max(
+        config.cellMin,
+        Math.min(config.cellMax, Math.round(width / 70)),
+      )
+
+      ctx.clearRect(0, 0, width, height)
+      ctx.font = `${cell * 0.68}px "Geist Mono", monospace`
+      ctx.textBaseline = 'middle'
+      ctx.textAlign = 'center'
+
+      for (let y = cell * 0.7; y < height; y += cell) {
+        for (let x = cell * 0.7; x < width; x += cell) {
+          const nx = x / width - 0.5
+          const ny = y / height - 0.5
+          const radius = Math.hypot(nx * 1.25, ny * 1.1)
+          const fade = Math.max(0, 1 - radius * 1.55)
+          const wave =
+            Math.sin(nx * 11 + seconds * 0.9) * 0.18 +
+            Math.cos(ny * 15 - seconds * 0.8) * 0.18 +
+            Math.sin((nx + ny) * 13 + seconds * 0.55) * 0.08
+          const dx = x / width - pointer.x
+          const dy = y / height - pointer.y
+          const pointerField = config.interactive
+            ? Math.max(0, 0.42 - Math.hypot(dx, dy)) * 1.85
+            : 0
+          const intensity = fade * 0.72 + pointerField + wave
+
+          if (intensity < 0.14) continue
+
+          const glyphIndex = Math.min(
+            config.glyphs.length - 1,
+            Math.max(0, Math.floor(intensity * config.glyphs.length)),
+          )
+          const alpha = Math.min(config.alpha, 0.08 + intensity * 0.72)
+
+          ctx.fillStyle = `rgba(248, 248, 248, ${alpha})`
+          ctx.fillText(config.glyphs[glyphIndex], x, y)
+        }
+      }
+
+      if (!reducedMotion && rafActive) {
+        frameId = window.requestAnimationFrame(draw)
+      }
+    }
+
+    const handlePointer = (event) => {
+      pointer.x = event.clientX / window.innerWidth
+      pointer.y = event.clientY / window.innerHeight
+
+      if (motionQuery.matches || !config.interactive) {
+        draw()
+      }
+    }
+
+    const cleanup = () => {
+      rafActive = false
+      window.cancelAnimationFrame(frameId)
+      window.removeEventListener('resize', resize)
+      window.removeEventListener('pointermove', handlePointer)
+    }
+
+    resize()
+    draw()
+
+    if (!motionQuery.matches) {
+      frameId = window.requestAnimationFrame(draw)
+    }
+
+    window.addEventListener('resize', resize)
+    if (config.interactive) {
+      window.addEventListener('pointermove', handlePointer, { passive: true })
+    }
+    document.addEventListener('astro:before-swap', cleanup, { once: true })
+    window.addEventListener('pagehide', cleanup, { once: true })
+  })()
+</script>

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="90" y1="70" x2="1080" y2="560" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#071217" />
+      <stop offset="1" stop-color="#020405" />
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(885 168) rotate(129.093) scale(305.204 382.271)">
+      <stop stop-color="#63D6F2" stop-opacity=".78" />
+      <stop offset="1" stop-color="#63D6F2" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <rect x="46" y="46" width="1108" height="538" rx="28" stroke="rgba(255,255,255,.12)" />
+  <path d="M85 130H1115" stroke="rgba(255,255,255,.08)" />
+  <path d="M110 184H520" stroke="rgba(255,255,255,.08)" />
+  <path d="M110 236H520" stroke="rgba(255,255,255,.08)" />
+  <path d="M110 288H520" stroke="rgba(255,255,255,.08)" />
+  <path d="M110 340H520" stroke="rgba(255,255,255,.08)" />
+  <path d="M110 392H520" stroke="rgba(255,255,255,.08)" />
+  <path d="M603 166H1090V474H603z" fill="rgba(255,255,255,.02)" stroke="rgba(255,255,255,.08)" />
+  <rect x="110" y="166" width="150" height="52" rx="14" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.1)" />
+  <rect x="302" y="218" width="178" height="52" rx="14" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.1)" />
+  <rect x="146" y="270" width="186" height="52" rx="14" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.1)" />
+  <rect x="338" y="322" width="146" height="52" rx="14" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.1)" />
+  <path d="M260 192H302" stroke="#63D6F2" stroke-width="2" />
+  <path d="M390 270V322" stroke="#63D6F2" stroke-width="2" />
+  <path d="M332 296H338" stroke="#63D6F2" stroke-width="2" />
+  <circle cx="260" cy="192" r="8" fill="#63D6F2" />
+  <circle cx="302" cy="244" r="8" fill="#63D6F2" />
+  <circle cx="332" cy="296" r="8" fill="#63D6F2" />
+  <circle cx="390" cy="322" r="8" fill="#63D6F2" />
+  <path d="M660 410C718 376 748 301 811 286C873 270 898 336 963 328C1014 322 1049 270 1090 226" stroke="#63D6F2" stroke-width="4" stroke-linecap="round" />
+  <path d="M660 430C718 396 748 321 811 306C873 290 898 356 963 348C1014 342 1049 290 1090 246" stroke="rgba(255,255,255,.12)" stroke-width="2" stroke-linecap="round" />
+  <circle cx="660" cy="410" r="7" fill="#63D6F2" />
+  <circle cx="811" cy="286" r="7" fill="#63D6F2" />
+  <circle cx="963" cy="328" r="7" fill="#63D6F2" />
+  <circle cx="1090" cy="226" r="7" fill="#63D6F2" />
+  <rect x="603" y="166" width="487" height="308" fill="url(#glow)" />
+  <text x="110" y="104" fill="rgba(255,255,255,.5)" font-family="Geist Mono, ui-monospace, monospace" font-size="18" letter-spacing="6">METALEARNER / PRODUCT ADOPTION</text>
+  <text x="110" y="492" fill="white" font-family="Geist, ui-sans-serif, sans-serif" font-size="74" font-weight="700" letter-spacing="-3">guided onboarding</text>
+  <text x="110" y="538" fill="rgba(255,255,255,.64)" font-family="Geist Mono, ui-monospace, monospace" font-size="24" letter-spacing="2">self-serve docs / feature entry points / chart tooling / real-time prototype</text>
+  <text x="136" y="198" fill="rgba(255,255,255,.78)" font-family="Geist Mono, ui-monospace, monospace" font-size="18" letter-spacing="2">START</text>
+  <text x="332" y="250" fill="rgba(255,255,255,.78)" font-family="Geist Mono, ui-monospace, monospace" font-size="18" letter-spacing="2">GUIDE</text>
+  <text x="172" y="302" fill="rgba(255,255,255,.78)" font-family="Geist Mono, ui-monospace, monospace" font-size="18" letter-spacing="2">PROMPT SUPPORT</text>
+  <text x="374" y="354" fill="rgba(255,255,255,.78)" font-family="Geist Mono, ui-monospace, monospace" font-size="18" letter-spacing="2">DOCS</text>
+</svg>

@@ -1,41 +1,156 @@
 ---
 import '@/styles/global.css'
+import '@/styles/immersive.css'
 import '@/styles/typography.css'
 
 import Footer from '@/components/footer.astro'
 import Head from '@/components/head.astro'
 import Header from '@/components/header.astro'
+import ImmersiveShell from '@/components/landing/immersive-shell.astro'
 import { SITE } from '@/consts'
 import { cn } from '@/lib/utils'
 
 interface Props {
   class?: string
+  variant?: 'default' | 'landing' | 'immersive'
 }
 
-const { class: className } = Astro.props
+const { class: className, variant = 'default' } = Astro.props
+const isLanding = variant === 'landing'
+const isImmersive = variant === 'immersive'
+const isAtmospheric = isLanding || isImmersive
 ---
 
 <!doctype html>
 <html
-  class="bg-background text-foreground scheme-light-dark"
+  class={cn(
+    'scheme-light-dark',
+    isAtmospheric ? 'bg-[#050505] text-white' : 'bg-background text-foreground',
+  )}
   lang={SITE.locale}
 >
   <Head>
     <slot name="head" />
   </Head>
-  <body class="flex h-fit min-h-screen flex-col gap-y-6 font-sans">
+  <body
+    class={cn(
+      'flex min-h-screen flex-col font-sans',
+      isAtmospheric
+        ? `site-shell--${variant} bg-[#050505] text-white`
+        : 'h-fit gap-y-6 bg-background text-foreground',
+    )}
+    data-route-shell={variant}
+  >
+    <a href="#main-content" class="skip-link"> Skip to main content </a>
+    {isImmersive && <ImmersiveShell />}
     <header
-      class="bg-background/50 sticky top-0 z-50 divide-y backdrop-blur-sm xl:divide-none"
+      class={cn(
+        'sticky top-0 z-50',
+        isAtmospheric
+          ? 'border-b border-white/10 bg-black/45 backdrop-blur-xl'
+          : 'bg-background/50 divide-y backdrop-blur-sm xl:divide-none',
+      )}
     >
-      <Header />
+      <Header variant={variant} />
       <slot name="subposts-navigation" />
       <slot name="table-of-contents" />
     </header>
     <main
-      class={cn('w-full mx-auto flex grow flex-col gap-y-6 px-4', className)}
+      id="main-content"
+      tabindex="-1"
+      class={cn(
+        'flex w-full grow flex-col',
+        isAtmospheric
+          ? 'site-main-shell relative overflow-x-clip'
+          : 'mx-auto gap-y-6 px-4',
+        className,
+      )}
     >
       <slot />
     </main>
     <Footer />
+
+    <script is:inline data-astro-rerun>
+      ;(() => {
+        if (!window.__siteRouteEffectsInitialized) {
+          window.__siteRouteEffectsInitialized = true
+
+          const root = document.documentElement
+          let clearTimer = 0
+
+          const syncShell = () => {
+            root.dataset.routeShell =
+              document.body?.dataset.routeShell || 'default'
+          }
+
+          const clearTransition = () => {
+            window.clearTimeout(clearTimer)
+            clearTimer = window.setTimeout(() => {
+              root.removeAttribute('data-route-transition')
+            }, 120)
+          }
+
+          document.addEventListener(
+            'click',
+            (event) => {
+              if (
+                event.defaultPrevented ||
+                event.button !== 0 ||
+                event.metaKey ||
+                event.ctrlKey ||
+                event.shiftKey ||
+                event.altKey
+              ) {
+                return
+              }
+
+              const target = event.target
+              const link =
+                target instanceof Element ? target.closest('a[href]') : null
+
+              if (!(link instanceof HTMLAnchorElement)) return
+              if (link.target && link.target !== '_self') return
+              if (link.hasAttribute('download')) return
+
+              const href = link.getAttribute('href')
+              if (!href || href.startsWith('#')) return
+
+              const nextUrl = new URL(link.href, window.location.href)
+              if (nextUrl.origin !== window.location.origin) return
+
+              if (
+                nextUrl.pathname === window.location.pathname &&
+                nextUrl.search === window.location.search &&
+                nextUrl.hash
+              ) {
+                return
+              }
+
+              root.setAttribute('data-route-transition', 'true')
+              window.clearTimeout(clearTimer)
+              clearTimer = window.setTimeout(() => {
+                root.removeAttribute('data-route-transition')
+              }, 1800)
+            },
+            true,
+          )
+
+          document.addEventListener('astro:after-swap', () => {
+            syncShell()
+            clearTransition()
+          })
+          document.addEventListener('astro:page-load', () => {
+            syncShell()
+            clearTransition()
+          })
+          window.addEventListener('pageshow', () => {
+            syncShell()
+            clearTransition()
+          })
+
+          syncShell()
+        }
+      })()
+    </script>
   </body>
 </html>

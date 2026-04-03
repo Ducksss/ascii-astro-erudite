@@ -1,8 +1,11 @@
 {
-  "name": "astro-erudite",
+  "name": "ascii-astro-erudite",
   "type": "module",
   "version": "1.6.3",
   "private": true,
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -46,7 +49,8 @@
     "prettier": "^3.5.1",
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-astro-organize-imports": "^0.4.11",
-    "prettier-plugin-tailwindcss": "^0.6.11"
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "vite": "7.3.1"
   },
   "prettier": {
     "semi": false,

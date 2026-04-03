@@ -1,0 +1,18 @@
+---
+import LandingAsciiField from '@/components/landing/ascii-field.astro'
+---
+
+<div class="immersive-shell" aria-hidden="true" transition:persist>
+  <div class="immersive-shell__canvas">
+    <LandingAsciiField
+      variant="ambient"
+      class="opacity-[0.18] mix-blend-screen"
+    />
+  </div>
+  <div class="immersive-shell__noise"></div>
+  <div class="immersive-shell__scan"></div>
+  <div class="immersive-shell__glow immersive-shell__glow--left"></div>
+  <div class="immersive-shell__glow immersive-shell__glow--right"></div>
+  <div class="immersive-shell__dots immersive-shell__dots--top"></div>
+  <div class="immersive-shell__dots immersive-shell__dots--bottom"></div>
+</div>

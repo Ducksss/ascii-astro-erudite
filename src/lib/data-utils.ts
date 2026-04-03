@@ -30,6 +30,20 @@ export async function getAllProjects(): Promise<CollectionEntry<'projects'>[]> {
   })
 }
 
+export async function getFeaturedProjects(
+  count = 3,
+): Promise<CollectionEntry<'projects'>[]> {
+  const projects = await getAllProjects()
+  const featured = projects.filter((project) => project.data.featured)
+
+  if (featured.length >= count) {
+    return featured.slice(0, count)
+  }
+
+  const fallback = projects.filter((project) => !project.data.featured)
+  return [...featured, ...fallback].slice(0, count)
+}
+
 export async function getAllTags(): Promise<Map<string, number>> {
   const posts = await getAllPosts()
   return posts.reduce((acc, post) => {
@@ -130,6 +144,34 @@ export async function getSortedTags(): Promise<
       const countDiff = b.count - a.count
       return countDiff !== 0 ? countDiff : a.tag.localeCompare(b.tag)
     })
+}
+
+export async function getArchiveStats(): Promise<{
+  postCount: number
+  tagCount: number
+  yearSpan: string
+}> {
+  const posts = await getAllPosts()
+  const tagCounts = await getAllTags()
+  const years = posts.map((post) => post.data.date.getFullYear())
+
+  if (years.length === 0) {
+    return {
+      postCount: 0,
+      tagCount: 0,
+      yearSpan: 'No archive yet',
+    }
+  }
+
+  const startYear = Math.min(...years)
+  const endYear = Math.max(...years)
+
+  return {
+    postCount: posts.length,
+    tagCount: tagCounts.size,
+    yearSpan:
+      startYear === endYear ? `${startYear}` : `${startYear} - ${endYear}`,
+  }
 }
 
 export function getParentId(subpostId: string): string {

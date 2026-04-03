@@ -1,0 +1,66 @@
+---
+import Breadcrumbs from '@/components/breadcrumbs.astro'
+
+interface IntroBreadcrumbItem {
+  href?: string
+  label: string
+  icon?: string
+}
+
+interface Props {
+  items?: IntroBreadcrumbItem[]
+  label: string
+  title: string
+  description?: string | string[]
+}
+
+const { items = [], label, title, description } = Astro.props
+
+const paragraphs = Array.isArray(description)
+  ? description
+  : description
+    ? [description]
+    : []
+
+const hasAside = Astro.slots.has('aside')
+const hasDefaultSlot = Astro.slots.has('default')
+---
+
+<section class="relative overflow-hidden border-b border-white/10 bg-black/30">
+  <div class="mx-auto max-w-[1400px] px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+    {items.length > 0 && <Breadcrumbs variant="immersive" items={items} />}
+
+    <div
+      class:list={[
+        'mt-8',
+        hasAside &&
+          'grid gap-8 xl:grid-cols-[minmax(0,1.08fr)_minmax(280px,0.92fr)] xl:items-start',
+      ]}
+    >
+      <div class="immersive-animate-in max-w-4xl" transition:name="page-intro">
+        <p class="landing-section-label">{label}</p>
+        <h1 class="landing-section-title mt-4 max-w-3xl">{title}</h1>
+
+        {
+          paragraphs.length > 0 && (
+            <div class="immersive-copy mt-6 max-w-2xl text-base leading-7 sm:text-lg sm:leading-8">
+              {paragraphs.map((paragraph) => (
+                <p>{paragraph}</p>
+              ))}
+            </div>
+          )
+        }
+
+        {hasDefaultSlot && <slot />}
+      </div>
+
+      {
+        hasAside && (
+          <aside class="immersive-panel immersive-animate-in self-start">
+            <slot name="aside" />
+          </aside>
+        )
+      }
+    </div>
+  </div>
+</section>

@@ -1,10 +1,12 @@
 ---
-import AuthorCard from '@/components/author-card.astro'
 import BlogCard from '@/components/blog-card.astro'
-import Breadcrumbs from '@/components/breadcrumbs.astro'
+import ImmersivePageIntro from '@/components/immersive-page-intro.astro'
+import Link from '@/components/link.astro'
 import PageHead from '@/components/page-head.astro'
+import AvatarComponent from '@/components/ui/avatar'
 import Layout from '@/layouts/layout.astro'
 import { getAllAuthors, getPostsByAuthor } from '@/lib/data-utils'
+import { Icon } from 'astro-icon/components'
 
 export async function getStaticPaths() {
   const authors = await getAllAuthors()
@@ -16,43 +18,147 @@ export async function getStaticPaths() {
 
 const { author } = Astro.props
 const authorPosts = await getPostsByAuthor(author.id)
+type SocialLinkItem = {
+  href: string
+  label: string
+  icon: string
+}
+const socialLinks = [
+  author.data.website && {
+    href: author.data.website,
+    label: 'Website',
+    icon: 'lucide:globe',
+  },
+  author.data.github && {
+    href: author.data.github,
+    label: 'GitHub',
+    icon: 'lucide:github',
+  },
+  author.data.twitter && {
+    href: author.data.twitter,
+    label: 'Twitter',
+    icon: 'lucide:twitter',
+  },
+  author.data.linkedin && {
+    href: author.data.linkedin,
+    label: 'LinkedIn',
+    icon: 'lucide:linkedin',
+  },
+  author.data.mail && {
+    href: `mailto:${author.data.mail}`,
+    label: 'Email',
+    icon: 'lucide:mail',
+  },
+].filter((item): item is SocialLinkItem => Boolean(item))
 ---
 
-<Layout class="max-w-3xl">
+<Layout variant="immersive">
   <PageHead
     slot="head"
     title={`${author.data.name} (Author)`}
     description={author.data.bio || `Profile of ${author.data.name}.`}
     noindex
   />
-  <Breadcrumbs
+
+  <ImmersivePageIntro
     items={[
       { href: '/authors', label: 'Authors', icon: 'lucide:users' },
       { label: author.data.name, icon: 'lucide:user' },
     ]}
-  />
+    label="Author profile"
+    title={author.data.name}
+    description={author.data.bio ||
+      `Profile and archive entries for ${author.data.name}.`}
+  >
+    <div slot="aside">
+      <div class="flex items-center gap-4">
+        <AvatarComponent
+          client:load
+          src={author.data.avatar}
+          alt={`Avatar of ${author.data.name}`}
+          fallback={author.data.name[0]}
+          className='size-16 rounded-2xl border border-white/10 *:data-[slot="avatar-fallback"]:rounded-2xl *:data-[slot="avatar-fallback"]:bg-white/[0.06]'
+        />
+        <div>
+          <p class="immersive-eyebrow">Profile details</p>
+          {
+            author.data.pronouns && (
+              <p class="mt-2 text-sm text-white/52">{author.data.pronouns}</p>
+            )
+          }
+        </div>
+      </div>
 
-  <section>
-    <AuthorCard author={author} />
-  </section>
-  <section class="flex flex-col gap-y-4">
-    <h2 class="text-2xl font-medium">Posts by {author.data.name}</h2>
-    {
-      authorPosts.length > 0 ? (
-        <ul class="flex flex-col gap-4">
-          {authorPosts
-            .filter((post) => !post.data.draft)
-            .map((post) => (
-              <li>
-                <BlogCard entry={post} />
-              </li>
-            ))}
-        </ul>
-      ) : (
-        <p class="text-muted-foreground">
-          No posts available from this author.
+      <div class="immersive-rule-list mt-6">
+        <div class="space-y-2">
+          <p
+            class="font-mono text-[0.66rem] tracking-[0.26em] text-white/34 uppercase"
+          >
+            Published notes
+          </p>
+          <p class="text-base text-white/68">
+            {String(authorPosts.length).padStart(2, '0')}
+          </p>
+        </div>
+        <div class="space-y-2">
+          <p
+            class="font-mono text-[0.66rem] tracking-[0.26em] text-white/34 uppercase"
+          >
+            Profile slug
+          </p>
+          <p class="text-base text-white/68">{author.id}</p>
+        </div>
+        {
+          socialLinks.length > 0 && (
+            <div class="space-y-3">
+              <p class="font-mono text-[0.66rem] tracking-[0.26em] text-white/34 uppercase">
+                Channels
+              </p>
+              <div class="flex flex-wrap gap-2">
+                {socialLinks.map((item) => (
+                  <Link href={item.href} external class="immersive-chip">
+                    <Icon name={item.icon} class="size-3" />
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </ImmersivePageIntro>
+
+  <section class="border-b border-white/10">
+    <div class="mx-auto max-w-[1400px] px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+      <div class="max-w-3xl border-b border-white/10 pb-8">
+        <p class="landing-section-label">Published notes</p>
+        <h2 class="landing-section-title mt-4 max-w-3xl">
+          Posts routed through this author profile.
+        </h2>
+        <p class="immersive-copy mt-6 max-w-2xl text-base leading-7">
+          Every note below now inherits the same immersive archive treatment as
+          the main blog index.
         </p>
-      )
-    }
+      </div>
+
+      {
+        authorPosts.length > 0 ? (
+          <div class="mt-8 flex flex-col">
+            {authorPosts.map((post) => (
+              <BlogCard entry={post} variant="immersive" />
+            ))}
+          </div>
+        ) : (
+          <div class="immersive-panel mt-8 p-6 sm:p-8">
+            <p class="landing-section-label">No notes yet</p>
+            <p class="immersive-copy mt-4 max-w-xl text-base leading-7">
+              This profile exists, but there are no published archive entries
+              attached to it yet.
+            </p>
+          </div>
+        )
+      }
+    </div>
   </section>
 </Layout>

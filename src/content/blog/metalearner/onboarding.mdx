@@ -1,0 +1,49 @@
+---
+title: 'Building self-serve onboarding inside MetaLearner'
+description: 'How guided onboarding, in-product docs, and i18n-aware guidance helped turn a complex product into something easier to enter.'
+date: 2026-04-03
+tags: ['projects', 'product-engineering', 'fastapi', 'redis', 'data-visualization']
+authors: ['chai-pin-zheng']
+order: 1
+---
+
+The most important product question during the internship was not "what else can this system do?" It was "how does a customer get from zero to useful without needing constant intervention?"
+
+That is the point where a lot of technically strong products lose people. The capability is there, but the first few steps are expensive. Someone has to explain where to begin, how the workflow is structured, what a good input looks like, and which parts of the interface matter first.
+
+## Why onboarding mattered so much
+
+MetaLearner had enough depth that weak onboarding would not fail loudly. It would fail quietly:
+
+- customers would hesitate at setup
+- feature entry points would feel ambiguous
+- support and field engineers would need to do more interpretive work than they should
+- documentation would feel external rather than part of the product
+
+That is why I treated onboarding as part of product quality, not just as a support layer sitting beside it.
+
+## What I shipped in this track
+
+A lot of the work here was about making the product more self-serve:
+
+- a guided onboarding workflow to create a clearer first path through setup
+- documentation and user-guide material implemented inside the MetaLearner frontend repo
+- guidance around feature entry points so the product felt less "blank" at first contact
+- prompt-writing support to help users understand what good product interaction looked like
+- i18n-aware structure so the support material had a more realistic path for broader customer use
+
+What mattered most to me was that these pieces were not independent. A guided flow without good in-product explanation still leaves people stranded. Documentation without the right feature entry points still asks the user to guess where to apply what they just learned.
+
+## Why keeping the guidance in-product matters
+
+One lesson I keep coming back to is that documentation becomes much more effective when it sits close to the decision it is trying to support.
+
+If the user has to leave the workflow, open another document, map the terminology manually, and return to the interface, that is already a form of friction. In a complex product, enough small frictions stack into avoidance.
+
+So the value of this work was not only that it "explained the product." It reduced the distance between confusion and help.
+
+## What I took from this part of the internship
+
+The onboarding work reinforced a product instinct I care about a lot: the first-use experience is infrastructure. It determines how much trust a user gives the product, how much support load the team has to absorb, and how much of the system's actual power ever gets reached.
+
+That is also why this track still feels important to me in retrospect. It was not flashy work, but it was the kind of work that changes whether the rest of the product can succeed.

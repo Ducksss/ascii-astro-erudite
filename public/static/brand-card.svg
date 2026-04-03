@@ -1,0 +1,123 @@
+<svg
+  width="1200"
+  height="630"
+  viewBox="0 0 1200 630"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <linearGradient id="bg-left" x1="0" y1="0" x2="600" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#111111" />
+      <stop offset="1" stop-color="#050505" />
+    </linearGradient>
+    <linearGradient id="bg-right" x1="600" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EFEDE8" />
+      <stop offset="1" stop-color="#D6D3D1" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" rx="40" fill="#050505" />
+  <rect width="600" height="630" rx="40" fill="url(#bg-left)" />
+  <rect x="600" width="600" height="630" rx="40" fill="url(#bg-right)" />
+
+  <g opacity="0.14">
+    <path d="M64 76H544" stroke="#F5F5F4" stroke-width="22" stroke-linecap="square" />
+    <path d="M64 174H516" stroke="#F5F5F4" stroke-width="22" stroke-linecap="square" />
+    <path d="M64 272H544" stroke="#F5F5F4" stroke-width="22" stroke-linecap="square" />
+    <path d="M64 370H496" stroke="#F5F5F4" stroke-width="22" stroke-linecap="square" />
+    <path d="M64 468H544" stroke="#F5F5F4" stroke-width="22" stroke-linecap="square" />
+    <path d="M656 76H1136" stroke="#27272A" stroke-width="22" stroke-linecap="square" />
+    <path d="M684 174H1136" stroke="#27272A" stroke-width="22" stroke-linecap="square" />
+    <path d="M656 272H1136" stroke="#27272A" stroke-width="22" stroke-linecap="square" />
+    <path d="M704 370H1136" stroke="#27272A" stroke-width="22" stroke-linecap="square" />
+    <path d="M656 468H1136" stroke="#27272A" stroke-width="22" stroke-linecap="square" />
+  </g>
+
+  <rect x="86" y="84" width="132" height="132" rx="32" fill="#111111" stroke="#E7E5E4" stroke-width="4" />
+  <path
+    d="M175 118H123V182H175"
+    stroke="#E7E5E4"
+    stroke-width="16"
+    stroke-linecap="square"
+    stroke-linejoin="miter"
+  />
+  <path d="M123 150H163" stroke="#E7E5E4" stroke-width="16" stroke-linecap="square" />
+
+  <text
+    x="86"
+    y="284"
+    fill="#FAFAF9"
+    font-size="72"
+    font-weight="700"
+    font-family="Helvetica Neue, Arial, sans-serif"
+    letter-spacing="-2"
+  >
+    Chai Pin Zheng
+  </text>
+  <text
+    x="86"
+    y="346"
+    fill="#D6D3D1"
+    font-size="30"
+    font-weight="500"
+    font-family="Helvetica Neue, Arial, sans-serif"
+  >
+    Product engineering, developer tooling, and operational systems.
+  </text>
+
+  <text
+    x="86"
+    y="438"
+    fill="#A8A29E"
+    font-size="21"
+    font-weight="600"
+    font-family="Helvetica Neue, Arial, sans-serif"
+    letter-spacing="3"
+  >
+    PORTFOLIO / WRITING / PROJECTS
+  </text>
+  <text
+    x="86"
+    y="485"
+    fill="#78716C"
+    font-size="22"
+    font-weight="500"
+    font-family="Helvetica Neue, Arial, sans-serif"
+  >
+    Singapore-based software engineer and NUS Computer Science student.
+  </text>
+
+  <text
+    x="86"
+    y="570"
+    fill="#E7E5E4"
+    font-size="18"
+    font-weight="600"
+    font-family="Helvetica Neue, Arial, sans-serif"
+    letter-spacing="2"
+  >
+    ducksss.github.io/Chai-Pin-Zheng
+  </text>
+
+  <g opacity="0.88">
+    <path
+      d="M930 146H786V486H930"
+      stroke="#111111"
+      stroke-width="56"
+      stroke-linecap="square"
+      stroke-linejoin="miter"
+    />
+  </g>
+
+  <text
+    x="686"
+    y="564"
+    fill="#44403C"
+    font-size="20"
+    font-weight="600"
+    font-family="Helvetica Neue, Arial, sans-serif"
+    letter-spacing="2"
+  >
+    CHAI PIN ZHENG
+  </text>
+</svg>
