@@ -10,6 +10,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro check && astro build",
+    "test": "tsx --test tests/ascii-generator-utils.test.ts",
     "preview": "astro preview",
     "astro": "astro",
     "prettier": "prettier --write **/*.{ts,tsx,css,astro} --ignore-path .gitignore"
@@ -28,6 +29,7 @@
     "@tailwindcss/vite": "^4.0.7",
     "@types/react": "19.0.0",
     "@types/react-dom": "19.0.0",
+    "@vercel/analytics": "^2.0.1",
     "astro": "6.0.2",
     "astro-icon": "^1.1.5",
     "class-variance-authority": "^0.7.1",
@@ -50,6 +52,7 @@
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-astro-organize-imports": "^0.4.11",
     "prettier-plugin-tailwindcss": "^0.6.11",
+    "tsx": "^4.21.0",
     "vite": "7.3.1"
   },
   "prettier": {

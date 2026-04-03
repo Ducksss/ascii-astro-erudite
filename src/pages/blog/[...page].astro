@@ -19,8 +19,13 @@ export async function getStaticPaths({
 
 const { page } = Astro.props
 
+const allPosts = await getAllPosts()
 const postsByYear = groupPostsByYear(page.data)
 const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a))
+const archiveYearCount = new Set(
+  allPosts.map((post) => post.data.date.getFullYear()),
+).size
+const pagePosition = `${String(page.currentPage).padStart(2, '0')}/${String(page.lastPage).padStart(2, '0')}`
 ---
 
 <Layout variant="immersive">
@@ -63,7 +68,7 @@ const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a))
         </div>
 
         <aside class="immersive-panel immersive-animate-in self-start">
-          <p class="immersive-eyebrow">Archive status</p>
+          <p class="immersive-eyebrow">Archive snapshot</p>
           <div
             class="mt-6 grid grid-cols-3 gap-px border border-white/10 bg-white/[0.03]"
           >
@@ -71,36 +76,36 @@ const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a))
               <p
                 class="text-2xl leading-none font-semibold tracking-[-0.06em] text-white"
               >
-                {String(page.data.length).padStart(2, '0')}
+                {String(allPosts.length).padStart(2, '0')}
               </p>
               <p
                 class="mt-2 font-mono text-[0.66rem] tracking-[0.24em] text-white/38 uppercase"
               >
-                On page
+                Published notes
               </p>
             </div>
             <div class="border-x border-white/10 p-4">
               <p
                 class="text-2xl leading-none font-semibold tracking-[-0.06em] text-white"
               >
-                {String(years.length).padStart(2, '0')}
+                {String(archiveYearCount).padStart(2, '0')}
               </p>
               <p
                 class="mt-2 font-mono text-[0.66rem] tracking-[0.24em] text-white/38 uppercase"
               >
-                Year groups
+                Years covered
               </p>
             </div>
             <div class="p-4">
               <p
                 class="text-2xl leading-none font-semibold tracking-[-0.06em] text-white"
               >
-                {String(page.currentPage).padStart(2, '0')}
+                {pagePosition}
               </p>
               <p
                 class="mt-2 font-mono text-[0.66rem] tracking-[0.24em] text-white/38 uppercase"
               >
-                Active page
+                Page position
               </p>
             </div>
           </div>

@@ -397,6 +397,10 @@ export const FOOTER: FooterContent = {
       label: 'GitHub',
     },
     {
+      href: '/signal-room/ascii-signal',
+      label: 'ASCII Playground',
+    },
+    {
       href: linkedInLink?.href ?? 'https://www.linkedin.com/in/chai-pin-zheng/',
       label: 'LinkedIn',
     },

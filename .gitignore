@@ -19,3 +19,5 @@ test-results/
 scripts/
 reports/
 output/*
+!tests/
+!tests/**/*.test.ts

@@ -1,5 +1,6 @@
 ---
 import { SITE } from '@/consts'
+import Analytics from '@vercel/analytics/astro'
 import { ClientRouter } from 'astro:transitions'
 import Favicons from './favicons.astro'
 ---
@@ -43,6 +44,7 @@ import Favicons from './favicons.astro'
 
   <Favicons />
   <ClientRouter />
+  <Analytics />
 
   <slot />
 </head>
