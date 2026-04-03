@@ -34,7 +34,8 @@ export type ProfileExperience = {
   company: string
   role: string
   period: string
-  summary: string
+  timelineSummary: string
+  caseStudyContext: string
   highlights: string[]
   tags: string[]
   featured?: boolean

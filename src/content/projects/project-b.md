@@ -9,13 +9,13 @@ tags:
     'Leadership',
     'Next.js',
   ]
-image: '../../../public/static/1200x630.png'
+image: './assets/saf-card.svg'
 link: '/about#saf'
 startDate: '2023-07-01'
 endDate: '2025-07-01'
 featured: true
 role: 'Tactical Cyber Defence Company Platoon Commander'
 status: 'Case study'
-outcome: 'Improved training efficiency by 70%, raised incident-response readiness, and reached 1,000+ players through a cybersecurity awareness game.'
+outcome: 'Improved training efficiency by 70%, lifted readiness across 40+ operators, and reached 1,000+ players through a public cybersecurity awareness game.'
 accent: '#ffd39a'
 ---

@@ -38,19 +38,6 @@ const featuredExperience = PROFILE.experience.filter((entry) => entry.featured)
           >
             {PROFILE.about.map((paragraph) => <p>{paragraph}</p>)}
           </div>
-
-          <div
-            class="mt-10 grid gap-px border border-white/10 bg-white/[0.02] sm:grid-cols-2 xl:grid-cols-4"
-          >
-            {
-              PROFILE.metrics.map((metric) => (
-                <div class="about-stat">
-                  <p class="about-stat__value">{metric.value}</p>
-                  <p class="about-stat__label">{metric.label}</p>
-                </div>
-              ))
-            }
-          </div>
         </div>
 
         <aside class="immersive-panel immersive-animate-in self-start">
@@ -98,9 +85,9 @@ const featuredExperience = PROFILE.experience.filter((entry) => entry.featured)
           operations.
         </h2>
         <p class="immersive-copy mt-6 max-w-2xl text-base leading-7">
-          The full timeline stays compact here, then opens into deeper
-          case-study blocks for the three roles carrying the strongest public
-          signal.
+          Each role sharpened a different part of the same practice: client
+          delivery, platform enablement, operational leadership, and product
+          adoption.
         </p>
       </div>
 
@@ -116,7 +103,7 @@ const featuredExperience = PROFILE.experience.filter((entry) => entry.featured)
                 {experience.company}
               </h3>
               <p class="mt-4 text-base leading-7 text-white/62">
-                {experience.summary}
+                {experience.timelineSummary}
               </p>
               <div class="mt-5 flex flex-wrap gap-2">
                 {experience.tags.slice(0, 4).map((tag) => (
@@ -138,8 +125,8 @@ const featuredExperience = PROFILE.experience.filter((entry) => entry.featured)
           Deeper proof from the three roles carrying the strongest outcomes.
         </h2>
         <p class="immersive-copy mt-6 max-w-2xl text-base leading-7">
-          These are the same three experience tracks featured on the homepage,
-          expanded with the delivery context and concrete wins behind them.
+          These examples show how the direction translated into shipped systems,
+          measurable outcomes, and clearer adoption in practice.
         </p>
       </div>
 
@@ -157,7 +144,7 @@ const featuredExperience = PROFILE.experience.filter((entry) => entry.featured)
 
               <div class="mt-6 grid gap-8 lg:grid-cols-[minmax(0,0.76fr)_minmax(0,1.24fr)]">
                 <p class="text-base leading-8 text-white/62 sm:text-lg">
-                  {experience.summary}
+                  {experience.caseStudyContext}
                 </p>
                 <div class="space-y-4">
                   {experience.highlights.map((highlight) => (
@@ -351,24 +338,6 @@ const featuredExperience = PROFILE.experience.filter((entry) => entry.featured)
 </Layout>
 
 <style>
-  .about-stat {
-    display: flex;
-    min-height: 8rem;
-    flex-direction: column;
-    justify-content: flex-end;
-    gap: 0.7rem;
-    padding: 1rem;
-  }
-
-  .about-stat__value {
-    font-size: clamp(1.5rem, 2.5vw, 2.1rem);
-    line-height: 1;
-    letter-spacing: -0.06em;
-    font-weight: 600;
-    color: white;
-  }
-
-  .about-stat__label,
   .about-mini-stat__label,
   .about-link-row__label,
   .about-timeline-card__role,
@@ -502,10 +471,6 @@ const featuredExperience = PROFILE.experience.filter((entry) => entry.featured)
   }
 
   @media (max-width: 767px) {
-    .about-stat {
-      min-height: 6.5rem;
-    }
-
     .about-mini-stat {
       min-height: 5.5rem;
     }

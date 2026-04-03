@@ -1,0 +1,58 @@
+---
+title: 'Prototyping real-time ideas and leaving a usable handoff'
+description: 'The Socket.IO research repo, search references for future use, and the wrap-up materials I left behind at the end of the internship.'
+date: 2026-04-03
+tags: ['projects', 'product-engineering', 'fastapi', 'redis', 'data-visualization']
+authors: ['chai-pin-zheng']
+order: 4
+---
+
+One thing I did not want at the end of the internship was for the work to exist only in my head. That is especially dangerous for research-heavy or future-facing work, because those are usually the first things to disappear once the original context is gone.
+
+So part of the MetaLearner wrap-up was not just building things. It was packaging them in a way the team could actually reuse.
+
+## The Socket.IO research project
+
+One of the clearest examples of that was the [Socket.IO research repo](https://github.com/Ducksss/socketio-chat).
+
+This was research and prototyping work for a real-time chat setup. What made it useful as a handoff artifact was that it included more than an idea:
+
+- a Redis pub/sub layer for fan-out messaging
+- setup instructions
+- architecture diagrams
+- a concrete repo the team could reference if a similar direction became relevant later
+
+That is the part I think matters most. Architecture exploration is much easier to carry forward when it is attached to something runnable or at least structurally explicit.
+
+## Future-facing references that I did not claim as shipped work
+
+I also passed along a search direction for future use only.
+
+I did **not** implement search during the internship, but I shared [Lunr.js](https://lunrjs.com/) with Lim as a lightweight client-side option if the team ever wanted to explore it. I also shared [research notes](https://docs.google.com/document/d/15dLIdhJCZmVgX5iFa9-Nf4JFLEWoh-Pj0mjqrZzu180/edit?usp=sharing) covering the high-level mechanics:
+
+- inverted indexing
+- tokenisation
+- stop-word removal
+- stemming
+- relevance-based ranking
+
+I wanted to keep that distinction explicit because I care about drawing a clean line between what was implemented and what was future-facing research.
+
+## The handoff site and reflections
+
+To wrap everything up cleanly, I also put together a public [handoff site / presentation](https://metalearner-internship-logs.vercel.app/). That site collects the work I had already completed and handed over, and it also points toward reflections and reports on the internship.
+
+I liked having that separate surface because it does a different job from this blog series. The handoff site is closer to a wrap-up document. This case study is closer to a structured explanation of the product and engineering judgment behind the work.
+
+## Why I think handoff quality matters
+
+Internships have a very obvious time boundary. That makes the final shape of the work matter even more. If the work is hard to locate, hard to explain, or hard to extend, then a lot of its value evaporates the moment the internship ends.
+
+So one of the things I wanted to do well here was leave behind:
+
+- clear links
+- concrete artifacts
+- honest boundaries around what shipped and what did not
+- enough context for someone else to continue without guessing
+
+That is not a glamorous category of work, but I think it is part of doing engineering responsibly in shared systems.

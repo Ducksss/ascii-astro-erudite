@@ -21,15 +21,37 @@ const archiveStats = await getArchiveStats()
 const [featuredPost, ...supportingPosts] = archivePosts
 const [nameLineOne = 'Chai', nameLineTwo = 'Pin', nameLineThree = 'Zheng'] =
   LANDING.name.split(' ')
-const heroPills = [
-  'Singapore-based engineer',
-  PROFILE.facts[1]?.value ?? 'NUS Computer Science',
-  'Product + cyber systems',
-]
+const heroPills = ['Singapore-based', 'NUS CS / First Class track', 'Stephen Riady Scholar']
+const linkedInLink =
+  PROFILE.links.find((item) => item.label === 'LinkedIn')?.href ??
+  'https://www.linkedin.com/in/chai-pin-zheng/'
 const consoleNotes = [
-  'Guided onboarding and in-product docs.',
-  'Full-stack tooling across CI/CD, SEO, and platform delivery.',
-  'Cyber training systems with readiness and awareness outcomes.',
+  'Best fit for technical teams, public-interest products, and operational workflows that need clearer self-serve paths.',
+  'Strongest contribution areas: onboarding, internal tooling, technical docs, testing, SEO, and platform delivery.',
+  'Most useful when adoption, reliability, and operator confidence matter as much as shipping the feature itself.',
+]
+const proofPoints = [
+  {
+    company: 'MetaLearner',
+    metric: 'Reduced onboarding drop-offs',
+    label: 'Self-serve product adoption',
+    context:
+      'Guided onboarding, in-product docs, and clearer feature entry points made a complex workflow easier to enter and trust.',
+  },
+  {
+    company: 'Singapore Armed Forces',
+    metric: '70% efficiency lift',
+    label: 'Operational readiness systems',
+    context:
+      'Automated fault injection and structured drills improved training efficiency while supporting readiness across 40+ operators.',
+  },
+  {
+    company: 'Government Technology Agency',
+    metric: '2.5k -> 6k weekly users',
+    label: 'Platform delivery + SEO',
+    context:
+      'Portal SEO improvements doubled weekly reach, and Cypress-based CI reduced deployment time by 20 minutes per merge.',
+  },
 ]
 ---
 
@@ -113,6 +135,20 @@ const consoleNotes = [
               ))
             }
           </div>
+          <div class="flex flex-wrap items-center gap-4 text-sm text-white/54">
+            <span class="text-white/38">Proof path</span>
+            <Link
+              href={linkedInLink}
+              external
+              class="font-mono text-[0.72rem] tracking-[0.24em] text-white/72 uppercase hover:text-white"
+            >
+              View LinkedIn
+            </Link>
+            <span class="hidden text-white/22 sm:inline">/</span>
+            <span class="text-sm text-white/48">
+              Product systems, internal tooling, and cyber-adjacent workflows.
+            </span>
+          </div>
         </div>
       </div>
 
@@ -125,15 +161,15 @@ const consoleNotes = [
           >
           </div>
           <div class="landing-terminal-bar">
-            <span>Career surface</span>
-            <span>current remit</span>
+            <span>Collaboration surface</span>
+            <span>best fit</span>
           </div>
           <div class="relative space-y-6 p-6">
             <div class="space-y-3">
               <p
                 class="font-mono text-[0.68rem] tracking-[0.28em] text-white/42 uppercase"
               >
-                active remit
+                who I help
               </p>
               <div class="space-y-2 text-sm text-white/75">
                 {consoleNotes.map((note) => <p>{note}</p>)}
@@ -157,21 +193,43 @@ const consoleNotes = [
         </div>
       </div>
     </div>
+  </section>
 
-    <div class="border-t border-white/10 bg-black/40">
+  <section class="border-y border-white/10 bg-[#020202]">
+    <div class="mx-auto max-w-[1400px] px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
       <div
-        class="mx-auto grid max-w-[1400px] grid-cols-2 gap-px px-4 sm:grid-cols-4 sm:px-6 lg:px-8"
+        class="flex flex-col gap-5 border-b border-white/10 pb-8 lg:flex-row lg:items-end lg:justify-between"
       >
+        <div class="max-w-2xl">
+          <p class="landing-section-label">Selected proof</p>
+          <h2 class="landing-section-title mt-4 max-w-xl">
+            Attributed outcomes that make the homepage claims concrete.
+          </h2>
+        </div>
+        <p class="max-w-md text-sm leading-7 text-white/52 sm:text-base">
+          The throughline is consistent: make technical systems easier to enter,
+          easier to run, and easier to trust across product, platform, and
+          operator environments.
+        </p>
+      </div>
+
+      <div class="mt-8 grid gap-px border border-white/10 bg-white/5 lg:grid-cols-3">
         {
-          PROFILE.metrics.map((metric) => (
-            <div class="border-r border-white/10 py-5 last:border-r-0 sm:py-6">
-              <p class="text-[1.55rem] font-semibold tracking-[-0.06em] text-white">
-                {metric.value}
+          proofPoints.map((point) => (
+            <article class="bg-black/35 px-5 py-6 sm:px-6">
+              <p class="font-mono text-[0.68rem] tracking-[0.26em] text-white/34 uppercase">
+                {point.company}
               </p>
-              <p class="mt-1 font-mono text-[0.68rem] tracking-[0.28em] text-white/46 uppercase">
-                {metric.label}
+              <p class="mt-4 text-[1.65rem] leading-none font-semibold tracking-[-0.06em] text-white sm:text-[1.9rem]">
+                {point.metric}
               </p>
-            </div>
+              <p class="mt-2 font-mono text-[0.7rem] tracking-[0.22em] text-white/52 uppercase">
+                {point.label}
+              </p>
+              <p class="mt-4 max-w-sm text-sm leading-7 text-white/56">
+                {point.context}
+              </p>
+            </article>
           ))
         }
       </div>

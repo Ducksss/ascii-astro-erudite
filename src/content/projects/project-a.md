@@ -10,13 +10,13 @@ tags:
     'PostgreSQL',
     'WebSockets',
   ]
-image: '../../../public/static/1200x630.png'
-link: '/about#metalearner'
+image: './assets/metalearner-card.svg'
+link: '/blog/metalearner'
 startDate: '2025-12-01'
 endDate: '2026-03-01'
 featured: true
 role: 'Software Engineer Intern'
 status: 'Case study'
-outcome: 'Reduced onboarding friction, expanded feature discovery, and evaluated a scalable real-time messaging architecture inside one product track.'
+outcome: 'Reduced onboarding drop-offs with guided onboarding, in-product docs, clearer feature entry points, and a real-time messaging prototype for future product depth.'
 accent: '#8af2ff'
 ---

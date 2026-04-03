@@ -10,13 +10,13 @@ tags:
     'GitLab CI/CD',
     'Micro frontends',
   ]
-image: '../../../public/static/1200x630.png'
+image: './assets/govtech-card.svg'
 link: '/about#govtech'
 startDate: '2022-04-01'
 endDate: '2023-06-01'
 featured: true
 role: 'Full Stack Engineer Intern'
 status: 'Case study'
-outcome: 'Doubled weekly portal traffic, cut deployment time by 20 minutes per merge, and improved delivery confidence through automated regression testing.'
+outcome: 'Doubled weekly portal traffic from 2.5k to 6k, cut deployment time by 20 minutes per merge, and improved release confidence through automated regression testing.'
 accent: '#c7b1ff'
 ---

@@ -43,8 +43,7 @@ export const PROFILE: Profile = {
   summary:
     'Singapore-based software engineer and NUS Computer Science student focused on product engineering for complex, technical workflows.',
   about: [
-    'Across MetaLearner, GovTech, the Singapore Armed Forces, and client delivery work, Chai keeps gravitating toward the same kind of problem: powerful systems that are too hard to adopt, too manual to operate, or too brittle to trust.',
-    'That has translated into guided onboarding, internal platform tooling, automated testing, SEO improvements, and operational training systems. The same direction also shows up in Resumify, where product and full-stack work supported more inclusive hiring pathways for underserved jobseekers. The throughline is product engineering for technical users, with an emphasis on adoption, leverage, and reliability.',
+    'Across MetaLearner, GovTech, the Singapore Armed Forces, and client delivery work, Chai keeps returning to the same kind of problem: technical systems that are hard to adopt, too manual to operate, or too brittle to trust. That has translated into onboarding flows, internal tooling, automated testing, SEO improvements, and operational training systems, with a consistent focus on making complex workflows clearer, more reliable, and easier to use.',
   ],
   links: [
     {
@@ -73,16 +72,8 @@ export const PROFILE: Profile = {
       value: 'NUS Computer Science',
     },
     {
-      label: 'Standing',
-      value: 'First Class track (GPA 4.6/5.00)',
-    },
-    {
       label: 'Direction',
       value: 'Product engineering for technical users',
-    },
-    {
-      label: 'Scholarship',
-      value: 'Stephen Riady Young Entrepreneur Scholar',
     },
     {
       label: 'Community impact',
@@ -127,8 +118,10 @@ export const PROFILE: Profile = {
       company: 'MetaLearner',
       role: 'Software Engineer Intern',
       period: 'Dec 2025 - Mar 2026',
-      summary:
-        'Built self-serve onboarding, in-product documentation, and exploratory chart tooling to improve adoption across core product workflows.',
+      timelineSummary:
+        'Improved product adoption with self-serve onboarding, in-product guidance, and better analysis tooling across core workflows.',
+      caseStudyContext:
+        'The work sat at the intersection of product onboarding and workflow usability: reducing dependence on support while making exploratory analysis easier inside the product.',
       highlights: [
         'Eliminated onboarding drop-offs with a guided onboarding flow and in-product user guide that reduced reliance on field engineers and customer support.',
         'Combined multi-step onboarding, feature entry points, prompt-writing support, and structured guide categories into a clearer self-serve experience.',
@@ -150,8 +143,10 @@ export const PROFILE: Profile = {
       company: 'Singapore Armed Forces',
       role: 'Tactical Cyber Defence Company Platoon Commander',
       period: 'Jul 2023 - Jul 2025',
-      summary:
-        'Led training systems and public cybersecurity experiences that improved readiness, drill speed, and awareness at operational scale.',
+      timelineSummary:
+        'Built training systems and public cybersecurity experiences that improved operational readiness, drill speed, and awareness at scale.',
+      caseStudyContext:
+        'This role combined operational leadership with systems thinking, from fault-injection infrastructure and training design to a public-facing OSINT experience used for awareness building.',
       highlights: [
         'Developed an automated fault injection system across a computer cluster, improving operational training efficiency by 70% and simulation accuracy by 20%.',
         'Designed and implemented a training plan for over 40 operators, increasing cyber incident response readiness scores by 25% and reducing security operations drill time by 15%.',
@@ -173,8 +168,10 @@ export const PROFILE: Profile = {
       company: 'Government Technology Agency',
       role: 'Full Stack Engineer Intern',
       period: 'Apr 2022 - Jun 2023',
-      summary:
-        'Shipped internal platform tooling, SEO improvements, and automated testing that reduced deployment friction for government product teams.',
+      timelineSummary:
+        'Shipped internal platform tooling, SEO improvements, and CI-backed testing that reduced friction for government product teams.',
+      caseStudyContext:
+        'The clearest thread here was platform enablement: helping teams ship more confidently through better tooling, stronger search visibility, and automated quality checks.',
       highlights: [
         'Created a TypeScript command-line tool for Government Digital Services teams to test, integrate, and deploy configurations onto the Developer Console as micro frontends.',
         'Revamped the Developer Portal community section to improve SEO and indexing, doubling traffic from 2.5k to 6k weekly users.',
@@ -195,8 +192,10 @@ export const PROFILE: Profile = {
       company: 'Associates Consulting',
       role: 'Full Stack Developer and Database Engineer',
       period: 'Apr 2021 - Mar 2022',
-      summary:
-        'Built ISO9001-aligned workflow software and coordinated delivery across a five-person team for clients moving off manual, siloed processes.',
+      timelineSummary:
+        'Built ISO9001-aligned workflow software and coordinated delivery for clients moving off manual, siloed processes.',
+      caseStudyContext:
+        'The work combined software delivery with client operations, translating certification and process requirements into systems teams could use day to day.',
       highlights: [
         'Engineered a digitised platform aligned with ISO9001 requirements, migrating forms and process components from manual workflows to an online system.',
         'Worked with clients biweekly to gather requirements, refine plans, and keep delivery aligned with operational goals.',
@@ -217,8 +216,8 @@ export const PROFILE: Profile = {
       degree: 'Bachelor of Computing in Computer Science',
       period: 'Aug 2025 - Aug 2028',
       details: [
-        'GPA 4.6/5.00 (First Class Honours).',
-        'Stephen Riady Young Entrepreneur Scholarship.',
+        'GPA 4.6/5.00.',
+        'Stephen Riady Young Entrepreneur Scholarship recipient.',
       ],
     },
     {
@@ -226,10 +225,8 @@ export const PROFILE: Profile = {
       degree: 'Diploma in Information Technology',
       period: 'Apr 2020 - May 2023',
       details: [
-        "GPA 3.99/4.00 (Valedictorian, Director's Honour Roll Academic Excellence 2020 - 2023).",
-        'IMDA Gold Medallist.',
-        'Singapore Polytechnic Scholarship Award (2020 - 2023).',
-        'Distinctions in Data Engineering, Enterprise Systems, Frontend and Backend Development.',
+        'GPA 3.99/4.00.',
+        'Graduated as valedictorian.',
       ],
     },
   ],
@@ -325,34 +322,35 @@ export const PROFILE: Profile = {
 export const LANDING: LandingContent = {
   name: 'Chai Pin Zheng',
   monogram: 'CPZ',
-  eyebrow: 'Product engineering / developer tooling / operational systems',
+  eyebrow: 'Onboarding / platform tooling / operational systems',
   description:
-    'A dark, directed front page for product engineering, developer tooling, technical writing, and operational systems work.',
+    'Singapore-based software engineer building onboarding, internal tooling, and operational systems for technical teams and mission-driven products.',
   manifesto:
-    'My direction is product engineering for complex systems. I do my best work where adoption, internal tooling, and operational clarity matter just as much as feature delivery.',
-  featuredWorkTitle: 'One direction across three very different environments.',
+    'I build onboarding, internal tooling, and operational systems for technical teams that need complex products to be easier to adopt, easier to operate, and easier to trust.',
+  featuredWorkTitle:
+    'Selected work across product, platform, and operational environments.',
   featuredWorkIntro:
-    'From product onboarding to government platform tooling to cyber training systems, the common thread is the same: make technical systems easier to adopt, operate, and trust.',
-  archiveTitle: 'Writing that supports the engineering direction.',
+    'Three tracks that best show the collaboration fit: self-serve product onboarding, government platform tooling, and cyber readiness systems with measurable outcomes.',
+  archiveTitle: 'Writing that stays close to delivery work.',
   archiveIntro:
-    'The writing archive stays close to the work itself: project retrospectives, hackathon notes, implementation details, and technical reasoning rather than detached commentary.',
+    'The writing archive is where implementation details, project retrospectives, and technical reasoning stay visible after the launch work is done.',
   primaryLink: {
-    href: '/about',
-    label: 'Open the profile',
-    note: 'Experience timeline, education, and case studies',
+    href: 'mailto:chaipinzheng@gmail.com',
+    label: 'Start a collaboration',
+    note: 'Email for product, platform, or cyber-adjacent builds',
   },
   secondaryLink: {
-    href: '/blog',
-    label: 'Read the writing',
-    note: 'Technical notes, interface work, and build logs',
+    href: '/about',
+    label: 'Open the case studies',
+    note: 'Writing, build notes, and deeper delivery context',
   },
   marqueeLines: [
-    'Product engineering',
-    'Developer tooling',
+    'Product systems',
+    'Platform tooling',
     'Operational systems',
     'Guided onboarding',
     'Technical writing',
-    'Cyber training systems',
+    'Cyber-adjacent workflows',
   ],
   capabilityLines: [
     {
@@ -361,7 +359,7 @@ export const LANDING: LandingContent = {
     },
     {
       label: '02',
-      title: 'Leverage',
+      title: 'Delivery',
     },
     {
       label: '03',

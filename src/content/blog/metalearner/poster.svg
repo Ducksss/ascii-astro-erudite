@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="72" y1="36" x2="1138" y2="598" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#041116" />
+      <stop offset="1" stop-color="#020405" />
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(890 170) rotate(131.7) scale(380 422)">
+      <stop stop-color="#6EE7F7" stop-opacity=".32" />
+      <stop offset="1" stop-color="#6EE7F7" stop-opacity="0" />
+    </radialGradient>
+    <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M24 0H0V24" stroke="#FFFFFF" stroke-opacity=".05" />
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <rect width="1200" height="630" fill="url(#grid)" opacity=".6" />
+  <rect x="40" y="40" width="1120" height="550" rx="26" fill="#000000" fill-opacity=".36" stroke="#FFFFFF" stroke-opacity=".12" />
+  <rect x="40" y="40" width="1120" height="550" rx="26" fill="url(#glow)" />
+  <path d="M78 96H1122" stroke="#FFFFFF" stroke-opacity=".1" />
+
+  <circle cx="104" cy="68" r="6" fill="#6EE7F7" />
+  <circle cx="130" cy="68" r="6" fill="#FFFFFF" fill-opacity=".28" />
+  <circle cx="156" cy="68" r="6" fill="#FFFFFF" fill-opacity=".16" />
+
+  <text x="186" y="74" fill="#FFFFFF" fill-opacity=".52" font-family="Geist Mono, ui-monospace, monospace" font-size="16" letter-spacing="4">METALEARNER / ASCII SYSTEM POSTER / CASE STUDY</text>
+
+  <g font-family="Geist Mono, ui-monospace, monospace" font-size="24" fill="#FFFFFF" xml:space="preserve">
+    <text x="88" y="150"> __  __ _____ _____ ___    _     _____  _    ____  _   _ _____ ____  </text>
+    <text x="88" y="178">|  \/  | ____|_   _/ _ \  | |   | ____|/ \  |  _ \| \ | | ____|  _ \ </text>
+    <text x="88" y="206">| |\/| |  _|   | || | | | | |   |  _| / _ \ | |_) |  \| |  _| | |_) |</text>
+    <text x="88" y="234">| |  | | |___  | || |_| | | |___| |__/ ___ \|  _ &lt;| |\  | |___|  _ &lt; </text>
+    <text x="88" y="262">|_|  |_|_____| |_| \___/  |_____|_____/_/   \_\_| \_\_| \_|_____|_| \_\</text>
+  </g>
+
+  <g font-family="Geist Mono, ui-monospace, monospace" font-size="18" fill="#FFFFFF" fill-opacity=".58" letter-spacing="1.15">
+    <text x="90" y="308">guided onboarding, chart clarity, mobile usability, and future-facing real-time architecture</text>
+  </g>
+
+  <rect x="86" y="338" width="330" height="178" rx="20" fill="#FFFFFF" fill-opacity=".03" stroke="#FFFFFF" stroke-opacity=".12" />
+  <rect x="436" y="338" width="320" height="178" rx="20" fill="#FFFFFF" fill-opacity=".03" stroke="#FFFFFF" stroke-opacity=".12" />
+  <rect x="776" y="338" width="338" height="178" rx="20" fill="#FFFFFF" fill-opacity=".03" stroke="#FFFFFF" stroke-opacity=".12" />
+
+  <g font-family="Geist Mono, ui-monospace, monospace" font-size="15" fill="#FFFFFF" fill-opacity=".44" letter-spacing="2.2">
+    <text x="112" y="372">ONBOARDING / DOCS</text>
+    <text x="462" y="372">CHARTS / MOBILE</text>
+    <text x="802" y="372">REAL-TIME R&amp;D</text>
+  </g>
+
+  <g font-family="Geist Mono, ui-monospace, monospace" font-size="15" fill="#FFFFFF" fill-opacity=".83" xml:space="preserve">
+    <text x="112" y="404">+-------------+   +-------------+</text>
+    <text x="112" y="426">| START HERE  |--&gt;| GUIDE / FAQ |</text>
+    <text x="112" y="448">+-------------+   +-------------+</text>
+    <text x="112" y="470">       \______________&gt;</text>
+    <text x="112" y="492" fill="#6EE7F7">       docs / prompts / feature entry points</text>
+  </g>
+
+  <g font-family="Geist Mono, ui-monospace, monospace" font-size="15" fill="#FFFFFF" fill-opacity=".83" xml:space="preserve">
+    <text x="462" y="404">/graphs/*</text>
+    <text x="462" y="426">72 |                         .-^-.</text>
+    <text x="462" y="448">64 |                 .----.-'     '-.</text>
+    <text x="462" y="470">56 |         .----.-'                '-.</text>
+    <text x="462" y="492" fill="#6EE7F7">zoom / hover / inspect / responsive layout</text>
+  </g>
+
+  <g font-family="Geist Mono, ui-monospace, monospace" font-size="15" fill="#FFFFFF" fill-opacity=".83" xml:space="preserve">
+    <text x="802" y="404">client --&gt; ws --&gt; redis --&gt; fanout</text>
+    <text x="802" y="426">             \------&gt; postgres</text>
+    <text x="802" y="448">auth: jwt</text>
+    <text x="802" y="470">stack: fastapi / sockets / compose</text>
+    <text x="802" y="492" fill="#6EE7F7">concrete handoff for future product depth</text>
+  </g>
+
+  <g font-family="Geist Mono, ui-monospace, monospace" font-size="16" fill="#FFFFFF" fill-opacity=".46" letter-spacing="1.9">
+    <text x="88" y="554">software engineer intern / dec 2025 - mar 2026</text>
+    <text x="786" y="554">product adoption through lower cognitive load</text>
+  </g>
+</svg>

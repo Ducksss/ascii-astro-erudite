@@ -1,7 +1,7 @@
 ---
 import Link from '@/components/link.astro'
 import ThemeToggle from '@/components/theme-toggle.astro'
-import { LANDING, NAV_LINKS, SITE } from '@/consts'
+import { LANDING, NAV_LINKS, PROFILE, SITE } from '@/consts'
 
 interface Props {
   variant?: 'default' | 'landing' | 'immersive'
@@ -11,6 +11,9 @@ const { variant = 'default' } = Astro.props
 const isLanding = variant === 'landing'
 const isImmersive = variant === 'immersive'
 const isAtmospheric = isLanding || isImmersive
+const linkedInLink =
+  PROFILE.links.find((item) => item.label === 'LinkedIn')?.href ??
+  'https://www.linkedin.com/in/chai-pin-zheng/'
 ---
 
 <div class="site-header-shell">
@@ -65,10 +68,10 @@ const isAtmospheric = isLanding || isImmersive
             <Link
               href={item.href}
               class:list={[
-                'transition-colors',
+                'inline-flex min-h-11 items-center rounded-full px-3 py-2 transition-colors',
                 isAtmospheric
-                  ? 'hover:text-white'
-                  : 'text-foreground/60 hover:text-foreground capitalize',
+                  ? 'hover:bg-white/[0.03] hover:text-white'
+                  : 'text-foreground/60 hover:text-foreground hover:bg-muted/60 capitalize',
               ]}
             >
               {item.label}
@@ -76,6 +79,15 @@ const isAtmospheric = isLanding || isImmersive
           ))
         }
       </nav>
+      {isAtmospheric && (
+        <Link
+          href={linkedInLink}
+          external
+          class="hidden min-h-11 items-center rounded-full border border-white/12 px-4 py-2 font-mono text-[0.68rem] tracking-[0.24em] text-white/74 uppercase transition-colors hover:border-white/22 hover:bg-white/[0.04] hover:text-white min-[640px]:inline-flex"
+        >
+          LinkedIn
+        </Link>
+      )}
       {!isAtmospheric && <ThemeToggle transition:persist />}
     </div>
   </div>

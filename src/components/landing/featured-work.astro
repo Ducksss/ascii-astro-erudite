@@ -48,6 +48,7 @@ const [leadProject, ...secondaryProjects] = projects
               <p class="landing-work-card__description">
                 {leadProject.data.description}
               </p>
+              <p class="landing-work-card__proof-label">Anchored outcome</p>
               <p class="landing-work-card__outcome">
                 {leadProject.data.outcome ??
                   'Structured as a richer case-study surface with room for process, outcomes, and references.'}
@@ -62,7 +63,7 @@ const [leadProject, ...secondaryProjects] = projects
                 class="landing-work-card__link"
                 external={leadProject.data.link.startsWith('http')}
               >
-                Open track
+                Open case study
               </Link>
             </div>
             <div class="landing-work-card__image-shell">
@@ -97,6 +98,7 @@ const [leadProject, ...secondaryProjects] = projects
                 <p class="landing-work-card__description">
                   {project.data.description}
                 </p>
+                <p class="landing-work-card__proof-label">Anchored outcome</p>
                 <p class="landing-work-card__outcome">
                   {project.data.outcome ??
                     'Prepared as a future case study with stronger metadata and annotated visual direction.'}
@@ -111,7 +113,7 @@ const [leadProject, ...secondaryProjects] = projects
                   class="landing-work-card__link"
                   external={project.data.link.startsWith('http')}
                 >
-                  Open track
+                  Open case study
                 </Link>
               </div>
               <div class="landing-work-card__image-shell landing-work-card__image-shell--compact">
@@ -285,11 +287,19 @@ const [leadProject, ...secondaryProjects] = projects
     color: rgba(255, 255, 255, 0.62);
   }
 
+  .landing-work-card__proof-label {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.32);
+  }
+
   .landing-work-card__outcome {
     max-width: 32rem;
     font-size: 0.95rem;
     line-height: 1.7;
-    color: rgba(255, 255, 255, 0.48);
+    color: rgba(255, 255, 255, 0.56);
   }
 
   .landing-work-card__tags {
@@ -346,7 +356,7 @@ const [leadProject, ...secondaryProjects] = projects
     width: 100%;
     height: auto;
     object-fit: cover;
-    filter: saturate(0) contrast(1.1);
+    filter: saturate(0.45) contrast(1.08);
     mix-blend-mode: screen;
   }
 

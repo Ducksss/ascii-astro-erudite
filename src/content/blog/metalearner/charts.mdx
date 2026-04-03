@@ -1,0 +1,50 @@
+---
+title: 'Making MetaLearner charts easier to inspect'
+description: 'The graph gallery, interaction patterns, and responsive interface work behind a more legible data experience.'
+date: 2026-04-03
+tags: ['projects', 'product-engineering', 'fastapi', 'redis', 'data-visualization']
+authors: ['chai-pin-zheng']
+order: 2
+---
+
+One of the easier ways to make a data-heavy product feel weaker than it is is to treat charts as decorative output. A chart only becomes useful when users can actually read it, compare states, and inspect the thing they are being asked to care about.
+
+That is what made the graph work in MetaLearner interesting to me. It was not just "add a chart." It was about building a more legible data surface.
+
+## The graph gallery as a public-facing reference
+
+The implementation I handed over included an initial interactive chart gallery under the public `/graphs/*` routes. The code itself was shared internally as a zip, but the public proof of the work is still the [demo video](https://www.youtube.com/watch?v=vEYGuY5jr-U).
+
+Each chart page was structured to do more than render a visualization. It included:
+
+- a live demo
+- an explanation of the chart behavior
+- sample code
+- routing that was ready for i18n expansion
+
+That structure mattered because it turned the gallery into a teaching surface as well as a product surface. Someone could look at a chart and also understand how it worked and how it might evolve.
+
+## Interaction patterns that actually help
+
+The last chart in the demo pushed the interaction layer further. It supported zoom and hover interactions so users could inspect time-series data more closely instead of only reading a static summary.
+
+That kind of interaction matters in practice:
+
+- hover states help users understand exact values and context
+- zoom helps data stop feeling compressed
+- legends and supporting cues make the chart easier to parse
+- responsive behavior determines whether the chart still makes sense on smaller screens
+
+What I liked about this work is that it sits right on the border between interface design and trust. If a chart feels awkward to inspect, the product feels less reliable even if the underlying data is correct.
+
+## The mobile-friendly layout work around it
+
+The chart work was also connected to broader mobile-friendly layout improvements in the MetaLearner frontend repo. Part of the goal was to make the interface adapt more cleanly across screen sizes, especially in the same product areas where dense information already creates pressure on comprehension.
+
+I do not think of responsive work here as cosmetic. It is another form of usability engineering. If a system already asks the user to think hard, the interface should not add avoidable layout friction on top of that.
+
+## Why this track still matters to me
+
+This part of the internship reinforced a lesson I keep finding in product systems: information design is not secondary work. The way data is presented determines whether users can confidently act on it.
+
+The graph gallery, interaction patterns, and responsive layout improvements all lived inside that same goal. Make the product easier to read, and the product becomes easier to trust.
