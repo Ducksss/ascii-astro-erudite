@@ -1,7 +1,10 @@
 ---
 import { SITE } from '@/consts'
+import Analytics from '@vercel/analytics/astro'
 import { ClientRouter } from 'astro:transitions'
 import Favicons from './favicons.astro'
+
+const shouldLoadAnalytics = import.meta.env.VERCEL_ENV === 'production'
 ---
 
 <head>
@@ -43,6 +46,7 @@ import Favicons from './favicons.astro'
 
   <Favicons />
   <ClientRouter />
+  {shouldLoadAnalytics && <Analytics />}
 
   <slot />
 </head>

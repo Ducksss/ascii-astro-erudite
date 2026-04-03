@@ -1,68 +1,101 @@
 ---
 title: 'Daybreak And The Work Of Building Calm'
-description: 'An early Android project about meditation, focus, and translating user research into an app that felt steady instead of noisy.'
+description: 'Revisiting an early Android meditation app shaped by personas, moodboards, Firebase flows, and a deliberate attempt to feel calm.'
 date: 2026-04-01
+image: './assets/daybreak-mockup.png'
 tags: ['projects', 'android', 'java', 'firebase']
 authors: ['chai-pin-zheng']
+draft: true
 ---
 
-Daybreak was an early project, but it still says a lot about the kind of work I like. The app started from a simple problem: staying focused is hard, mental overhead accumulates quietly, and most "wellness" apps either feel generic or too shallow to be useful.
+Daybreak gave us two personas, a moodboard, a Firebase-backed auth flow, and one harder product question than "should we build a meditation app?"
 
-Our team eventually chose to build a meditation app because the idea resonated with all of us. In the public writeup that I shipped alongside the project, I described how we had considered other directions first, then landed on a calmer, more intentional product after user research showed how common distraction and low focus had become.
+If a product says it wants to reduce mental clutter, does the interface itself actually behave that way?
 
-## What the app was trying to do
+That was the real center of the project. The app mattered, but the stronger constraint was that it had to feel calmer than the problem it was trying to solve.
 
-Daybreak was meant to help users stay mindful, refocus, and build calmer routines around work and daily life. Even in the codebase, that intent shows up everywhere:
+## Why we chose this direction
 
-- onboarding, login, signup, and email verification flows
-- a home surface and an explore surface
-- meditation series, ambient mixes, stories, and recommendations
-- timer flows for guided sessions
-- Firebase-backed auth and data services
+We did not start with "let's build a meditation app."
 
-The app also included hooks for premium and payment-related experiences, which made the project feel closer to a real product instead of just a static classroom demo.
+In the original project write-up, I mentioned that we explored other directions first, including a medication app and a study-focused social product. Daybreak won because the problem felt immediate to everyone on the team. Staying focused was hard enough already, and it was obvious that technology was often making that worse instead of better.
 
-## The part that mattered most: product thinking before code
+We backed that instinct with user research. One of the sources we cited at the time reported that 49% of 478 students and 36 instructors said technology outside work or school was distracting. That was enough to give the app a clear center. We were not trying to build a generic wellness product. We were trying to make something that helped people slow down, refocus, and get through the day with less mental clutter.
 
-What I still like about Daybreak is that it was not built from code outward. The public project page walked through a more product-shaped process first:
+## Research before screens
 
-- user studies to understand the problem
-- personas to make the pain points more concrete
-- a moodboard and color palette built around calm rather than intensity
-- flow diagrams before implementation
+This is still my favorite part of the project.
 
-That sequence matters. Meditation and focus products are easy to make visually busy, morally preachy, or structurally confusing. If the product is supposed to reduce noise, the interface has to do the same.
+Before we got deep into implementation, we did the product work first. The old Daybreak page still shows the sequence clearly: user studies, personas, a moodboard, a color palette exercise, and a simple flow diagram before the app build really took shape.
 
-So a lot of the early work was really about tone: what should this app feel like, what kind of visual language supports the purpose, and how do we avoid building something that talks about calm while behaving like a distraction?
+We even created two personas, Kenneth and Celine, to force ourselves to think about actual user pain points instead of designing for an abstract "mindfulness user." That mattered more than I knew at the time. Calm is surprisingly easy to get wrong in software. The wrong palette, the wrong density, or the wrong screen order can make the app feel more agitating than the problem it is meant to solve.
 
-## What I learned from the Android build
+<div class="flex gap-4 flex-wrap justify-center [&_img,p]:m-0 my-6">
+  <div class="max-w-md border">
+    ![Persona for Kenneth, used during Daybreak research](assets/persona-kenneth.png)
+  </div>
+  <div class="max-w-md border">
+    ![Persona for Celine, used during Daybreak research](assets/persona-celine.png)
+  </div>
+</div>
 
-The repo shows a classic Android stack for the time:
+So a lot of the early thinking was really about tone. We deliberately leaned toward softer, more muted visual choices because we wanted the app to feel steady, not piercing. That sounds simple, but it was one of the first times I saw how product intent had to show up in interface decisions, not just in a pitch sentence.
 
-- **Java** in Android Studio
-- **Material Design** patterns
-- **Firebase Auth** and **Firebase Realtime Database**
-- view binding, navigation components, and multi-screen flows
-- Stripe and ads dependencies for monetization experiments
+<div class="max-w-4xl mx-auto border [&_img,p]:m-0 my-6">
+![Daybreak moodboard and theme board](assets/moodboard-theme.png)
+</div>
 
-The engineering lesson was straightforward but valuable: mobile products force you to think carefully about screen-to-screen continuity. Every extra step in onboarding, every overly dense layout, every awkward transition becomes obvious very quickly on a phone.
+The flow work mattered just as much. We were already mapping how someone would move from onboarding into actual use, which kept the app from becoming a pile of disconnected screens.
 
-That made Daybreak a useful training ground for:
+<div class="max-w-5xl mx-auto border [&_img,p]:m-0 my-6">
+![Daybreak user flow diagram](assets/flow-diagram.png)
+</div>
 
-- structuring flows cleanly
-- keeping interfaces legible
-- thinking about state across authentication and navigation
-- making a product feel coherent, not just functional
+## What the app actually shipped
 
-## Why I still keep it around
+Reopening the repo, I was happy to see that Daybreak was more than a few static mockups.
 
-Daybreak is not the most technically advanced project in the archive, but it is one of the clearest early examples of me caring about product clarity, user emotion, and the shape of an experience from first screen to repeat use.
+The authentication flow was real. `LoginActivity.java` handled sign-in with Firebase Auth, `SignupActivity.java` created accounts and wrote user data into Firebase Realtime Database, and `VerifyEmailActivity.java` sat between signup and the rest of the product so email verification was part of the experience instead of an afterthought.
 
-It also explains part of the throughline behind later work. Even when the domain changed from meditation to internal tooling or cyber operations, I kept being drawn to the same question: how do you make a system feel more usable, more trustworthy, and less mentally expensive?
+After that, `MainActivity.java` dropped the user into a bottom-navigation app with Home, Explore, and Profile surfaces. The home screen in `HomeFragment.java` tried to feel personal in small ways: it greeted the user by name, changed the message based on time of day, rotated ambient video backgrounds, and overlaid short motivational quotes. There was also a clear `Start focus...` path into `TimerActivity.java`, which broke the timer flow into separate fragments for selecting a session, continuing it, and ending it.
 
-That question was already there in Daybreak. The tools were just smaller.
+The explore side had more range than I remembered. `ExploreFragment.java` exposes five tabs: Explore, Single Series, Meditation, Selected Mix, and Selected Story. The strings file fills those sections with meditation series, seasonal ambience collections, long-form sound mixes, and even story content like Cinderella and Jack and the Beanstalk. It was a small content system, but it gave the product more shape than a one-screen demo.
 
-## Project links
+<div class="flex gap-4 flex-wrap justify-center [&_img,p]:m-0 my-6">
+  <div class="max-w-3xs border">
+    ![Daybreak onboarding screen](assets/onboarding-screen.png)
+  </div>
+  <div class="max-w-3xs border">
+    ![Daybreak home screen](assets/home-screen.png)
+  </div>
+  <div class="max-w-3xs border">
+    ![Daybreak profile and insights screen](assets/profile-screen.png)
+  </div>
+</div>
 
-- [Public project writeup](https://ducksss.github.io/Chai-Pin-Zheng/#/Chai-Pin-Zheng/Daybreak)
+## Trying to make it feel like a real product
+
+One thing I still respect about this build is that we were not satisfied with making it look finished. We were trying to make it feel product-shaped.
+
+The stack was classic Android for the time: Java, Android Studio, Material components, view binding, navigation, and Firebase. But the dependency list also shows where our heads were at. We pulled in Stripe, Google Mobile Ads, AnyChart, and other libraries because we were already thinking about premium flows, monetization, and what the app might need if it grew past a classroom exercise. There is even a paid confirmation modal that tells the user they are now a premium member.
+
+Not every part of that system was equally mature, and that is fine. What matters to me now is the instinct behind it. Even early on, I was less interested in building isolated screens than in asking what would make the whole thing feel believable.
+
+<div class="max-w-lg mx-auto [&_img,p]:m-0 my-6">
+![Final Daybreak app mockup](assets/daybreak-mockup.png)
+</div>
+
+## What stayed with me
+
+Daybreak is rougher than my later work, but the throughline is already there.
+
+I care a lot about products that reduce mental effort. In Daybreak, that showed up as calmer visual choices, cleaner flow design, lightweight personalization, and a deliberate attempt to make the interface support the emotional goal of the product. Later projects moved into very different domains, but that underlying question never really changed.
+
+How do you make a system feel clearer, steadier, and easier to trust?
+
+That question was already visible in Daybreak. The tools were just smaller, and I was still learning how to use them.
+
+## Links
+
+- [Original project write-up](https://ducksss.github.io/Chai-Pin-Zheng/#/Chai-Pin-Zheng/Daybreak)
 - [GitHub repository](https://github.com/Ducksss/Daybreak)

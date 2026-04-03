@@ -1,122 +1,131 @@
 ---
 title: 'Winning LifeHack 2023 With EcoCart'
-description: 'How we framed EcoCart, split the build, and turned a sustainability idea into a hackathon-winning product at LifeHack 2023.'
+description: 'How our LifeHack-winning browser extension and dashboard made shopping tradeoffs visible before checkout.'
 date: 2023-05-30
 image: './assets/lifehack-grand-prize.jpeg'
 tags: ['hackathons', 'ai', 'nextjs', 'sustainability']
 authors: ['chai-pin-zheng']
 ---
 
-## Overview
+## The product clicked because it showed up at the right moment
 
-EcoCart is still one of my favorite hackathon projects because it had a very clear product thesis from the beginning. We were not trying to build a generic "green shopping" app. We were trying to make the environmental cost of an online purchase visible at the exact moment someone was about to make that decision.
+EcoCart became a winning project once we reduced it to one useful moment: show the environmental cost of online shopping while the person is still deciding what to buy.
 
-That framing mattered. A lot of sustainability products become dashboards that people only visit after the fact, when the moment to change behavior is already gone. Our thought process was to move closer to the buying flow itself, then support that with a second surface that could give users deeper context, progress tracking, and better recommendations over time.
+That turned the idea into **EcoCart**, a sustainable shopping companion with two parts:
 
-That idea became **EcoCart**, an AI-powered sustainable shopping companion made up of two connected parts:
+- a browser extension that could live close to the shopping flow
+- a dashboard web app that could show impact, progress, and alternatives more clearly
 
-- a **browser extension** that could sit inside real e-commerce flows
-- a **dashboard web app** that could summarize impact, surface patterns, and make the data feel actionable
+The project ended up winning **LifeHack 2023** and the **SGID Award** because the story was legible fast: surface the tradeoff in-context, then give the user somewhere deeper to go afterward.
 
-The project went on to win **LifeHack 2023** and the **SGID Award**, and it still stands out to me as one of the clearest examples of product framing, frontend execution, and demo storytelling all lining up under hackathon pressure.
+## The Idea
 
-## Problem Framing
+### The problem we were trying to solve
 
-### The starting insight
+The starting point was pretty simple. People shop online all the time, but the environmental consequences of what they buy are mostly invisible. Even if someone genuinely wants to make a better choice, the burden is still on them to leave the page, do extra research, compare alternatives, and figure out what the information actually means.
 
-The problem we kept coming back to was simple: online shopping is incredibly convenient, but the environmental tradeoffs behind a purchase are often invisible. Even if someone wants to make a better choice, they usually have to leave the shopping flow, do their own research, compare alternatives manually, and interpret a lot of scattered information.
+That felt wrong to me.
 
-That felt like the wrong interaction model.
+I did not think the answer was to build yet another sustainability dashboard that people only open after everything is already done. By then, the interesting moment is over. So the thought process became: how do we move closer to the decision itself?
 
-Instead of asking users to do extra work, we wanted the product to do more of the work for them:
+### Why we split it into two surfaces
 
-- detect what they were already shopping for
-- estimate or surface the environmental impact in a digestible way
-- recommend greener alternatives while there was still time to switch
-- reward better choices so the experience felt encouraging instead of guilt-driven
+That gave us a clearer product shape very quickly. Instead of building one big app that tried to do everything, we split the experience into two surfaces:
 
-That sequence became the backbone of the project. We were not only building a sustainability tool. We were designing a behavior loop.
+- the extension would show up where the purchase was happening
+- the dashboard would give the user the fuller story afterward
 
-### The product decisions
+I liked that split because it gave the project a believable flow. It was not just "AI plus sustainability." It was a product that could meet the user in context and then support them more deeply afterward.
 
-Very early on, we tried to keep ourselves honest by asking one question: **what would make this feel useful in the middle of a real purchase, not just impressive in a pitch?**
+## My Part In It
 
-That led us to a few product decisions:
+### How we split the team
 
-- **Meet the user where they already are.** The extension mattered because it let the product appear in-context rather than forcing people into a separate app first.
-- **Keep the signal legible.** A sustainability score alone can feel abstract, so we wanted the dashboard to translate raw product and shopping data into something a user could actually understand.
-- **Make alternatives actionable.** If we surfaced a problem, we also needed to show a next step. Otherwise the product would stop at awareness instead of helping with decision-making.
-- **Build a demo loop judges could follow immediately.** Hackathons reward technical ambition, but they also reward clarity. We needed a story that could be understood in one pass.
+There were three of us, and the split helped a lot. **Kei Lok** focused on frontend engineering and UI/UX design, **Yu Hoe** handled the AI and backend side, and I worked on the **frontend** and the **web extension**.
 
-That thinking shaped the architecture more than the technology did. The stack was important, but the stronger decision was how each piece of the product contributed to a single user journey.
+### Why the extension was the interesting part for me
 
-## Build Execution
+For me, the extension was the most interesting part.
 
-### How we split the work
+The challenge was not only making it work. The challenge was making it feel like it belonged inside a real shopping flow. If the extension was too clunky, too slow, or too disconnected from what the user was looking at, the whole product would start to feel like a school project pasted on top of an e-commerce site.
 
-The public project materials described our roles clearly, and that division helped us move fast. **Kei Lok** focused on frontend engineering and UI/UX design, **Yu Hoe** handled the AI and backend side, and I worked on the **frontend** and the **web extension**.
+So a lot of my thinking went into immediacy:
 
-That gave us a practical way to parallelize the build:
+- how do we make the information appear at the right moment
+- how do we keep it understandable without overwhelming the user
+- how do we make the experience feel helpful instead of preachy
 
-- the extension could focus on living inside the shopping journey
-- the dashboard could focus on visibility, interpretation, and polish
-- the backend and AI layer could focus on data, recommendation logic, and system glue
+That last part mattered to me. I never wanted the product to feel like it was scolding the user. The better version was something that helped them see a tradeoff clearly and then gave them a better next step.
 
-For me, the interesting challenge was the extension side. If the extension felt clunky, delayed, or disconnected from what the user was actually doing, the entire product loop would weaken. So a lot of my thinking was around immediacy: how do we make the product feel like it belongs in the shopping flow rather than feeling bolted on?
+## The Build
 
-### What we built
+### What we actually shipped
 
-The final system covered more surface area than most hackathon projects. Based on the public repo, the stack included **Next.js**, **Chrome Extension Manifest V3**, **Supabase**, **AWS**, **Docker**, **Netlify**, **Tailwind CSS**, **OpenAI API**, and **SGID**.
+The final build covered more ground than people might expect from a hackathon project. Based on the public repo, the stack included **Next.js**, **Chrome Extension Manifest V3**, **Supabase**, **AWS**, **Docker**, **Netlify**, **Tailwind CSS**, **OpenAI API**, and **SGID**.
 
-That combination made sense for the problem:
+On paper that sounds like a lot, but it did fit the project:
 
-- **Next.js** gave us a fast way to build a polished dashboard experience
-- the **Chrome extension** let us place the product inside real e-commerce flows
-- **Supabase** gave us a lightweight backend foundation without a lot of setup drag
-- **OpenAI** helped turn product and shopping data into more usable interpretation and recommendations
-- **SGID** gave the project a stronger identity and trust layer, which made the concept feel more credible as something beyond a throwaway demo
+- **Next.js** gave us a fast way to build the dashboard
+- the **Chrome extension** let us sit inside real shopping behavior
+- **Supabase** gave us a backend foundation without too much setup friction
+- **OpenAI** helped turn raw information into something more useful and readable
+- **SGID** made the project feel more credible as something that could extend beyond a one-weekend prototype
 
-From a user point of view, EcoCart was meant to feel like a companion rather than a report. The extension tracked or interpreted shopping activity close to the source, while the web app created a broader picture through footprint tracking, progress visibility, and alternative suggestions.
+What I liked most was that the build had a real product loop behind it. The extension handled the in-the-moment part. The dashboard handled the reflective part. Together, they made the idea feel much more complete than if we had only built one side.
 
-### How we worked under hackathon pressure
+### The product loop we kept protecting
 
-The main constraint was not a lack of ideas. It was time. Once we had the core thesis, the real job was cutting scope without cutting the story.
+The part we kept protecting was the handoff between the two surfaces. The extension made the tradeoff visible while the choice was still live. The dashboard gave the user a place to understand patterns, track impact, and keep engaging with the idea after the purchase moment had passed. That handoff was what made the project feel like a product instead of a single feature.
 
-The way we approached it was roughly:
+## The Hackathon Constraint
 
-1. define the smallest believable end-to-end user journey
-2. identify which part of that journey had to feel real in the demo
-3. split ownership so design, frontend, extension, and backend work could move in parallel
-4. keep checking whether each feature strengthened the main loop or distracted from it
+### What had to feel real in the demo
 
-That last part was important. In hackathons, it is easy to keep adding clever ideas because the problem space is rich. But the better move is usually to protect the core loop. For us, that meant keeping the product centered on awareness, alternatives, and action rather than trying to become a full sustainability platform in a weekend.
+The biggest constraint was time, which is obvious, but the real problem was deciding what deserved time.
 
-## Outcome
+Once we had the core idea, we kept coming back to a simple question: what absolutely has to feel real in the demo?
 
-### Why the project worked
+That question helped us cut through a lot of noise. We did not need to solve everything about sustainable commerce. We needed to show a believable flow:
 
-Looking back, I think EcoCart landed because it was stronger as a product story than as a technology showcase alone.
+1. a user is shopping
+2. EcoCart appears at the right moment
+3. the product makes the hidden cost easier to understand
+4. the user sees that a better choice is possible
 
-It connected a few things cleanly:
+That was the story. Everything else had to support it.
 
-- a real and understandable user problem
-- a product surface that showed up in the right place
-- enough technical depth to feel substantial
-- a demo that made the value obvious very quickly
+I think that helped us avoid a common hackathon trap, which is building a lot of disconnected clever features. We still had technical ambition, but we were not adding things just to sound impressive. We were trying to protect the clarity of the demo.
 
-That is also why the extension mattered so much. It turned the project from "yet another dashboard" into something that could influence a live decision. The dashboard then gave the idea more weight by showing that this was not only a momentary prompt, but part of a larger, trackable system.
+## Why It Landed
+
+### Why the judges could understand it quickly
+
+Looking back, I do not think EcoCart worked because it used a long list of technologies. I think it worked because the idea was easy to explain and the demo made immediate sense.
+
+There were a few reasons for that:
+
+- the problem was real and easy to understand
+- the extension made the product feel present in the right place
+- the dashboard made it feel like more than a gimmick
+- the whole thing told one clear story instead of four unrelated ones
+
+That mattered a lot in a judging setting. Judges see many projects in a short amount of time. If they have to work too hard to understand what the product is trying to do, you are already losing ground. EcoCart had a cleaner sentence behind it, and I think that helped us.
+
+It also helped that I genuinely believed in the timing of the product. To me, the strongest part of EcoCart was never just that it could generate information. It was that it could surface the information while the choice was still live.
 
 ![Team photo from LifeHack 2023 with the SGID prize board.](assets/lifehack-sgid-team.jpeg)
 
 _One of the moments from LifeHack 2023 after presenting EcoCart._
 
-### What I learned from it
+## What Stayed With Me
 
-EcoCart reinforced a lesson I still come back to: strong technical work becomes much more memorable when it is tied to a clear decision point in the user's workflow.
+### What this clarified for me
 
-We did not win because we used a long list of technologies. We won because the technologies supported a product idea that was easy to grasp and a user flow that felt believable. The engineering, design, and demo all pointed in the same direction.
+This project made something click for me quite early: I really like building products that sit between technical capability and human behavior.
 
-That project also reminded me how much I enjoy building at the boundary between frontend experience and product behavior. My contribution sat on the frontend and extension side, but the deeper work was really about product timing: showing the right information when it could still change what the user did next.
+I liked the frontend side of EcoCart, and I liked working on the extension itself, but the deeper thing I liked was shaping when and how the product entered the user's flow. That is still something I care about now. A technically strong system becomes much more interesting to me when it is also well-timed, legible, and easy for someone to act on.
+
+EcoCart was one of the first projects where I felt that clearly. It was not just a hackathon build that happened to win. It was an early sign of the kind of work I wanted to keep doing.
 
 ## Links
 

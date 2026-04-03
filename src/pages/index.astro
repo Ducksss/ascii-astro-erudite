@@ -21,14 +21,17 @@ const archiveStats = await getArchiveStats()
 const [featuredPost, ...supportingPosts] = archivePosts
 const [nameLineOne = 'Chai', nameLineTwo = 'Pin', nameLineThree = 'Zheng'] =
   LANDING.name.split(' ')
-const heroPills = ['Singapore-based', 'NUS CS / First Class track', 'Stephen Riady Scholar']
+const heroPills = [
+  'NUS CS / First Class track',
+  '70% training-efficiency lift',
+  '2.5k -> 6k weekly reach',
+]
 const linkedInLink =
   PROFILE.links.find((item) => item.label === 'LinkedIn')?.href ??
   'https://www.linkedin.com/in/chai-pin-zheng/'
 const consoleNotes = [
-  'Best fit for technical teams, public-interest products, and operational workflows that need clearer self-serve paths.',
-  'Strongest contribution areas: onboarding, internal tooling, technical docs, testing, SEO, and platform delivery.',
-  'Most useful when adoption, reliability, and operator confidence matter as much as shipping the feature itself.',
+  'Best fit: technically strong products that still feel too hard to enter, operate, or hand off.',
+  'Recent proof: MetaLearner onboarding, GovTech platform tooling, and SAF readiness systems.',
 ]
 const proofPoints = [
   {
@@ -36,21 +39,21 @@ const proofPoints = [
     metric: 'Reduced onboarding drop-offs',
     label: 'Self-serve product adoption',
     context:
-      'Guided onboarding, in-product docs, and clearer feature entry points made a complex workflow easier to enter and trust.',
+      'Guided onboarding and a four-category User Guide made a complex forecasting workflow easier to enter and trust.',
   },
   {
     company: 'Singapore Armed Forces',
     metric: '70% efficiency lift',
     label: 'Operational readiness systems',
     context:
-      'Automated fault injection and structured drills improved training efficiency while supporting readiness across 40+ operators.',
+      'Automated fault injection and structured drills lifted training efficiency across a 40+ operator environment.',
   },
   {
     company: 'Government Technology Agency',
     metric: '2.5k -> 6k weekly users',
     label: 'Platform delivery + SEO',
     context:
-      'Portal SEO improvements doubled weekly reach, and Cypress-based CI reduced deployment time by 20 minutes per merge.',
+      'SEO improvements expanded reach, and Cypress-backed CI removed manual release checking from production merges.',
   },
 ]
 ---
@@ -81,13 +84,13 @@ const proofPoints = [
     <div class="landing-grain pointer-events-none absolute inset-0"></div>
 
     <div
-      class="mx-auto grid min-h-[calc(100svh-4.6rem)] max-w-[1400px] grid-cols-1 px-4 py-10 sm:px-6 sm:py-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)] lg:px-8 lg:py-16"
+      class="mx-auto grid min-h-[calc(100svh-4.6rem)] max-w-[1400px] grid-cols-1 px-4 py-6 sm:px-6 sm:py-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)] lg:px-8 lg:py-16"
     >
-      <div class="flex flex-col justify-between gap-10 lg:pr-10">
+      <div class="flex flex-col justify-between gap-6 sm:gap-10 lg:pr-10">
         <div class="max-w-4xl" transition:name="page-intro">
           <p class="landing-kicker">{LANDING.eyebrow}</p>
           <h1
-            class="landing-wordmark mt-6 text-[clamp(4rem,14vw,12rem)] leading-[0.82] font-semibold tracking-[-0.09em] text-white uppercase"
+            class="landing-wordmark mt-4 text-[clamp(3.3rem,18vw,7rem)] leading-[0.84] font-semibold tracking-[-0.09em] text-white uppercase sm:mt-6 lg:text-[clamp(4rem,14vw,12rem)]"
           >
             <span class="block"> {nameLineOne}</span>
             <!-- ml-[10vw] text-white/68 sm:ml-[18vw] lg:ml-[11vw] -->
@@ -95,13 +98,13 @@ const proofPoints = [
             <span class="block">{nameLineThree}</span>
           </h1>
           <p
-            class="landing-manifesto mt-8 max-w-2xl text-base leading-7 text-balance text-white/68 sm:text-lg sm:leading-8"
+            class="landing-manifesto mt-6 max-w-xl text-[0.98rem] leading-7 text-balance text-white/70 sm:mt-8 sm:max-w-2xl sm:text-lg sm:leading-8"
           >
             {LANDING.manifesto}
           </p>
         </div>
 
-        <div class="space-y-6">
+        <div class="max-w-xl space-y-4 sm:max-w-none sm:space-y-6">
           <div class="flex flex-col gap-3 sm:flex-row">
             <Link href={LANDING.primaryLink.href} class="landing-button group">
               <span>{LANDING.primaryLink.label}</span>
@@ -125,7 +128,7 @@ const proofPoints = [
           </div>
 
           <div
-            class="flex flex-wrap items-center gap-3 text-[0.72rem] tracking-[0.26em] text-white/42 uppercase"
+            class="hidden flex-wrap items-center gap-3 text-[0.72rem] tracking-[0.26em] text-white/42 uppercase sm:flex"
           >
             {
               heroPills.map((pill) => (
@@ -135,7 +138,9 @@ const proofPoints = [
               ))
             }
           </div>
-          <div class="flex flex-wrap items-center gap-4 text-sm text-white/54">
+          <div
+            class="hidden flex-wrap items-center gap-4 text-sm text-white/54 sm:flex"
+          >
             <span class="text-white/38">Proof path</span>
             <Link
               href={linkedInLink}
@@ -146,7 +151,8 @@ const proofPoints = [
             </Link>
             <span class="hidden text-white/22 sm:inline">/</span>
             <span class="text-sm text-white/48">
-              Product systems, internal tooling, and cyber-adjacent workflows.
+              Start with the outcomes here, then open the case studies and build
+              logs.
             </span>
           </div>
         </div>
@@ -196,27 +202,30 @@ const proofPoints = [
   </section>
 
   <section class="border-y border-white/10 bg-[#020202]">
-    <div class="mx-auto max-w-[1400px] px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
+    <div
+      class="mx-auto max-w-[1400px] px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12"
+    >
       <div
-        class="flex flex-col gap-5 border-b border-white/10 pb-8 lg:flex-row lg:items-end lg:justify-between"
+        class="flex flex-col gap-4 border-b border-white/10 pb-6 sm:gap-5 sm:pb-8 lg:flex-row lg:items-end lg:justify-between"
       >
         <div class="max-w-2xl">
           <p class="landing-section-label">Selected proof</p>
           <h2 class="landing-section-title mt-4 max-w-xl">
-            Attributed outcomes that make the homepage claims concrete.
+            Attributed outcomes that make the homepage pitch checkable.
           </h2>
         </div>
-        <p class="max-w-md text-sm leading-7 text-white/52 sm:text-base">
-          The throughline is consistent: make technical systems easier to enter,
-          easier to run, and easier to trust across product, platform, and
-          operator environments.
+        <p
+          class="max-w-xl text-sm leading-6 text-white/56 sm:text-base sm:leading-7"
+        >
+          Start with the outcomes. The case studies below explain how those
+          gains were made and where the work fits best.
         </p>
       </div>
 
-      <div class="mt-8 grid gap-px border border-white/10 bg-white/5 lg:grid-cols-3">
+      <div class="mt-6 grid gap-4 sm:mt-8 sm:gap-5 lg:grid-cols-3">
         {
           proofPoints.map((point) => (
-            <article class="bg-black/35 px-5 py-6 sm:px-6">
+            <article class="border border-white/10 bg-black/35 px-6 py-6 sm:px-7 sm:py-7">
               <p class="font-mono text-[0.68rem] tracking-[0.26em] text-white/34 uppercase">
                 {point.company}
               </p>
@@ -226,7 +235,7 @@ const proofPoints = [
               <p class="mt-2 font-mono text-[0.7rem] tracking-[0.22em] text-white/52 uppercase">
                 {point.label}
               </p>
-              <p class="mt-4 max-w-sm text-sm leading-7 text-white/56">
+              <p class="mt-5 max-w-[30ch] text-sm leading-7 text-white/60">
                 {point.context}
               </p>
             </article>

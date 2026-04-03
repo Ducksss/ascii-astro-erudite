@@ -1,6 +1,6 @@
 ---
 name: 'MetaLearner'
-description: 'Shipped guided onboarding, in-product documentation, and exploratory chart tooling to make a complex product easier to enter and use.'
+description: 'Improved an AI-native supply chain forecasting and planning product built on ERP data with guided onboarding, a 4-category User Guide, a multilingual chart gallery, and reusable handoff artifacts.'
 tags:
   [
     'Product onboarding',
@@ -17,6 +17,6 @@ endDate: '2026-03-01'
 featured: true
 role: 'Software Engineer Intern'
 status: 'Case study'
-outcome: 'Reduced onboarding drop-offs with guided onboarding, in-product docs, clearer feature entry points, and a real-time messaging prototype for future product depth.'
+outcome: 'Improved first-time-user clarity with guided onboarding and a 4-category User Guide, shipped a 9-demo chart gallery across 3 locales, and left behind reusable real-time research artifacts.'
 accent: '#8af2ff'
 ---

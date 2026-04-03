@@ -1,0 +1,50 @@
+---
+import AsciiGenerator from '@/components/dev/ascii-generator'
+import LandingAsciiField from '@/components/landing/ascii-field.astro'
+import PageHead from '@/components/page-head.astro'
+import Layout from '@/layouts/layout.astro'
+
+export function getStaticPaths() {
+  return [{ params: { slug: 'ascii-signal' } }]
+}
+
+const description =
+  'A small public ASCII art playground for turning uploaded images into monochrome ASCII frames.'
+---
+
+<Layout variant="immersive" class="px-0">
+  <PageHead
+    slot="head"
+    title="ASCII Art Playground"
+    description={description}
+  />
+
+  <section class="relative isolate min-h-[calc(100svh-4.6rem)] bg-[#050505]">
+    <div class="pointer-events-none absolute inset-0 overflow-hidden">
+      <LandingAsciiField variant="ambient" class="opacity-[0.3]" />
+      <div class="landing-grain absolute inset-0"></div>
+      <div
+        class="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black via-black/55 to-transparent"
+      >
+      </div>
+      <div
+        class="absolute inset-0 [background-image:linear-gradient(to_bottom,transparent_0,transparent_11px,rgba(255,255,255,0.045)_12px)] [background-size:100%_12px] opacity-35"
+      >
+      </div>
+      <div
+        class="landing-dot-mass absolute top-10 -left-24 h-[28rem] w-[28rem] opacity-50 sm:h-[36rem] sm:w-[36rem]"
+      >
+      </div>
+      <div
+        class="landing-dot-mass landing-dot-mass--reverse absolute right-[-7rem] bottom-[-8rem] h-[26rem] w-[26rem] opacity-40 sm:h-[34rem] sm:w-[34rem]"
+      >
+      </div>
+    </div>
+
+    <div
+      class="relative mx-auto w-full max-w-[1440px] px-4 py-8 sm:px-6 lg:px-8 lg:py-10"
+    >
+      <AsciiGenerator client:load />
+    </div>
+  </section>
+</Layout>

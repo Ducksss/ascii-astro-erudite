@@ -39,6 +39,9 @@ const { class: className, variant = 'hero' } = Astro.props
         alpha: 0.92,
         speed: 1,
         interactive: true,
+        fontScale: 0.62,
+        compactGlyphScale: 0.52,
+        compactGlyphs: ['+', '*', '#', 'x', '='],
       },
       ambient: {
         glyphs: ['.', ':', '+', 'x'],
@@ -47,6 +50,9 @@ const { class: className, variant = 'hero' } = Astro.props
         alpha: 0.55,
         speed: 0.52,
         interactive: false,
+        fontScale: 0.68,
+        compactGlyphScale: 0.68,
+        compactGlyphs: [],
       },
       panel: {
         glyphs: ['.', ':', '=', 'x'],
@@ -55,8 +61,12 @@ const { class: className, variant = 'hero' } = Astro.props
         alpha: 0.72,
         speed: 0.7,
         interactive: false,
+        fontScale: 0.68,
+        compactGlyphScale: 0.68,
+        compactGlyphs: [],
       },
     }[variant]
+    const compactGlyphs = new Set(config.compactGlyphs)
     const pointer = { x: 0.78, y: 0.32 }
 
     let frameId = 0
@@ -82,9 +92,12 @@ const { class: className, variant = 'hero' } = Astro.props
       )
 
       ctx.clearRect(0, 0, width, height)
-      ctx.font = `${cell * 0.68}px "Geist Mono", monospace`
       ctx.textBaseline = 'middle'
       ctx.textAlign = 'center'
+
+      const compactFont = `${cell * config.compactGlyphScale}px "Geist Mono", monospace`
+      const normalFont = `${cell * config.fontScale}px "Geist Mono", monospace`
+      let currentFont = ''
 
       for (let y = cell * 0.7; y < height; y += cell) {
         for (let x = cell * 0.7; x < width; x += cell) {
@@ -109,10 +122,17 @@ const { class: className, variant = 'hero' } = Astro.props
             config.glyphs.length - 1,
             Math.max(0, Math.floor(intensity * config.glyphs.length)),
           )
+          const glyph = config.glyphs[glyphIndex]
           const alpha = Math.min(config.alpha, 0.08 + intensity * 0.72)
 
+          const nextFont = compactGlyphs.has(glyph) ? compactFont : normalFont
+          if (nextFont !== currentFont) {
+            ctx.font = nextFont
+            currentFont = nextFont
+          }
+
           ctx.fillStyle = `rgba(248, 248, 248, ${alpha})`
-          ctx.fillText(config.glyphs[glyphIndex], x, y)
+          ctx.fillText(glyph, x, y)
         }
       }
 

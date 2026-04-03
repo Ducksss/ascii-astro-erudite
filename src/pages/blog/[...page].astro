@@ -14,26 +14,36 @@ export async function getStaticPaths({
   paginate: PaginateFunction
 }) {
   const allPosts = await getAllPosts()
-  return paginate(allPosts, { pageSize: SITE.postsPerPage })
+  const archiveYearCount = new Set(
+    allPosts.map((post) => post.data.date.getFullYear()),
+  ).size
+
+  return paginate(allPosts, {
+    pageSize: SITE.postsPerPage,
+    props: { archiveYearCount },
+  })
 }
 
-const { page } = Astro.props
+const { page, archiveYearCount } = Astro.props
 
 const postsByYear = groupPostsByYear(page.data)
 const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a))
+const pagePosition = `${String(page.currentPage).padStart(2, '0')}/${String(page.lastPage).padStart(2, '0')}`
 ---
 
 <Layout variant="immersive">
   <PageHead
     slot="head"
     title="Blog"
-    description="Project retrospectives, hackathon writeups, and technical notes by Chai Pin Zheng."
+    description="Build logs, hackathon writeups, and technical notes that stay close to shipped work."
   />
 
   <section
     class="relative overflow-hidden border-b border-white/10 bg-black/30"
   >
-    <div class="mx-auto max-w-[1400px] px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+    <div
+      class="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 sm:py-14 lg:px-8 lg:py-20"
+    >
       <Breadcrumbs
         variant="immersive"
         items={[
@@ -43,7 +53,8 @@ const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a))
       />
 
       <div
-        class="mt-8 grid gap-8 xl:grid-cols-[minmax(0,1.08fr)_minmax(280px,0.92fr)] xl:items-start"
+        class="immersive-animate-in mt-8 max-w-4xl"
+        transition:name="page-intro"
       >
         <div
           class="immersive-animate-in max-w-4xl"
@@ -51,19 +62,18 @@ const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a))
         >
           <p class="landing-section-label">Blog index</p>
           <h1 class="landing-section-title mt-4 max-w-3xl">
-            Project notes, hackathon writeups, and technical reflections.
+            Build logs, hackathon writeups, and technical notes.
           </h1>
           <p
             class="immersive-copy mt-6 max-w-2xl text-base leading-7 sm:text-lg sm:leading-8"
           >
-            This archive is where shipped work gets unpacked: what the project
-            was trying to do, what actually got built, and what was worth
-            learning from the result.
+            This archive keeps the proof trail visible: what got built, what
+            changed, what was hard, and why the implementation choices mattered.
           </p>
         </div>
 
         <aside class="immersive-panel immersive-animate-in self-start">
-          <p class="immersive-eyebrow">Archive status</p>
+          <p class="immersive-eyebrow">Archive snapshot</p>
           <div
             class="mt-6 grid grid-cols-3 gap-px border border-white/10 bg-white/[0.03]"
           >
@@ -71,36 +81,36 @@ const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a))
               <p
                 class="text-2xl leading-none font-semibold tracking-[-0.06em] text-white"
               >
-                {String(page.data.length).padStart(2, '0')}
+                {String(page.total).padStart(2, '0')}
               </p>
               <p
                 class="mt-2 font-mono text-[0.66rem] tracking-[0.24em] text-white/38 uppercase"
               >
-                On page
+                Published notes
               </p>
             </div>
             <div class="border-x border-white/10 p-4">
               <p
                 class="text-2xl leading-none font-semibold tracking-[-0.06em] text-white"
               >
-                {String(years.length).padStart(2, '0')}
+                {String(archiveYearCount).padStart(2, '0')}
               </p>
               <p
                 class="mt-2 font-mono text-[0.66rem] tracking-[0.24em] text-white/38 uppercase"
               >
-                Year groups
+                Years covered
               </p>
             </div>
             <div class="p-4">
               <p
                 class="text-2xl leading-none font-semibold tracking-[-0.06em] text-white"
               >
-                {String(page.currentPage).padStart(2, '0')}
+                {pagePosition}
               </p>
               <p
                 class="mt-2 font-mono text-[0.66rem] tracking-[0.24em] text-white/38 uppercase"
               >
-                Active page
+                Page position
               </p>
             </div>
           </div>

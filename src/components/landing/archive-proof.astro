@@ -21,9 +21,11 @@ const { title, intro, featuredPost, supportingPosts, stats } = Astro.props
 
 <section class="relative border-b border-white/10 bg-[#040404]">
   <LandingAsciiField variant="ambient" class="opacity-[0.14]" />
-  <div class="mx-auto max-w-[1400px] px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
+  <div
+    class="mx-auto max-w-[1400px] px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24"
+  >
     <div
-      class="flex flex-col gap-5 pb-8 lg:flex-row lg:items-end lg:justify-between"
+      class="flex flex-col gap-4 pb-6 sm:gap-5 sm:pb-8 lg:flex-row lg:items-end lg:justify-between"
     >
       <div class="max-w-2xl">
         <p class="landing-section-label">Archive proof</p>
@@ -41,7 +43,7 @@ const { title, intro, featuredPost, supportingPosts, stats } = Astro.props
     </div>
 
     <div
-      class="mt-10 grid gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(22rem,0.92fr)]"
+      class="mt-8 grid gap-8 sm:mt-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(22rem,0.92fr)]"
     >
       {
         featuredPost ? (
@@ -74,7 +76,7 @@ const { title, intro, featuredPost, supportingPosts, stats } = Astro.props
         )
       }
 
-      <div class="space-y-6">
+      <div class="hidden space-y-6 sm:block">
         <div class="grid grid-cols-3 gap-px border border-white/10 bg-white/5">
           <div class="landing-archive-stat">
             <span class="landing-archive-stat__value">
