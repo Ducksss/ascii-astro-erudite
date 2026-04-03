@@ -14,17 +14,20 @@ export async function getStaticPaths({
   paginate: PaginateFunction
 }) {
   const allPosts = await getAllPosts()
-  return paginate(allPosts, { pageSize: SITE.postsPerPage })
+  const archiveYearCount = new Set(
+    allPosts.map((post) => post.data.date.getFullYear()),
+  ).size
+
+  return paginate(allPosts, {
+    pageSize: SITE.postsPerPage,
+    props: { archiveYearCount },
+  })
 }
 
-const { page } = Astro.props
+const { page, archiveYearCount } = Astro.props
 
-const allPosts = await getAllPosts()
 const postsByYear = groupPostsByYear(page.data)
 const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a))
-const archiveYearCount = new Set(
-  allPosts.map((post) => post.data.date.getFullYear()),
-).size
 const pagePosition = `${String(page.currentPage).padStart(2, '0')}/${String(page.lastPage).padStart(2, '0')}`
 ---
 
@@ -76,7 +79,7 @@ const pagePosition = `${String(page.currentPage).padStart(2, '0')}/${String(page
               <p
                 class="text-2xl leading-none font-semibold tracking-[-0.06em] text-white"
               >
-                {String(allPosts.length).padStart(2, '0')}
+                {String(page.total).padStart(2, '0')}
               </p>
               <p
                 class="mt-2 font-mono text-[0.66rem] tracking-[0.24em] text-white/38 uppercase"

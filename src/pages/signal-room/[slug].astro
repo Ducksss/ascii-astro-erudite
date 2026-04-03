@@ -5,10 +5,6 @@ import PageHead from '@/components/page-head.astro'
 import Layout from '@/layouts/layout.astro'
 
 export function getStaticPaths() {
-  if (!import.meta.env.DEV) {
-    return []
-  }
-
   return [{ params: { slug: 'ascii-signal' } }]
 }
 
@@ -17,7 +13,11 @@ const description =
 ---
 
 <Layout variant="immersive" class="px-0">
-  <PageHead slot="head" title="ASCII Art Playground" description={description} />
+  <PageHead
+    slot="head"
+    title="ASCII Art Playground"
+    description={description}
+  />
 
   <section class="relative isolate min-h-[calc(100svh-4.6rem)] bg-[#050505]">
     <div class="pointer-events-none absolute inset-0 overflow-hidden">
@@ -28,7 +28,7 @@ const description =
       >
       </div>
       <div
-        class="absolute inset-0 opacity-35 [background-image:linear-gradient(to_bottom,transparent_0,transparent_11px,rgba(255,255,255,0.045)_12px)] [background-size:100%_12px]"
+        class="absolute inset-0 [background-image:linear-gradient(to_bottom,transparent_0,transparent_11px,rgba(255,255,255,0.045)_12px)] [background-size:100%_12px] opacity-35"
       >
       </div>
       <div
@@ -41,7 +41,9 @@ const description =
       </div>
     </div>
 
-    <div class="relative mx-auto w-full max-w-[1440px] px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+    <div
+      class="relative mx-auto w-full max-w-[1440px] px-4 py-8 sm:px-6 lg:px-8 lg:py-10"
+    >
       <AsciiGenerator client:load />
     </div>
   </section>

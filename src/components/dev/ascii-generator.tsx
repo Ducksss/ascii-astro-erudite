@@ -12,10 +12,7 @@ import {
   getPaddedCanvasSize,
   renderAsciiFromRgba,
 } from './ascii-generator-utils'
-import type {
-  CharsetPreset,
-  GradientPreset,
-} from './ascii-generator-utils'
+import type { CharsetPreset, GradientPreset } from './ascii-generator-utils'
 
 type RenderedAscii = {
   lines: string[]
@@ -273,7 +270,12 @@ function drawLandingBackdrop(
   context.fillStyle = surfaceGradient
   context.fillRect(0, 0, width, height)
 
-  const topFade = context.createLinearGradient(0, 0, 0, Math.min(height * 0.22, 180))
+  const topFade = context.createLinearGradient(
+    0,
+    0,
+    0,
+    Math.min(height * 0.22, 180),
+  )
   topFade.addColorStop(0, 'rgba(0,0,0,0.92)')
   topFade.addColorStop(0.56, 'rgba(0,0,0,0.55)')
   topFade.addColorStop(1, 'rgba(0,0,0,0)')
@@ -281,9 +283,30 @@ function drawLandingBackdrop(
   context.fillStyle = topFade
   context.fillRect(0, 0, width, Math.min(height * 0.22, 180))
 
-  drawAtmosphereCloud(context, width * 0.2, height * 0.2, width * 0.42, 0.11, 0.8)
-  drawAtmosphereCloud(context, width * 0.82, height * 0.04, width * 0.3, 0.06, 0.76)
-  drawAtmosphereCloud(context, width * 0.42, height * 0.74, width * 0.28, 0.06, 0.8)
+  drawAtmosphereCloud(
+    context,
+    width * 0.2,
+    height * 0.2,
+    width * 0.42,
+    0.11,
+    0.8,
+  )
+  drawAtmosphereCloud(
+    context,
+    width * 0.82,
+    height * 0.04,
+    width * 0.3,
+    0.06,
+    0.76,
+  )
+  drawAtmosphereCloud(
+    context,
+    width * 0.42,
+    height * 0.74,
+    width * 0.28,
+    0.06,
+    0.8,
+  )
 
   drawDotMass(context, {
     centerX: width * 0.15,
@@ -360,13 +383,7 @@ function drawLandingFrame(
   context.font = '500 11px "Geist Mono", monospace'
   context.textBaseline = 'middle'
   context.fillStyle = ART_FRAME_THEME.barText
-  drawTrackedText(
-    context,
-    'ASCII SIGNAL LAB',
-    18,
-    layout.barHeight / 2,
-    3.8,
-  )
+  drawTrackedText(context, 'ASCII SIGNAL LAB', 18, layout.barHeight / 2, 3.8)
   drawTrackedText(
     context,
     'LANDING FRAME',
@@ -415,6 +432,7 @@ export default function AsciiGenerator() {
   const [fileName, setFileName] = React.useState('')
   const [rendered, setRendered] = React.useState<RenderedAscii | null>(null)
   const [error, setError] = React.useState<string | null>(null)
+  const [copyError, setCopyError] = React.useState<string | null>(null)
   const [isDragging, setIsDragging] = React.useState(false)
   const [isRendering, setIsRendering] = React.useState(false)
   const [isExportingPng, setIsExportingPng] = React.useState(false)
@@ -573,15 +591,30 @@ export default function AsciiGenerator() {
     })
     setFileName(file.name)
     setCopied(false)
+    setCopyError(null)
     setError(null)
   }
 
   async function handleCopy() {
-    if (!rendered?.text || !navigator.clipboard) return
+    if (!rendered?.text) return
 
-    await navigator.clipboard.writeText(rendered.text)
-    setCopied(true)
-    window.setTimeout(() => setCopied(false), 1500)
+    if (!navigator.clipboard) {
+      setCopied(false)
+      setCopyError('Clipboard access is unavailable in this browser.')
+      return
+    }
+
+    try {
+      await navigator.clipboard.writeText(rendered.text)
+      setCopyError(null)
+      setCopied(true)
+      window.setTimeout(() => setCopied(false), 1500)
+    } catch {
+      setCopied(false)
+      setCopyError(
+        'Clipboard permissions blocked the copy action. You can still download the .txt output.',
+      )
+    }
   }
 
   function handleDownloadText() {
@@ -677,7 +710,7 @@ export default function AsciiGenerator() {
     : getDisplayFontSize(DEFAULT_WIDTH)
 
   return (
-    <div className="grid gap-6 lg:items-start lg:grid-cols-[minmax(320px,0.44fr)_minmax(0,1fr)] xl:gap-8">
+    <div className="grid gap-6 lg:grid-cols-[minmax(320px,0.44fr)_minmax(0,1fr)] lg:items-start xl:gap-8">
       <section
         className="landing-terminal relative overflow-hidden"
         style={TERMINAL_SURFACE_STYLE}
@@ -695,9 +728,8 @@ export default function AsciiGenerator() {
               </h1>
             </div>
             <p className="max-w-lg text-sm leading-7 text-white/58 sm:text-base">
-              This lives as a small footer-linked playground and locks the
-              final render to the same black, terminal treatment as the landing
-              hero.
+              This lives as a small footer-linked playground and locks the final
+              render to the same black, terminal treatment as the landing hero.
             </p>
           </div>
 
@@ -993,6 +1025,15 @@ export default function AsciiGenerator() {
         </div>
 
         <div className="grid gap-5 p-5 sm:p-6 lg:max-h-[calc(100svh-8.5rem)] lg:overflow-y-auto xl:grid-cols-[240px_minmax(0,1fr)]">
+          {copyError ? (
+            <div
+              role="status"
+              className="border border-amber-300/30 bg-amber-300/10 px-4 py-3 text-sm leading-6 text-amber-50 xl:col-span-2"
+            >
+              {copyError}
+            </div>
+          ) : null}
+
           <div className="space-y-4">
             <div className="space-y-2">
               <p className="font-mono text-[0.68rem] tracking-[0.28em] text-white/42 uppercase">
@@ -1059,7 +1100,7 @@ export default function AsciiGenerator() {
                   </div>
                 ) : rendered ? (
                   <pre
-                    className="min-h-[22rem] whitespace-pre font-mono text-white/92"
+                    className="min-h-[22rem] font-mono whitespace-pre text-white/92"
                     style={{
                       fontSize: `${displayFontSize.toFixed(3)}rem`,
                       lineHeight: 0.92,
