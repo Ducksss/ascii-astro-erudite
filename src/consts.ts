@@ -39,21 +39,6 @@ export const NAV_LINKS: SocialLink[] = [
   },
 ]
 
-export const SOCIAL_LINKS: SocialLink[] = [
-  {
-    href: 'https://github.com/Ducksss',
-    label: 'GitHub',
-  },
-  {
-    href: 'https://www.linkedin.com/in/chai-pin-zheng/',
-    label: 'LinkedIn',
-  },
-  {
-    href: 'mailto:chaipinzheng@gmail.com',
-    label: 'Email',
-  },
-]
-
 export const PROFILE: Profile = {
   summary:
     'Singapore-based software engineer and NUS Computer Science student focused on product engineering for complex, technical workflows.',
@@ -348,20 +333,9 @@ export const LANDING: LandingContent = {
   featuredWorkTitle: 'One direction across three very different environments.',
   featuredWorkIntro:
     'From product onboarding to government platform tooling to cyber training systems, the common thread is the same: make technical systems easier to adopt, operate, and trust.',
-  processTitle:
-    'How I usually work when the problem sits between users and complex systems.',
-  processIntro:
-    'The environments change, but the pattern is consistent: find the friction, create the self-serve path, harden the system, and prove the outcome with something measurable.',
-  signalConsoleTitle: 'Three lenses that make the direction clearer.',
-  signalConsoleIntro:
-    'Together these say more than a generic portfolio label: the work lives at the boundary between adoption, tooling, and operational readiness.',
   archiveTitle: 'Writing that supports the engineering direction.',
   archiveIntro:
     'The writing archive stays close to the work itself: project retrospectives, hackathon notes, implementation details, and technical reasoning rather than detached commentary.',
-  finalTitle:
-    'If you want the direction in one sentence: I build product systems for technical users.',
-  finalDescription:
-    'Start with the profile for the career narrative, then the writing for how I think through systems, front-end craft, and implementation detail.',
   primaryLink: {
     href: '/about',
     label: 'Open the profile',
@@ -372,124 +346,18 @@ export const LANDING: LandingContent = {
     label: 'Read the writing',
     note: 'Technical notes, interface work, and build logs',
   },
-  closingLinks: [
-    {
-      href: '/about',
-      label: 'About',
-    },
-    {
-      href: '/blog',
-      label: 'Blog index',
-    },
-    {
-      href: '/rss.xml',
-      label: 'RSS feed',
-    },
-  ],
-  marqueeLines: [
-    'product engineering',
-    'developer tooling',
-    'operational readiness',
-    'technical writing',
-    'real-time systems',
-    'seo and ci/cd',
-  ],
   capabilityLines: [
     {
       label: '01',
       title: 'Adoption',
-      description:
-        'Onboarding flows, in-product guidance, and user-facing systems that help technical products explain themselves.',
     },
     {
       label: '02',
       title: 'Leverage',
-      description:
-        'Internal tooling, CI/CD automation, SEO improvements, and platform work that make teams faster and systems easier to run.',
     },
     {
       label: '03',
       title: 'Readiness',
-      description:
-        'Operational training systems, incident-response readiness, and public cybersecurity work shaped by real constraints and measurable performance.',
-    },
-  ],
-  processSteps: [
-    {
-      label: '01',
-      title: 'Identify the friction',
-      description:
-        'Start with the real blocker: where users drop off, where operators slow down, or where teams are relying on manual workarounds.',
-      detail:
-        'The first pass is diagnostic. Metrics, workflow pain, and operational context shape what gets built next.',
-    },
-    {
-      label: '02',
-      title: 'Design the self-serve path',
-      description:
-        'Turn that friction into a clearer system: onboarding flows, better docs, safer defaults, or tools that let people move without constant support.',
-      detail:
-        'The goal is not extra surface area. It is a path that makes the right next step obvious.',
-    },
-    {
-      label: '03',
-      title: 'Harden reliability',
-      description:
-        'Once the path is clear, make it dependable with better tooling, testing, automation, or architecture.',
-      detail:
-        'This is where CI/CD, observability, scalable prototypes, and repeatable drills matter most.',
-    },
-    {
-      label: '04',
-      title: 'Ship the measurable result',
-      description:
-        'The final pass is outcome-driven: adoption, training speed, readiness, traffic, or time saved per release.',
-      detail:
-        'A polished interface matters, but the result needs numbers, operator feedback, or team leverage behind it.',
-    },
-  ],
-  signalPanels: [
-    {
-      id: 'product-systems',
-      label: 'Adoption',
-      title: 'Self-serve experiences that reduce support load.',
-      summary:
-        'The strongest product work in the resume is about entry points: how users onboard, how they discover features, and how the product teaches itself.',
-      bullets: [
-        'Guided onboarding and in-product user guidance at MetaLearner',
-        'Prompt-writing support and structured guide categories for self-serve adoption',
-        'Interactive charting and exploratory tooling designed for real product usage',
-      ],
-      footer:
-        'The product layer matters most when it removes friction without adding noise.',
-    },
-    {
-      id: 'full-stack-delivery',
-      label: 'Leverage',
-      title: 'Tooling, automation, and platform work that scales teams.',
-      summary:
-        'Behind the visible interface work is a systems layer: internal tooling, SEO, testing pipelines, and architecture prototypes that improve leverage for teams.',
-      bullets: [
-        'TypeScript CLI tooling for micro frontend deployment flows at GovTech',
-        'Cypress integrated into existing Amplify and GitLab CI/CD workflows',
-        'FastAPI, WebSockets, Redis pub/sub, PostgreSQL, JWT, and Docker Compose for real-time architecture exploration',
-      ],
-      footer:
-        'The connective tissue is often the highest-leverage part of the build.',
-    },
-    {
-      id: 'cyber-operations',
-      label: 'Readiness',
-      title: 'Operational training systems shaped by real constraints.',
-      summary:
-        'The cyber work centers on readiness, drills, and operator confidence: systems that are judged by how well teams perform under pressure.',
-      bullets: [
-        'Automated fault injection across a computer cluster for more realistic training',
-        'Training plans and drills for 40+ operators with TCIRT and TSOT protocols',
-        'A public OSINT game that turned cybersecurity awareness into an accessible interactive experience',
-      ],
-      footer:
-        'Operational credibility comes from readiness, not just presentation.',
     },
   ],
 }

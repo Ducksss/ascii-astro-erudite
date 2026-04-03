@@ -1,12 +1,6 @@
 ---
 import Link from '@/components/link.astro'
 import { FOOTER } from '@/consts'
-
-interface Props {
-  variant?: 'default' | 'landing' | 'immersive'
-}
-
-const { variant: _variant = 'default' } = Astro.props
 const isExternalLink = (href: string) =>
   href.startsWith('http://') ||
   href.startsWith('https://') ||

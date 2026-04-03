@@ -72,7 +72,8 @@ following order:
 | `VERCEL_PROJECT_PRODUCTION_URL` | Automatic on Vercel | Keeps preview deployments pointed at the production domain for SEO-safe metadata |
 | `VERCEL_URL` | Automatic on Vercel | Last-resort fallback |
 
-If none of these are set, the site falls back to `https://example.com`.
+For `npm run dev`, the site falls back to `http://localhost:1234`. Production
+builds intentionally fail fast if no site URL is configured.
 
 ## Available Scripts
 

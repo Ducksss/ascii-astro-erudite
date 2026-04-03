@@ -98,23 +98,6 @@ export type LandingLink = {
 export type LandingCapability = {
   label: string
   title: string
-  description: string
-}
-
-export type LandingProcessStep = {
-  label: string
-  title: string
-  description: string
-  detail: string
-}
-
-export type LandingSignalPanel = {
-  id: string
-  label: string
-  title: string
-  summary: string
-  bullets: string[]
-  footer: string
 }
 
 export type FooterContent = {
@@ -137,19 +120,9 @@ export type LandingContent = {
   manifesto: string
   featuredWorkTitle: string
   featuredWorkIntro: string
-  processTitle: string
-  processIntro: string
-  signalConsoleTitle: string
-  signalConsoleIntro: string
   archiveTitle: string
   archiveIntro: string
-  finalTitle: string
-  finalDescription: string
   primaryLink: LandingLink
   secondaryLink: LandingLink
-  closingLinks: LandingLink[]
-  marqueeLines: string[]
   capabilityLines: LandingCapability[]
-  processSteps: LandingProcessStep[]
-  signalPanels: LandingSignalPanel[]
 }
