@@ -5,9 +5,16 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+.vercel/
 .env
-.env.production
+.env.*
+!.env.example
 .DS_Store
 .idea/
 teaser.pptx
 ~$teaser.pptx
+.playwright-cli/
+playwright-report/
+test-results/
+.scripts/
+.reports/

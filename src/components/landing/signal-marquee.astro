@@ -1,0 +1,71 @@
+---
+interface Props {
+  lines: string[]
+}
+
+const { lines } = Astro.props
+---
+
+<section class="border-y border-white/10 bg-black/80 py-3">
+  <div class="landing-marquee-shell">
+    <div class="landing-marquee-track">
+      {
+        [...lines, ...lines].map((line, index) => (
+          <span class="landing-marquee-item">
+            <span>{line}</span>
+            {index < [...lines, ...lines].length - 1 && (
+              <span class="landing-marquee-separator">/</span>
+            )}
+          </span>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .landing-marquee-shell {
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .landing-marquee-track {
+    display: inline-flex;
+    min-width: max-content;
+    align-items: center;
+    gap: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45);
+    animation: landing-marquee-scroll 28s linear infinite;
+    will-change: transform;
+  }
+
+  .landing-marquee-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .landing-marquee-separator {
+    color: rgba(255, 255, 255, 0.2);
+  }
+
+  @keyframes landing-marquee-scroll {
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .landing-marquee-track {
+      animation: none;
+    }
+  }
+</style>

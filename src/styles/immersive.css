@@ -1,0 +1,694 @@
+@reference './global.css';
+
+@layer base {
+  body[data-route-shell='landing'],
+  body[data-route-shell='immersive'] {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --primary: oklch(0.922 0 0);
+    --primary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(1 0 0 / 10%);
+    --ring: oklch(0.556 0 0);
+    color-scheme: dark;
+    background-color: #050505;
+  }
+}
+
+.site-shell--landing,
+.site-shell--immersive,
+.landing-shell {
+  overflow-x: clip;
+}
+
+.site-main-shell {
+  position: relative;
+  z-index: 2;
+}
+
+.landing-kicker,
+.landing-section-label,
+.immersive-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.44);
+}
+
+.landing-section-title {
+  font-size: clamp(2.2rem, 4vw, 4.5rem);
+  line-height: 0.96;
+  letter-spacing: -0.07em;
+  font-weight: 600;
+  color: white;
+  text-wrap: balance;
+}
+
+.landing-wordmark span,
+.landing-kicker,
+.landing-manifesto,
+.landing-terminal,
+.landing-lane,
+.landing-pill-link,
+.immersive-animate-in {
+  animation: landing-rise 0.8s cubic-bezier(0.21, 1, 0.32, 1) both;
+}
+
+.landing-wordmark span:nth-child(2) {
+  animation-delay: 0.08s;
+}
+
+.landing-wordmark span:nth-child(3) {
+  animation-delay: 0.16s;
+}
+
+.landing-manifesto {
+  animation-delay: 0.18s;
+}
+
+.landing-terminal {
+  animation-delay: 0.24s;
+}
+
+.landing-dot-mass {
+  opacity: 0.42;
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.26) 1px,
+    transparent 1.5px
+  );
+  background-size: 12px 12px;
+  mask-image: radial-gradient(circle at center, black 0, transparent 72%);
+}
+
+.landing-dot-mass--reverse {
+  opacity: 0.34;
+  background-size: 14px 14px;
+  transform: scaleX(-1);
+}
+
+.landing-grain {
+  opacity: 0.16;
+  background-image:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(255, 255, 255, 0.16) 0,
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 80% 0%,
+      rgba(255, 255, 255, 0.08) 0,
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 40% 70%,
+      rgba(255, 255, 255, 0.08) 0,
+      transparent 28%
+    );
+  mix-blend-mode: screen;
+}
+
+.landing-button {
+  position: relative;
+  display: flex;
+  min-width: min(100%, 22rem);
+  flex-direction: column;
+  gap: 0.55rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.08),
+      rgba(255, 255, 255, 0.02)
+    ),
+    rgba(255, 255, 255, 0.03);
+  padding: 1rem 1.1rem;
+  color: white;
+  backdrop-filter: blur(8px);
+}
+
+.landing-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.12) 35%,
+    transparent 70%
+  );
+  transform: translateX(-115%);
+  transition: transform 0.6s ease;
+}
+
+.landing-button:hover::before {
+  transform: translateX(100%);
+}
+
+.landing-button span {
+  position: relative;
+  z-index: 1;
+}
+
+.landing-button > span:first-child {
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.landing-button--ghost {
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.landing-terminal,
+.immersive-panel,
+.immersive-prose-shell {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.05),
+      rgba(255, 255, 255, 0.015)
+    ),
+    rgba(0, 0, 0, 0.62);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 24px 90px rgba(0, 0, 0, 0.42);
+}
+
+.landing-terminal::after,
+.immersive-prose-shell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 13px,
+    rgba(255, 255, 255, 0.05) 14px
+  );
+  background-size: 100% 14px;
+  opacity: 0.18;
+  pointer-events: none;
+  animation: landing-scan 12s linear infinite;
+}
+
+.landing-terminal-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.85rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.46);
+}
+
+.landing-lane {
+  transition:
+    background-color 0.3s ease,
+    transform 0.3s ease;
+}
+
+.landing-lane:hover {
+  background: rgba(255, 255, 255, 0.02);
+  transform: translateY(-2px);
+}
+
+.landing-pill-link {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.85rem 1rem;
+  color: rgba(255, 255, 255, 0.56);
+  transition:
+    color 0.3s ease,
+    border-color 0.3s ease,
+    transform 0.3s ease,
+    background-color 0.3s ease;
+}
+
+.landing-pill-link:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.03);
+  color: white;
+}
+
+.immersive-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.immersive-shell__canvas,
+.immersive-shell__noise,
+.immersive-shell__scan,
+.immersive-shell__glow,
+.immersive-shell__dots {
+  position: absolute;
+  inset: 0;
+}
+
+.immersive-shell__noise {
+  opacity: 0.16;
+  background-image:
+    radial-gradient(
+      circle at 20% 15%,
+      rgba(255, 255, 255, 0.09),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 80% 12%,
+      rgba(255, 255, 255, 0.08),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 55% 78%,
+      rgba(255, 255, 255, 0.08),
+      transparent 32%
+    );
+  mix-blend-mode: screen;
+}
+
+.immersive-shell__scan {
+  opacity: 0.26;
+  background-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 11px,
+    rgba(255, 255, 255, 0.04) 12px
+  );
+  background-size: 100% 12px;
+}
+
+.immersive-shell__glow {
+  inset: auto;
+  width: 34rem;
+  height: 34rem;
+  filter: blur(28px);
+  opacity: 0.18;
+}
+
+.immersive-shell__glow--left {
+  top: -9rem;
+  left: -10rem;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.18),
+    transparent 68%
+  );
+}
+
+.immersive-shell__glow--right {
+  right: -12rem;
+  bottom: -12rem;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.12),
+    transparent 70%
+  );
+}
+
+.immersive-shell__dots {
+  opacity: 0.18;
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.24) 1px,
+    transparent 1.5px
+  );
+  background-size: 13px 13px;
+  mask-image: radial-gradient(circle at center, black 0, transparent 72%);
+}
+
+.immersive-shell__dots--top {
+  top: -12rem;
+  left: 56%;
+  width: 42rem;
+  height: 42rem;
+}
+
+.immersive-shell__dots--bottom {
+  right: -10rem;
+  bottom: -16rem;
+  width: 36rem;
+  height: 36rem;
+}
+
+.immersive-panel,
+.immersive-prose-shell {
+  position: relative;
+  overflow: hidden;
+}
+
+.immersive-panel {
+  padding: 1.25rem;
+}
+
+.immersive-copy {
+  color: rgba(255, 255, 255, 0.66);
+}
+
+.immersive-copy p + p {
+  margin-top: 1rem;
+}
+
+.immersive-rule-list {
+  display: grid;
+}
+
+.immersive-rule-list > * {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.9rem 0;
+}
+
+.immersive-rule-list > *:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.immersive-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.55rem 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.immersive-chip--solid {
+  background: rgba(255, 255, 255, 0.04);
+  color: white;
+}
+
+.immersive-row-arrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.34);
+  transition: transform 0.3s ease;
+}
+
+.immersive-breadcrumb [data-slot='breadcrumb-list'] {
+  gap: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.44);
+}
+
+.immersive-breadcrumb [data-slot='breadcrumb-link'] {
+  color: rgba(255, 255, 255, 0.52);
+}
+
+.immersive-breadcrumb [data-slot='breadcrumb-link']:hover {
+  color: white;
+}
+
+.immersive-breadcrumb [data-slot='breadcrumb-page'] {
+  color: white;
+}
+
+.immersive-breadcrumb [data-slot='breadcrumb-separator'] {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.immersive-prose-shell {
+  padding: clamp(1.25rem, 2vw, 2.4rem);
+}
+
+body[data-route-shell='immersive'] .prose {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  line-height: 1.85;
+}
+
+body[data-route-shell='immersive']
+  .prose
+  :where(p):not(:where(.not-prose, .not-prose *)) {
+  color: rgba(255, 255, 255, 0.74);
+}
+
+body[data-route-shell='immersive']
+  .prose
+  :where(h1, h2, h3, h4, h5, h6):not(:where(.not-prose, .not-prose *)) {
+  color: white;
+}
+
+body[data-route-shell='immersive']
+  .prose
+  :where(a):not(:where(.not-prose, .not-prose *)) {
+  color: white;
+  text-decoration-color: rgba(255, 255, 255, 0.24);
+}
+
+body[data-route-shell='immersive']
+  .prose
+  :where(strong):not(:where(.not-prose, .not-prose *)) {
+  color: white;
+}
+
+body[data-route-shell='immersive']
+  .prose
+  :where(blockquote):not(:where(.not-prose, .not-prose *)) {
+  border-left-color: rgba(255, 255, 255, 0.22);
+}
+
+body[data-route-shell='immersive']
+  .prose
+  :where(code):not(:where(.not-prose, .not-prose *)),
+body[data-route-shell='immersive']
+  .prose
+  :where(.shiki):not(:where(pre *, .not-prose, .not-prose *)) {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+body[data-route-shell='immersive']
+  .prose
+  :where(hr):not(:where(.not-prose, .not-prose *)),
+body[data-route-shell='immersive']
+  .prose
+  :where(tr):not(:where(.not-prose, .not-prose *)),
+body[data-route-shell='immersive']
+  .prose
+  :where(thead):not(:where(.not-prose, .not-prose *)) {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+body[data-route-shell='immersive'] #mobile-toc-container,
+body[data-route-shell='immersive'] #mobile-subposts-container {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.62);
+  backdrop-filter: blur(18px);
+}
+
+body[data-route-shell='immersive'] #mobile-toc-container summary,
+body[data-route-shell='immersive'] #mobile-subposts-container summary {
+  color: rgba(255, 255, 255, 0.66);
+}
+
+body[data-route-shell='immersive']
+  #toc-sidebar-container
+  [data-toc-scroll-area],
+body[data-route-shell='immersive']
+  #subposts-sidebar-container
+  [data-subposts-sidebar-scroll] {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.04),
+      rgba(255, 255, 255, 0.015)
+    ),
+    rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+body[data-route-shell='immersive'] #toc-sidebar-container [data-heading-link],
+body[data-route-shell='immersive']
+  #subposts-sidebar-container
+  .subposts-sidebar-link,
+body[data-route-shell='immersive']
+  #mobile-subposts-container
+  .mobile-subposts-link {
+  transition:
+    color 0.3s ease,
+    background-color 0.3s ease,
+    transform 0.3s ease;
+}
+
+body[data-route-shell='immersive']
+  #toc-sidebar-container
+  [data-heading-link]:hover,
+body[data-route-shell='immersive']
+  #subposts-sidebar-container
+  .subposts-sidebar-link:hover,
+body[data-route-shell='immersive']
+  #mobile-subposts-container
+  .mobile-subposts-link:hover {
+  transform: translateX(4px);
+}
+
+html[data-route-shell='landing']::before,
+html[data-route-shell='landing']::after,
+html[data-route-shell='immersive']::before,
+html[data-route-shell='immersive']::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+html[data-route-shell='landing']::before,
+html[data-route-shell='immersive']::before {
+  background: rgba(0, 0, 0, 0.58);
+}
+
+html[data-route-shell='landing']::after,
+html[data-route-shell='immersive']::after {
+  background-image:
+    linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 11px,
+      rgba(255, 255, 255, 0.045) 12px
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(255, 255, 255, 0.08) 1px,
+      transparent 1.6px
+    );
+  background-size:
+    100% 12px,
+    12px 12px;
+  mix-blend-mode: screen;
+}
+
+html[data-route-shell='landing'][data-route-transition='true']::before,
+html[data-route-shell='landing'][data-route-transition='true']::after,
+html[data-route-shell='immersive'][data-route-transition='true']::before,
+html[data-route-shell='immersive'][data-route-transition='true']::after {
+  opacity: 1;
+}
+
+::view-transition-group(root) {
+  animation-duration: 0.62s;
+  animation-timing-function: cubic-bezier(0.21, 1, 0.32, 1);
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.62s;
+  animation-fill-mode: both;
+}
+
+::view-transition-old(root) {
+  animation-name: immersive-route-out;
+}
+
+::view-transition-new(root) {
+  animation-name: immersive-route-in;
+}
+
+@keyframes landing-rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes landing-scan {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(14px);
+  }
+}
+
+@keyframes immersive-route-out {
+  from {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(20px);
+  }
+}
+
+@keyframes immersive-route-in {
+  from {
+    opacity: 0;
+    filter: blur(16px);
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-wordmark span,
+  .landing-kicker,
+  .landing-manifesto,
+  .landing-terminal,
+  .landing-lane,
+  .landing-pill-link,
+  .immersive-animate-in {
+    animation: none;
+  }
+
+  .landing-terminal::after,
+  .landing-button::before,
+  .immersive-prose-shell::after {
+    animation: none;
+    transition: none;
+  }
+
+  .landing-lane:hover,
+  .landing-pill-link:hover {
+    transform: none;
+  }
+
+  html[data-route-shell='landing']::before,
+  html[data-route-shell='landing']::after,
+  html[data-route-shell='immersive']::before,
+  html[data-route-shell='immersive']::after {
+    transition: none;
+  }
+
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.01ms;
+  }
+}

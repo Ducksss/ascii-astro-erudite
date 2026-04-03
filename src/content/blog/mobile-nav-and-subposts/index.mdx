@@ -4,7 +4,7 @@ description: 'This new version introduces improved mobile navigation (via sticky
 date: 2025-05-21
 tags: ['v1.6.0']
 image: './banner.png'
-authors: ['enscribe']
+authors: ['chai-pin-zheng']
 ---
 
 ## Two major improvements to the reading experience
@@ -34,7 +34,7 @@ This gives users the same level of navigation control as if they were on desktop
 
 ### Subposts for hierarchical content organization
 
-The second major feature is something I'm calling "subposts," a way to organize related content in a parent-child hierarchy within your blog. This concept came from when I was writing [this](https://enscribe.dev/blog/japan-retrospective) travel blog post on my personal site, where I essentially wanted a "subpost" for each day of the trip since it was way too long to fit into a single post.
+The second major feature is something I'm calling "subposts," a way to organize related content in a parent-child hierarchy within your blog. This concept came from when I was writing a long travel retrospective on a personal site, where I essentially wanted a "subpost" for each day of the trip since it was way too long to fit into a single post.
 
 Instead of creating separate blog posts in a "series" (and thus clogging up your blog post listings with a bunch of smaller, tangentially-related posts), you can now automatically establish a parent-child relationship between posts by creating a folder for your main topic with an `index.mdx` file as your parent post, then adding additional `.mdx` files in the same folder as subposts. For example, this very post demonstrates the feature by containing two subposts that explore the technical implementation details of each feature. On desktop, we display a `<SubpostsSidebar>{:tsx}` component on the right-hand side of the page that shows a list of all the subposts alongside the parent post:
 

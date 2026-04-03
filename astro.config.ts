@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config'
+import { loadEnv } from 'vite'
 
 import mdx from '@astrojs/mdx'
 import react from '@astrojs/react'
@@ -18,12 +19,16 @@ import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers'
 import type { ExpressiveCodeTheme } from 'rehype-expressive-code'
 
 import tailwindcss from '@tailwindcss/vite'
+import { resolveSiteUrl } from './src/lib/site-config'
+
+const siteEnv = loadEnv(process.env.NODE_ENV ?? 'development', process.cwd(), '')
 
 export default defineConfig({
-  site: 'https://astro-erudite.vercel.app',
+  site: resolveSiteUrl(siteEnv),
   integrations: [mdx(), react(), sitemap(), icon()],
   vite: {
-    plugins: [tailwindcss()],
+    // Astro and the Tailwind Vite plugin can resolve slightly different Vite types.
+    plugins: [tailwindcss() as any],
   },
   server: {
     port: 1234,

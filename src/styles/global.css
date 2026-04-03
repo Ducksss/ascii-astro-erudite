@@ -74,4 +74,47 @@
   ::file-selector-button {
     @apply border-border outline-ring/50 tracking-tight;
   }
+
+  a,
+  button,
+  [role='button'],
+  [tabindex]:not([tabindex='-1']) {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.14);
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+  }
+
+  main:focus-visible {
+    outline: none;
+  }
+}
+
+.skip-link {
+  position: fixed;
+  top: 0.85rem;
+  left: 1rem;
+  z-index: 80;
+  transform: translateY(-180%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(5, 5, 5, 0.92);
+  padding: 0.75rem 0.95rem;
+  color: white;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  transition:
+    transform 0.24s ease,
+    border-color 0.24s ease;
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+  border-color: rgba(255, 255, 255, 0.34);
+  outline: 2px solid rgba(255, 255, 255, 0.72);
+  outline-offset: 3px;
 }

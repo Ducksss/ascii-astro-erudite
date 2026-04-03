@@ -1,19 +1,22 @@
 ---
 import Link from '@/components/link.astro'
 import AvatarComponent from '@/components/ui/avatar'
+import { ICON_MAP } from '@/consts'
 import { cn } from '@/lib/utils'
 import type { SocialLink } from '@/types'
+import { Icon } from 'astro-icon/components'
 import type { CollectionEntry } from 'astro:content'
-import SocialIcons from './social-icons.astro'
 
 interface Props {
   author: CollectionEntry<'authors'>
+  variant?: 'default' | 'immersive'
 }
 
-const { author } = Astro.props
+const { author, variant = 'default' } = Astro.props
 const { name, avatar, bio, pronouns } = author.data
 const currentPath = Astro.url.pathname
 const isAuthorPage = currentPath === `/authors/${author.id}`
+const isImmersive = variant === 'immersive'
 
 const socialLinks: SocialLink[] = [
   author.data.website && { href: author.data.website, label: 'Website' },
@@ -24,39 +27,139 @@ const socialLinks: SocialLink[] = [
 ].filter(Boolean) as SocialLink[]
 ---
 
-<div
-  class="has-[a:hover]:bg-muted/50 overflow-hidden rounded-xl border p-4 transition-colors duration-300 ease-in-out"
->
-  <div class="flex flex-wrap gap-4">
-    <Link
-      href={`/authors/${author.id}`}
-      class={cn('block', isAuthorPage && 'pointer-events-none')}
-    >
-      <AvatarComponent
-        client:load
-        src={avatar}
-        alt={`Avatar of ${name}`}
-        fallback={name[0]}
-        className={cn(
-          'size-32 rounded-md *:data-[slot="avatar-fallback"]:rounded-md',
-          !isAuthorPage &&
-            'hover:ring-primary transition-shadow duration-300 hover:cursor-pointer hover:ring-2',
-        )}
-      />
-    </Link>
-    <div class="flex grow flex-col justify-between gap-y-4">
-      <div>
-        <div class="flex flex-wrap items-center gap-x-2">
-          <h3 class="text-lg font-medium">{name}</h3>
-          {
-            pronouns && (
-              <span class="text-muted-foreground text-sm">({pronouns})</span>
-            )
-          }
+{
+  isImmersive ? (
+    <article class="border-t border-white/10 py-6 first:border-t-0 sm:py-8">
+      <div class="grid gap-6 lg:grid-cols-[7rem_minmax(0,1fr)_auto] lg:items-start lg:gap-8">
+        <Link
+          href={`/authors/${author.id}`}
+          class={cn('block', isAuthorPage && 'pointer-events-none')}
+        >
+          <AvatarComponent
+            client:load
+            src={avatar}
+            alt={`Avatar of ${name}`}
+            fallback={name[0]}
+            className={cn(
+              'size-24 rounded-2xl border border-white/10 object-cover *:data-[slot="avatar-fallback"]:rounded-2xl *:data-[slot="avatar-fallback"]:bg-white/[0.06] sm:size-28',
+              !isAuthorPage &&
+                'transition-transform duration-300 hover:-translate-y-1',
+            )}
+          />
+        </Link>
+
+        <div class="space-y-5">
+          <div class="space-y-3">
+            <p class="font-mono text-[0.68rem] tracking-[0.28em] text-white/38 uppercase">
+              Author
+            </p>
+            <div class="flex flex-wrap items-center gap-3">
+              <h3 class="text-[1.7rem] leading-none font-medium tracking-[-0.05em] text-white sm:text-[2rem]">
+                {isAuthorPage ? (
+                  name
+                ) : (
+                  <Link
+                    href={`/authors/${author.id}`}
+                    class="text-white hover:text-white/78"
+                  >
+                    {name}
+                  </Link>
+                )}
+              </h3>
+              {pronouns && (
+                <span class="text-sm text-white/42">{pronouns}</span>
+              )}
+            </div>
+            {bio && (
+              <p class="max-w-2xl text-base leading-7 text-white/58">{bio}</p>
+            )}
+          </div>
+
+          {socialLinks.length > 0 && (
+            <div class="flex flex-wrap gap-2">
+              {socialLinks.map(({ href, label }) => (
+                <Link href={href} external class="immersive-chip">
+                  <Icon
+                    name={
+                      ICON_MAP[label as keyof typeof ICON_MAP] ||
+                      'lucide:message-circle-question'
+                    }
+                    class="size-3"
+                  />
+                  {label}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
-        <p class="text-muted-foreground text-sm">{bio}</p>
+
+        <div class="flex items-start justify-start lg:justify-end">
+          {isAuthorPage ? (
+            <span class="immersive-row-arrow">profile</span>
+          ) : (
+            <Link
+              href={`/authors/${author.id}`}
+              class="immersive-chip immersive-chip--solid"
+            >
+              Open profile
+            </Link>
+          )}
+        </div>
       </div>
-      <SocialIcons links={socialLinks} />
+    </article>
+  ) : (
+    <div class="has-[a:hover]:bg-muted/50 overflow-hidden rounded-xl border p-4 transition-colors duration-300 ease-in-out">
+      <div class="flex flex-wrap gap-4">
+        <Link
+          href={`/authors/${author.id}`}
+          class={cn('block', isAuthorPage && 'pointer-events-none')}
+        >
+          <AvatarComponent
+            client:load
+            src={avatar}
+            alt={`Avatar of ${name}`}
+            fallback={name[0]}
+            className={cn(
+              'size-32 rounded-md *:data-[slot="avatar-fallback"]:rounded-md',
+              !isAuthorPage &&
+                'hover:ring-primary transition-shadow duration-300 hover:cursor-pointer hover:ring-2',
+            )}
+          />
+        </Link>
+        <div class="flex grow flex-col justify-between gap-y-4">
+          <div>
+            <div class="flex flex-wrap items-center gap-x-2">
+              <h3 class="text-lg font-medium">{name}</h3>
+              {pronouns && (
+                <span class="text-muted-foreground text-sm">({pronouns})</span>
+              )}
+            </div>
+            <p class="text-muted-foreground text-sm">{bio}</p>
+          </div>
+
+          <ul class="flex flex-wrap gap-2" role="list">
+            {socialLinks.map(({ href, label }) => (
+              <li>
+                <Link
+                  href={href}
+                  aria-label={label}
+                  title={label}
+                  class="border-border bg-background hover:bg-muted hover:text-foreground inline-flex size-9 items-center justify-center rounded-md border transition-colors"
+                  external
+                >
+                  <Icon
+                    name={
+                      ICON_MAP[label as keyof typeof ICON_MAP] ||
+                      'lucide:message-circle-question'
+                    }
+                    class="size-4"
+                  />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
+  )
+}

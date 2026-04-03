@@ -1,33 +1,118 @@
 ---
-import Breadcrumbs from '@/components/breadcrumbs.astro'
+import ImmersivePageIntro from '@/components/immersive-page-intro.astro'
 import Link from '@/components/link.astro'
 import PageHead from '@/components/page-head.astro'
-import { badgeVariants } from '@/components/ui/badge'
 import Layout from '@/layouts/layout.astro'
-import { getSortedTags } from '@/lib/data-utils'
+import { getAllPosts, getSortedTags } from '@/lib/data-utils'
 import { Icon } from 'astro-icon/components'
 
+const taggedPosts = await getAllPosts()
 const sortedTags = await getSortedTags()
+const totalTaggedPosts = taggedPosts.filter((post) => post.data.tags?.length).length
+const topTag = sortedTags[0]
 ---
 
-<Layout class="max-w-3xl">
-  <PageHead slot="head" title="Tags" />
-  <Breadcrumbs items={[{ label: 'Tags', icon: 'lucide:tags' }]} />
+<Layout variant="immersive">
+  <PageHead
+    slot="head"
+    title="Tags"
+    description="Archive categories rendered as part of the same immersive editorial surface."
+  />
 
-  <div class="flex flex-col gap-4">
-    <div class="flex flex-wrap gap-2">
-      {
-        sortedTags.map(({ tag, count }) => (
-          <Link
-            href={`/tags/${tag}`}
-            class={badgeVariants({ variant: 'muted' })}
+  <ImmersivePageIntro
+    items={[{ label: 'Tags', icon: 'lucide:tags' }]}
+    label="Tags"
+    title="Archive categories now carry the same editorial weight as the writing."
+    description="Instead of a badge cloud, the taxonomy reads like a browsable directory with room for hierarchy, count, and density."
+  >
+    <div slot="aside">
+      <p class="immersive-eyebrow">Taxonomy status</p>
+      <div
+        class="mt-6 grid grid-cols-3 gap-px border border-white/10 bg-white/[0.03]"
+      >
+        <div class="p-4">
+          <p
+            class="text-2xl leading-none font-semibold tracking-[-0.06em] text-white"
           >
-            <Icon name="lucide:hash" class="size-3" />
-            {tag}
-            <span class="text-muted-foreground ml-1.5">({count})</span>
-          </Link>
-        ))
+            {String(sortedTags.length).padStart(2, '0')}
+          </p>
+          <p
+            class="mt-2 font-mono text-[0.66rem] tracking-[0.24em] text-white/38 uppercase"
+          >
+            Active tags
+          </p>
+        </div>
+        <div class="border-x border-white/10 p-4">
+          <p
+            class="text-2xl leading-none font-semibold tracking-[-0.06em] text-white"
+          >
+            {String(totalTaggedPosts).padStart(2, '0')}
+          </p>
+          <p
+            class="mt-2 font-mono text-[0.66rem] tracking-[0.24em] text-white/38 uppercase"
+          >
+            Tagged notes
+          </p>
+        </div>
+        <div class="p-4">
+          <p
+            class="text-2xl leading-none font-semibold tracking-[-0.06em] text-white"
+          >
+            {topTag ? topTag.tag : '--'}
+          </p>
+          <p
+            class="mt-2 font-mono text-[0.66rem] tracking-[0.24em] text-white/38 uppercase"
+          >
+            Densest tag
+          </p>
+        </div>
+      </div>
+    </div>
+  </ImmersivePageIntro>
+
+  <section class="border-b border-white/10">
+    <div class="mx-auto max-w-[1400px] px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
+      {
+        sortedTags.length > 0 ? (
+          <div class="flex flex-col">
+            {sortedTags.map(({ tag, count }) => (
+              <Link
+                href={`/tags/${tag}`}
+                class="group block border-t border-white/10 py-6 first:border-t-0 sm:py-7"
+              >
+                <div class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-center sm:gap-6">
+                  <div class="min-w-0">
+                    <p class="font-mono text-[0.68rem] tracking-[0.28em] text-white/36 uppercase">
+                      Archive tag
+                    </p>
+                    <h2 class="mt-3 flex items-center gap-3 text-[1.65rem] leading-none font-medium tracking-[-0.05em] text-white sm:text-[1.9rem]">
+                      <Icon
+                        name="lucide:hash"
+                        class="size-4 shrink-0 text-white/36"
+                      />
+                      <span class="truncate">{tag}</span>
+                    </h2>
+                  </div>
+                  <p class="font-mono text-[0.68rem] tracking-[0.24em] text-white/42 uppercase">
+                    {String(count).padStart(2, '0')} posts
+                  </p>
+                  <div class="immersive-row-arrow group-hover:translate-x-2">
+                    open
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div class="immersive-panel p-6 sm:p-8">
+            <p class="landing-section-label">No tags yet</p>
+            <p class="immersive-copy mt-4 max-w-xl text-base leading-7">
+              Publish tagged notes and the taxonomy directory will populate here
+              automatically.
+            </p>
+          </div>
+        )
       }
     </div>
-  </div>
+  </section>
 </Layout>

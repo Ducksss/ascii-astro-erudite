@@ -6,15 +6,25 @@ interface Props {
   external?: boolean
   class?: string
   underline?: boolean
+  rel?: string
   [key: string]: any
 }
 
-const { href, external, class: className, underline, ...rest } = Astro.props
+const {
+  href,
+  external,
+  class: className,
+  underline,
+  rel,
+  ...rest
+} = Astro.props
+const resolvedRel = external ? (rel ?? 'noopener noreferrer') : rel
 ---
 
 <a
   href={href}
   target={external ? '_blank' : '_self'}
+  rel={resolvedRel}
   class={cn(
     'inline-block transition-colors duration-300 ease-in-out',
     underline &&

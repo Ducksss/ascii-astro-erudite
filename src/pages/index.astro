@@ -1,85 +1,193 @@
 ---
-import BlogCard from '@/components/blog-card.astro'
+import ArchiveProof from '@/components/landing/archive-proof.astro'
+import LandingAsciiField from '@/components/landing/ascii-field.astro'
+import FeaturedWork from '@/components/landing/featured-work.astro'
 import Link from '@/components/link.astro'
 import PageHead from '@/components/page-head.astro'
-import { buttonVariants } from '@/components/ui/button'
-import { SITE } from '@/consts'
+import { LANDING, PROFILE, SITE } from '@/consts'
 import Layout from '@/layouts/layout.astro'
-import { getRecentPosts } from '@/lib/data-utils'
+import {
+  getArchiveStats,
+  getFeaturedProjects,
+  getRecentPosts,
+} from '@/lib/data-utils'
 
-const blog = await getRecentPosts(SITE.featuredPostCount)
+const archivePosts = await getRecentPosts(
+  Math.max(SITE.featuredPostCount + 1, 4),
+)
+const featuredProjects = await getFeaturedProjects(3)
+const archiveStats = await getArchiveStats()
+const [featuredPost, ...supportingPosts] = archivePosts
+const [nameLineOne = 'Chai', nameLineTwo = 'Pin', nameLineThree = 'Zheng'] =
+  LANDING.name.split(' ')
+const heroPills = [
+  'Singapore-based engineer',
+  PROFILE.facts[1]?.value ?? 'NUS Computer Science',
+  'Product + cyber systems',
+]
+const consoleNotes = [
+  'Guided onboarding and in-product docs.',
+  'Full-stack tooling across CI/CD, SEO, and platform delivery.',
+  'Cyber training systems with readiness and awareness outcomes.',
+]
 ---
 
-<Layout class="max-w-3xl">
-  <PageHead slot="head" title="Home" />
-  <section class="rounded-lg border">
-    <div class="flex flex-col space-y-1.5 p-6">
-      <h3 class="text-3xl leading-none font-medium">er·u·dite</h3>
-      <p class="text-muted-foreground text-sm">
-        /ˈer(y)əˌdīt/ &bull; <span class="font-medium">adjective</span>
-      </p>
+<Layout variant="landing">
+  <PageHead slot="head" title={SITE.title} description={LANDING.description} />
+
+  <section
+    class="relative isolate min-h-[calc(100svh-4.6rem)] overflow-hidden border-b border-white/10 bg-[#050505]"
+  >
+    <LandingAsciiField class="opacity-[0.76]" />
+    <div
+      class="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black via-black/55 to-transparent"
+    >
     </div>
-    <div class="p-6 pt-0">
-      <p class="text-muted-foreground mb-2 text-sm">
-        astro-erudite is an opinionated, unstyled static blogging template built
-        with <Link
-          href="https://astro.build"
-          class="text-foreground"
-          external
-          underline>Astro</Link
-        >, <Link
-          href="https://tailwindcss.com"
-          class="text-foreground"
-          external
-          underline>Tailwind</Link
-        >, and <Link
-          href="https://ui.shadcn.com"
-          class="text-foreground"
-          external
-          underline>shadcn/ui</Link
-        >. Extraordinarily loosely based on the <Link
-          href="https://astro-micro.vercel.app/"
-          class="text-foreground"
-          external
-          underline>Astro Micro</Link
-        > theme.
-      </p>
-      <p class="text-muted-foreground text-sm">
-        To use this template, check out the <Link
-          href="https://github.com/jktrn/astro-erudite"
-          class="text-foreground"
-          underline
-          external>GitHub</Link
-        > repository. To learn more about why this template exists, read this blog
-        post: <Link
-          href="/blog/the-state-of-static-blogs"
-          class="text-foreground"
-          underline>The State of Static Blogs in 2024</Link
-        >.
-      </p>
+    <div
+      class="pointer-events-none absolute inset-0 [background-image:linear-gradient(to_bottom,transparent_0,transparent_11px,rgba(255,255,255,0.045)_12px)] [background-size:100%_12px] opacity-35"
+    >
     </div>
-  </section>
-  <section class="flex flex-col gap-y-4">
-    <h2 class="text-2xl font-medium">Latest posts</h2>
-    <ul class="flex flex-col gap-y-4">
-      {
-        blog.map((post) => (
-          <li>
-            <BlogCard entry={post} />
-          </li>
-        ))
-      }
-    </ul>
-    <div class="flex justify-center">
-      <Link
-        href="/blog"
-        class={buttonVariants({ variant: 'ghost' }) + ' group'}
-      >
-        See all posts <span
-          class="ml-1.5 transition-transform group-hover:translate-x-1"
-          >&rarr;</span
+    <div
+      class="landing-dot-mass absolute top-8 -left-24 h-[26rem] w-[26rem] sm:h-[34rem] sm:w-[34rem]"
+    >
+    </div>
+    <div
+      class="landing-dot-mass landing-dot-mass--reverse absolute -right-28 bottom-[-8rem] h-[28rem] w-[28rem] sm:h-[36rem] sm:w-[36rem]"
+    >
+    </div>
+    <div class="landing-grain pointer-events-none absolute inset-0"></div>
+
+    <div
+      class="mx-auto grid min-h-[calc(100svh-4.6rem)] max-w-[1400px] grid-cols-1 px-4 py-10 sm:px-6 sm:py-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)] lg:px-8 lg:py-16"
+    >
+      <div class="flex flex-col justify-between gap-10 lg:pr-10">
+        <div class="max-w-4xl" transition:name="page-intro">
+          <p class="landing-kicker">{LANDING.eyebrow}</p>
+          <h1
+            class="landing-wordmark mt-6 text-[clamp(4rem,14vw,12rem)] leading-[0.82] font-semibold tracking-[-0.09em] text-white uppercase"
+          >
+            <span class="block"> {nameLineOne}</span>
+            <!-- ml-[10vw] text-white/68 sm:ml-[18vw] lg:ml-[11vw] -->
+            <span class="block">{nameLineTwo}</span>
+            <span class="block">{nameLineThree}</span>
+          </h1>
+          <p
+            class="landing-manifesto mt-8 max-w-2xl text-base leading-7 text-balance text-white/68 sm:text-lg sm:leading-8"
+          >
+            {LANDING.manifesto}
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="flex flex-col gap-3 sm:flex-row">
+            <Link href={LANDING.primaryLink.href} class="landing-button group">
+              <span>{LANDING.primaryLink.label}</span>
+              <span
+                class="font-mono text-[0.7rem] tracking-[0.25em] text-white/42 uppercase transition-colors duration-300 group-hover:text-white/70"
+              >
+                {LANDING.primaryLink.note}
+              </span>
+            </Link>
+            <Link
+              href={LANDING.secondaryLink.href}
+              class="landing-button landing-button--ghost group"
+            >
+              <span>{LANDING.secondaryLink.label}</span>
+              <span
+                class="font-mono text-[0.7rem] tracking-[0.25em] text-white/38 uppercase transition-colors duration-300 group-hover:text-white/62"
+              >
+                {LANDING.secondaryLink.note}
+              </span>
+            </Link>
+          </div>
+
+          <div
+            class="flex flex-wrap items-center gap-3 text-[0.72rem] tracking-[0.26em] text-white/42 uppercase"
+          >
+            {
+              heroPills.map((pill) => (
+                <span class="rounded-full border border-white/12 px-3 py-1.5">
+                  {pill}
+                </span>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="hidden items-end justify-end lg:flex">
+        <div
+          class="landing-terminal relative w-full max-w-[32rem] overflow-hidden"
         >
-      </Link>
+          <div
+            class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.14),transparent_60%)] opacity-70"
+          >
+          </div>
+          <div class="landing-terminal-bar">
+            <span>Career surface</span>
+            <span>current remit</span>
+          </div>
+          <div class="relative space-y-6 p-6">
+            <div class="space-y-3">
+              <p
+                class="font-mono text-[0.68rem] tracking-[0.28em] text-white/42 uppercase"
+              >
+                active remit
+              </p>
+              <div class="space-y-2 text-sm text-white/75">
+                {consoleNotes.map((note) => <p>{note}</p>)}
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3 border-t border-white/10 pt-4">
+              {
+                LANDING.capabilityLines.map((capability) => (
+                  <div class="space-y-1">
+                    <p class="font-mono text-[0.66rem] tracking-[0.28em] text-white/35 uppercase">
+                      {capability.label}
+                    </p>
+                    <p class="text-lg leading-none font-medium text-white">
+                      {capability.title}
+                    </p>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-t border-white/10 bg-black/40">
+      <div
+        class="mx-auto grid max-w-[1400px] grid-cols-2 gap-px px-4 sm:grid-cols-4 sm:px-6 lg:px-8"
+      >
+        {
+          PROFILE.metrics.map((metric) => (
+            <div class="border-r border-white/10 py-5 last:border-r-0 sm:py-6">
+              <p class="text-[1.55rem] font-semibold tracking-[-0.06em] text-white">
+                {metric.value}
+              </p>
+              <p class="mt-1 font-mono text-[0.68rem] tracking-[0.28em] text-white/46 uppercase">
+                {metric.label}
+              </p>
+            </div>
+          ))
+        }
+      </div>
     </div>
   </section>
+
+  <FeaturedWork
+    title={LANDING.featuredWorkTitle}
+    intro={LANDING.featuredWorkIntro}
+    projects={featuredProjects}
+  />
+
+  <ArchiveProof
+    title={LANDING.archiveTitle}
+    intro={LANDING.archiveIntro}
+    featuredPost={featuredPost ?? null}
+    supportingPosts={supportingPosts.slice(0, SITE.featuredPostCount)}
+    stats={archiveStats}
+  />
 </Layout>

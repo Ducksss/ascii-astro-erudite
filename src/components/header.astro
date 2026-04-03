@@ -1,36 +1,82 @@
 ---
 import Link from '@/components/link.astro'
 import ThemeToggle from '@/components/theme-toggle.astro'
-import { NAV_LINKS, SITE } from '@/consts'
-import { Image } from 'astro:assets'
-import logo from '../../public/static/logo.svg'
+import { LANDING, NAV_LINKS, SITE } from '@/consts'
+
+interface Props {
+  variant?: 'default' | 'landing' | 'immersive'
+}
+
+const { variant = 'default' } = Astro.props
+const isLanding = variant === 'landing'
+const isImmersive = variant === 'immersive'
+const isAtmospheric = isLanding || isImmersive
 ---
 
-<div>
+<div class="site-header-shell">
   <div
-    class="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-3"
+    class:list={[
+      'mx-auto flex items-center justify-between gap-4 px-4 py-3',
+      isAtmospheric ? 'max-w-[1400px] sm:px-6 lg:px-8' : 'max-w-3xl',
+    ]}
   >
-    <Link href="/" class="flex shrink-0 items-center justify-center gap-3">
-      <Image src={logo} alt="Logo" class="size-5 sm:size-6" />
-      <span
-        class="hidden h-full text-lg leading-none font-medium min-[400px]:block"
-        >{SITE.title}</span
-      >
+    <Link
+      href="/"
+      transition:persist
+      transition:name="site-brand"
+      class:list={[
+        'flex shrink-0 items-center justify-center gap-3',
+        isAtmospheric ? 'text-white' : 'text-foreground',
+      ]}
+    >
+      {
+        isAtmospheric ? (
+          <>
+            <span class="inline-flex size-10 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] font-mono text-[0.64rem] tracking-[0.36em] text-white/88 uppercase">
+              {LANDING.monogram}
+            </span>
+            <span class="hidden h-full text-[0.7rem] leading-none font-medium tracking-[0.38em] text-white/58 uppercase min-[520px]:block">
+              {LANDING.name}
+            </span>
+          </>
+        ) : (
+          <>
+            <span class="border-border bg-muted text-foreground/86 inline-flex size-9 items-center justify-center rounded-full border font-mono text-[0.64rem] tracking-[0.28em] uppercase">
+              {LANDING.monogram}
+            </span>
+            <span class="hidden h-full text-lg leading-none font-medium min-[400px]:block">
+              {SITE.title}
+            </span>
+          </>
+        )
+      }
     </Link>
     <div class="flex items-center gap-4">
-      <nav class="flex items-center gap-4 text-sm sm:gap-6">
+      <nav
+        class:list={[
+          'flex items-center gap-2.5 sm:gap-6',
+          isAtmospheric
+            ? 'font-mono text-[0.62rem] tracking-[0.24em] text-white/60 uppercase min-[420px]:text-[0.68rem] min-[420px]:tracking-[0.28em]'
+            : 'text-sm',
+        ]}
+      >
         {
           NAV_LINKS.map((item) => (
             <Link
               href={item.href}
-              class="text-foreground/60 hover:text-foreground capitalize transition-colors"
+              class:list={[
+                'transition-colors',
+                isAtmospheric
+                  ? 'hover:text-white'
+                  : 'text-foreground/60 hover:text-foreground capitalize',
+              ]}
             >
               {item.label}
             </Link>
           ))
         }
       </nav>
-      <ThemeToggle transition:persist />
+      {!isAtmospheric && <ThemeToggle transition:persist />}
     </div>
   </div>
 </div>

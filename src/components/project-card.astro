@@ -8,63 +8,133 @@ import type { CollectionEntry } from 'astro:content'
 
 interface Props {
   project: CollectionEntry<'projects'>
+  variant?: 'default' | 'immersive'
 }
 
-const { project } = Astro.props
+const { project, variant = 'default' } = Astro.props
+const isImmersive = variant === 'immersive'
+const isExternalLink = /^https?:\/\//.test(project.data.link)
 ---
 
-<div
-  class="hover:bg-muted/50 rounded-xl border p-4 transition-colors duration-300 ease-in-out"
->
-  <Link
-    href={project.data.link}
-    class="flex flex-col gap-4 sm:flex-row"
-    external
-  >
-    {
-      project.data.image && (
-        <div class="w-full sm:max-w-3xs sm:shrink-0">
-          <Image
-            src={project.data.image}
-            alt={project.data.name}
-            width={1200}
-            height={630}
-            class="object-cover"
-          />
-        </div>
-      )
-    }
-    <div class="grow">
-      <h3 class="mb-1 text-lg font-medium">
-        {project.data.name}
-      </h3>
-      <p class="text-muted-foreground mb-2 text-sm">
-        {project.data.description}
-      </p>
-      {
-        project.data.startDate && (
-          <p class="text-muted-foreground/70 mb-2 flex items-center gap-x-1.5 text-xs">
-            <span class="flex items-center gap-x-1.5">
-              <Icon name="lucide:calendar" class="size-3" />
-              <span>
-                {formatDate(project.data.startDate)}
-                {project.data.endDate
-                  ? ` → ${formatDate(project.data.endDate)}`
-                  : ' → Present'}
-              </span>
-            </span>
-          </p>
-        )
-      }
-      {
-        project.data.tags && (
-          <div class="flex flex-wrap gap-2">
-            {project.data.tags.map((tag: string) => (
-              <Badge variant="muted">{tag}</Badge>
-            ))}
+{
+  isImmersive ? (
+    <article class="border-t border-white/10 first:border-t-0">
+      <Link
+        href={project.data.link}
+        class="group block px-0 py-8"
+        external={isExternalLink}
+      >
+        <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_16rem] lg:items-start">
+          <div class="space-y-4">
+            <div class="flex flex-wrap gap-3 font-mono text-[0.68rem] tracking-[0.24em] text-white/42 uppercase">
+              <span>{project.data.role ?? 'Project track'}</span>
+              <span>{project.data.status ?? 'In progress'}</span>
+            </div>
+
+            <div class="space-y-3">
+              <h3 class="text-[1.9rem] leading-none font-medium tracking-[-0.06em] text-white">
+                {project.data.name}
+              </h3>
+              <p class="max-w-3xl text-base leading-7 text-white/62">
+                {project.data.description}
+              </p>
+              {project.data.outcome && (
+                <p class="max-w-3xl text-sm leading-7 text-white/46">
+                  {project.data.outcome}
+                </p>
+              )}
+            </div>
+
+            {project.data.startDate && (
+              <div class="flex flex-wrap items-center gap-3 text-sm text-white/44">
+                <span class="flex items-center gap-x-1.5">
+                  <Icon name="lucide:calendar" class="size-3" />
+                  <span>
+                    {formatDate(project.data.startDate)}
+                    {project.data.endDate
+                      ? ` → ${formatDate(project.data.endDate)}`
+                      : ' → Present'}
+                  </span>
+                </span>
+              </div>
+            )}
+
+            {project.data.tags && (
+              <div class="flex flex-wrap gap-2">
+                {project.data.tags.map((tag: string) => (
+                  <span class="immersive-chip">{tag}</span>
+                ))}
+              </div>
+            )}
           </div>
-        )
-      }
+
+          <div class="space-y-3">
+            {project.data.image && (
+              <div
+                class="overflow-hidden border border-white/10 bg-white/[0.03] p-3"
+                style={`box-shadow: inset 0 0 0 1px ${project.data.accent ?? 'rgba(255,255,255,0.06)'}`}
+              >
+                <Image
+                  src={project.data.image}
+                  alt={project.data.name}
+                  width={1200}
+                  height={630}
+                  class="aspect-[6/4] w-full object-cover opacity-84"
+                />
+              </div>
+            )}
+            <div class="immersive-row-arrow group-hover:translate-x-2">
+              {isExternalLink ? 'open track' : 'open detail'}
+            </div>
+          </div>
+        </div>
+      </Link>
+    </article>
+  ) : (
+    <div class="hover:bg-muted/50 rounded-xl border p-4 transition-colors duration-300 ease-in-out">
+      <Link
+        href={project.data.link}
+        class="flex flex-col gap-4 sm:flex-row"
+        external={isExternalLink}
+      >
+        {project.data.image && (
+          <div class="w-full sm:max-w-3xs sm:shrink-0">
+            <Image
+              src={project.data.image}
+              alt={project.data.name}
+              width={1200}
+              height={630}
+              class="object-cover"
+            />
+          </div>
+        )}
+        <div class="grow">
+          <h3 class="mb-1 text-lg font-medium">{project.data.name}</h3>
+          <p class="text-muted-foreground mb-2 text-sm">
+            {project.data.description}
+          </p>
+          {project.data.startDate && (
+            <p class="text-muted-foreground/70 mb-2 flex items-center gap-x-1.5 text-xs">
+              <span class="flex items-center gap-x-1.5">
+                <Icon name="lucide:calendar" class="size-3" />
+                <span>
+                  {formatDate(project.data.startDate)}
+                  {project.data.endDate
+                    ? ` → ${formatDate(project.data.endDate)}`
+                    : ' → Present'}
+                </span>
+              </span>
+            </p>
+          )}
+          {project.data.tags && (
+            <div class="flex flex-wrap gap-2">
+              {project.data.tags.map((tag: string) => (
+                <Badge variant="muted">{tag}</Badge>
+              ))}
+            </div>
+          )}
+        </div>
+      </Link>
     </div>
-  </Link>
-</div>
+  )
+}

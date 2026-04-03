@@ -1,0 +1,62 @@
+---
+title: 'Winning LifeHack 2023 With EcoCart'
+description: 'How EcoCart turned a sustainability idea into a working AI shopping companion and went on to win LifeHack 2023.'
+date: 2026-04-03
+tags: ['hackathons', 'ai', 'nextjs', 'sustainability']
+authors: ['chai-pin-zheng']
+---
+
+EcoCart is still one of my favorite hackathon projects because it had a very clear product loop from the start. Shopping online is frictionless, but the environmental impact of what we buy is usually invisible. We wanted to build something that made that cost legible while people were already in the middle of a purchase decision.
+
+That idea turned into an AI-powered sustainable shopping companion made up of two parts: a dashboard web app and a browser extension. The extension handled transaction tracking across e-commerce platforms, while the dashboard gave users a clearer view of their carbon footprint, progress, and alternatives. The project went on to win **LifeHack 2023** and the **SGID Award**, which made it one of the strongest examples of product framing and implementation range coming together under hackathon pressure.
+
+## What we built
+
+The public project materials describe EcoCart as a sustainable shopping companion powered by AI, and that is still the cleanest summary. The extension sat close to the user's shopping flow, while the web app handled the heavier product surface around tracking and interpretation.
+
+The core ideas were:
+
+- track shopping activity without asking the user to manually log everything
+- estimate environmental impact and make the data understandable
+- use charts and a lightweight gamified layer to keep the experience actionable instead of guilt-driven
+- suggest more sustainable alternatives while the user still had a chance to change course
+
+From a product point of view, that combination mattered more than any single model or API. The strength of the build was that the system showed up at the right moment, not just that it could generate sustainability information.
+
+## Why the stack fit the problem
+
+EcoCart covered a surprising amount of ground for a hackathon build. The public repo and Devpost entry show a stack that included **Next.js**, **Chrome Extension Manifest V3**, **Supabase**, **AWS**, **Netlify**, **Tailwind CSS**, **OpenAI API**, and **SGID**.
+
+That mix made sense for the shape of the product:
+
+- Next.js gave us a fast way to build a polished dashboard
+- the browser extension let the project live inside real shopping flows
+- Supabase handled backend and auth needs without too much setup friction
+- SGID gave the project a stronger identity layer and a more credible path for real users
+- OpenAI helped turn raw product data into something more useful and readable
+
+According to the repo README, my role sat on the **frontend** and **web extension** side. That was the fun part of the build for me because the challenge was not only making the system work, but making it feel immediate and understandable at the exact point where a shopping decision was happening.
+
+## What made it a winning hackathon project
+
+Looking back, I think EcoCart worked because it was not only "AI + sustainability." It had a tighter behavioral loop than that.
+
+The project connected:
+
+- a clear real-world problem
+- a product surface that met the user in context
+- enough technical ambition to feel substantial
+- a demo story that judges could understand quickly
+
+Hackathons reward working prototypes, but they also reward sharp framing. EcoCart had a clean sentence behind it, a believable user flow, and enough polish to make the concept feel real instead of speculative.
+
+## What I took away from it
+
+EcoCart reinforced a lesson I still keep coming back to: strong engineering work lands harder when it is attached to a clear decision point in the user's workflow. The project was not just about carbon metrics or AI-generated suggestions. It was about making a hidden tradeoff visible at the right time.
+
+That is also why I still think it belongs in the archive. It was an early signal of the kind of work I like doing now: product systems that sit between raw technical capability and better day-to-day decisions.
+
+## Project links
+
+- [Devpost submission](https://devpost.com/software/ecocart-rkmcjg)
+- [GitHub repository](https://github.com/keiloktql/LifeHack2023-EcoCart)

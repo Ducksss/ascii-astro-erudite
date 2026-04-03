@@ -3,13 +3,17 @@
   "type": "module",
   "version": "1.6.3",
   "private": true,
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "prettier": "prettier --write **/*.{ts,tsx,css,astro} --ignore-path .gitignore"
+    "prettier": "prettier --write **/*.{ts,tsx,css,astro} --ignore-path .gitignore",
+    "audit:authorship": "node scripts/audit-authorship.mjs --owner \"Chai Pin Zheng\" --out reports/authorship-audit.md"
   },
   "dependencies": {
     "@astrojs/check": "0.9.7",
@@ -46,7 +50,8 @@
     "prettier": "^3.5.1",
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-astro-organize-imports": "^0.4.11",
-    "prettier-plugin-tailwindcss": "^0.6.11"
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "vite": "7.3.1"
   },
   "prettier": {
     "semi": false,

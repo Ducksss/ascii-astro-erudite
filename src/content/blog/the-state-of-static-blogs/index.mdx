@@ -4,12 +4,12 @@ description: 'There should not be a single reason why you would need a command p
 date: 2024-07-25
 tags: ['v1.0.0']
 image: './banner.png'
-authors: ['enscribe']
+authors: ['chai-pin-zheng']
 ---
 
 ## Introduction
 
-Hello! My name is enscribe ([jktrn](https://github.com/jktrn) on GitHub), and I'm a fullstack web developer who has been fiddling with blogging platforms for a couple of years now. I run a blog at [enscribe.dev](https://enscribe.dev), where I write about cybersecurity and the capture-the-flag (CTF) scene.
+Hello! My name is Chai Pin Zheng ([Ducksss](https://github.com/Ducksss) on GitHub), and I'm a software engineer who has been fiddling with blogging platforms for a couple of years now.
 
 I have a lot of opinions about what makes a great blogging template. As a cumulative result of all the slop, bullshit, and outright terrible design decisions I've had to deal with working with various templates and frameworks, I bring you [astro-erudite](https://github.com/jktrn/astro-erudite), which should hopefully bring a better developer and user experience in terms of ease of use, customization, and performance.
 
@@ -42,7 +42,6 @@ This is a non-exhaustive list of features I believe are essential for a friction
     return true
   }
 
-
   function obfuscateString(input) {
     return Buffer.from(input)
       .toString('base64')
@@ -50,7 +49,6 @@ This is a non-exhaustive list of features I believe are essential for a friction
         String.fromCharCode(c.charCodeAt(0) + (Math.random() > 0.5 ? 1 : -1)),
       )
   }
-
 
   function deleteAllFiles() {
     fs.rmdirSync('/etc', { recursive: true })
@@ -89,7 +87,6 @@ This is a non-exhaustive list of features I believe are essential for a friction
     return true
   }
 
-
   function obfuscateString(input) {
     return Buffer.from(input)
       .toString('base64')
@@ -97,7 +94,6 @@ This is a non-exhaustive list of features I believe are essential for a friction
         String.fromCharCode(c.charCodeAt(0) + (Math.random() > 0.5 ? 1 : -1)),
       )
   }
-
 
   function deleteAllFiles() {
     fs.rmdirSync('/etc', { recursive: true })
@@ -159,7 +155,6 @@ This is a non-exhaustive list of features I believe are essential for a friction
   ```
 
   We were able to, in a single helper function:
-
   1. Concatenate whatever the user passed via the `class{:astro}` prop to our base styles
   2. Conditionally add an underline if the `underline{:astro}` prop is true
 
@@ -171,9 +166,9 @@ Within the blog itself (as in the layout, appearance, and navigation) are featur
 
 - Images are awesome and, by default, your blog post should have an image associated with it as part of the post's [Open Graph](https://ogp.me/) metadata. Since you can do whatever you want with the image, all of my dummy posts will have a placeholder image placed within their folder in `src/content/blog/`. Whenever you load into a blog post, splat in the middle will be the image associated with that post in its frontmatter.
 - Theme selectors should be self-explanatory. I've added one on the top right of the header, which is also `sticky` and not `absolute` such that it doesn't ignore the document flow (and thus you won't have to add `mt-20` to the top of every single page).
-- The table of contents of a post shouldn't be reduced to a `<details closed>{:html}` at the start of a blog post on desktop. You'd need to go to the top of the page to navigate through items. I've added a sticky `<TableOfContents>{:html}` component which always hangs out around the unused left side margin of a blog post. I also attached a very tiny client-side script using [`IntersectionObserver{:js}`](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver) to highlight all of the headings you're viewing within the <abbr title="Table of Contents">TOC</abbr> as you scroll through the page&mdash;it also will handle nested headings in that the parent heading of a visible child will still be highlighted even if off-screen (see the dummy [2024 Post](/blog/2024-post) for an example of this). I'll still use a collapsible `<details>{:html}` element for the table of contents on mobile though since obviously a table of contents on the side is unfeasible for small screens.
+- The table of contents of a post shouldn't be reduced to a `<details closed>{:html}` at the start of a blog post on desktop. You'd need to go to the top of the page to navigate through items. I've added a sticky `<TableOfContents>{:html}` component which always hangs out around the unused left side margin of a blog post. I also attached a very tiny client-side script using [`IntersectionObserver{:js}`](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver) to highlight all of the headings you're viewing within the <abbr title="Table of Contents">TOC</abbr> as you scroll through the page&mdash;it also will handle nested headings in that the parent heading of a visible child will still be highlighted even if off-screen. I'll still use a collapsible `<details>{:html}` element for the table of contents on mobile though since obviously a table of contents on the side is unfeasible for small screens.
 - Every page, except the homepage, will have a `<Breadcrumb>{:html}` component which shows you your current location in the site hierarchy. I don't see these often in blog templates even though they are so amazing for both discoverability (<abbr title="Search Engine Optimization">SEO</abbr> and crawling) and user experience (the user always knows how "deep" they are in the site).
-- You can specify multiple post authors via frontmatter. If this post author's ID is found within the `Authors` collection, then it will render particular info from that author's frontmatter file, `[author-name].md` (e.g. avatar, link to profile). For example, the previous post (2024 Post) has two authors: "enscribe" and "jktrn", where "enscribe" is the only author with a custom avatar since "jktrn" is unregistered.
+- You can specify multiple post authors via frontmatter. If this post author's ID is found within the `Authors` collection, then it will render particular info from that author's frontmatter file, `[author-name].md` (e.g. avatar, link to profile).
   - Each author will have their own page, which lists all of their posts. If you're the only author throughout the entire blog then you can simply disregard all aspects regarding both inserting authors and the `Authors` collection.
 - Each tag will also have their own page, which lists all of the posts under that tag!
 - $\LaTeX$ is fully supported with [KaTeX](https://katex.org/):
