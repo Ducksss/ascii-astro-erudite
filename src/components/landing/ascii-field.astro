@@ -95,6 +95,10 @@ const { class: className, variant = 'hero' } = Astro.props
       ctx.textBaseline = 'middle'
       ctx.textAlign = 'center'
 
+      const compactFont = `${cell * config.compactGlyphScale}px "Geist Mono", monospace`
+      const normalFont = `${cell * config.fontScale}px "Geist Mono", monospace`
+      let currentFont = ''
+
       for (let y = cell * 0.7; y < height; y += cell) {
         for (let x = cell * 0.7; x < width; x += cell) {
           const nx = x / width - 0.5
@@ -119,12 +123,14 @@ const { class: className, variant = 'hero' } = Astro.props
             Math.max(0, Math.floor(intensity * config.glyphs.length)),
           )
           const glyph = config.glyphs[glyphIndex]
-          const glyphScale = compactGlyphs.has(glyph)
-            ? config.compactGlyphScale
-            : config.fontScale
           const alpha = Math.min(config.alpha, 0.08 + intensity * 0.72)
 
-          ctx.font = `${cell * glyphScale}px "Geist Mono", monospace`
+          const nextFont = compactGlyphs.has(glyph) ? compactFont : normalFont
+          if (nextFont !== currentFont) {
+            ctx.font = nextFont
+            currentFont = nextFont
+          }
+
           ctx.fillStyle = `rgba(248, 248, 248, ${alpha})`
           ctx.fillText(glyph, x, y)
         }
