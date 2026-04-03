@@ -20,7 +20,9 @@ const [leadProject, ...secondaryProjects] = projects
     class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_46%)]"
   >
   </div>
-  <div class="mx-auto max-w-[1400px] px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
+  <div
+    class="mx-auto max-w-[1400px] px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24"
+  >
     <div class="max-w-3xl">
       <p class="landing-section-label">Featured work</p>
       <h2 class="landing-section-title mt-4 max-w-2xl">{title}</h2>
@@ -29,7 +31,7 @@ const [leadProject, ...secondaryProjects] = projects
       </p>
     </div>
 
-    <div class="mt-12 grid gap-4 lg:grid-cols-12">
+    <div class="mt-10 grid gap-4 lg:grid-cols-12">
       {
         leadProject && (
           <article
@@ -54,8 +56,15 @@ const [leadProject, ...secondaryProjects] = projects
                   'Structured as a richer case-study surface with room for process, outcomes, and references.'}
               </p>
               <div class="landing-work-card__tags">
-                {leadProject.data.tags.map((tag) => (
-                  <span class="landing-work-card__tag">{tag}</span>
+                {leadProject.data.tags.map((tag, index) => (
+                  <span
+                    class:list={[
+                      'landing-work-card__tag',
+                      index >= 3 && 'hidden sm:inline-flex',
+                    ]}
+                  >
+                    {tag}
+                  </span>
                 ))}
               </div>
               <Link
@@ -104,8 +113,15 @@ const [leadProject, ...secondaryProjects] = projects
                     'Prepared as a future case study with stronger metadata and annotated visual direction.'}
                 </p>
                 <div class="landing-work-card__tags">
-                  {project.data.tags.map((tag) => (
-                    <span class="landing-work-card__tag">{tag}</span>
+                  {project.data.tags.map((tag, index) => (
+                    <span
+                      class:list={[
+                        'landing-work-card__tag',
+                        index >= 2 && 'hidden sm:inline-flex',
+                      ]}
+                    >
+                      {tag}
+                    </span>
                   ))}
                 </div>
                 <Link
@@ -363,11 +379,51 @@ const [leadProject, ...secondaryProjects] = projects
   @media (max-width: 1023px) {
     .landing-work-card {
       transform: none;
-      min-height: 24rem;
+      min-height: 21.5rem;
     }
 
     .landing-work-card__image-shell {
       width: min(56%, 18rem);
+    }
+  }
+
+  @media (max-width: 639px) {
+    .landing-work-card {
+      min-height: 19.5rem;
+    }
+
+    .landing-work-card__copy {
+      gap: 0.95rem;
+      padding: 1.15rem;
+      justify-content: flex-start;
+    }
+
+    .landing-work-card--lead .landing-work-card__copy {
+      padding: 1.15rem;
+    }
+
+    .landing-work-card__title {
+      max-width: 13ch;
+      font-size: clamp(1.55rem, 9vw, 2.2rem);
+    }
+
+    .landing-work-card__description,
+    .landing-work-card__outcome {
+      display: -webkit-box;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+    }
+
+    .landing-work-card__description {
+      -webkit-line-clamp: 3;
+    }
+
+    .landing-work-card__outcome {
+      -webkit-line-clamp: 2;
+    }
+
+    .landing-work-card__tags {
+      gap: 0.5rem;
     }
   }
 

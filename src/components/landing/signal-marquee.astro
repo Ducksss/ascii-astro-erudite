@@ -8,7 +8,7 @@ const marqueeLines = [...lines, ...lines]
 const accessibleText = lines.join(' / ')
 ---
 
-<section class="border-y border-white/10 bg-black/80 py-3">
+<section class="hidden border-y border-white/10 bg-black/80 py-3 sm:block">
   <p class="sr-only">{accessibleText}</p>
   <div class="landing-marquee-shell">
     <div class="landing-marquee-track" aria-hidden="true">
