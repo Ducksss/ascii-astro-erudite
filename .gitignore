@@ -16,5 +16,6 @@ teaser.pptx
 .playwright-cli/
 playwright-report/
 test-results/
-.scripts/
-.reports/
+scripts/
+reports/
+output/*

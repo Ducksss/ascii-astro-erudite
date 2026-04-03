@@ -124,5 +124,6 @@ export type LandingContent = {
   archiveIntro: string
   primaryLink: LandingLink
   secondaryLink: LandingLink
+  marqueeLines: string[]
   capabilityLines: LandingCapability[]
 }

@@ -346,6 +346,14 @@ export const LANDING: LandingContent = {
     label: 'Read the writing',
     note: 'Technical notes, interface work, and build logs',
   },
+  marqueeLines: [
+    'Product engineering',
+    'Developer tooling',
+    'Operational systems',
+    'Guided onboarding',
+    'Technical writing',
+    'Cyber training systems',
+  ],
   capabilityLines: [
     {
       label: '01',

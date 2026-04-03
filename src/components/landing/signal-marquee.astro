@@ -4,16 +4,19 @@ interface Props {
 }
 
 const { lines } = Astro.props
+const marqueeLines = [...lines, ...lines]
+const accessibleText = lines.join(' / ')
 ---
 
 <section class="border-y border-white/10 bg-black/80 py-3">
+  <p class="sr-only">{accessibleText}</p>
   <div class="landing-marquee-shell">
-    <div class="landing-marquee-track">
+    <div class="landing-marquee-track" aria-hidden="true">
       {
-        [...lines, ...lines].map((line, index) => (
+        marqueeLines.map((line, index) => (
           <span class="landing-marquee-item">
             <span>{line}</span>
-            {index < [...lines, ...lines].length - 1 && (
+            {index < marqueeLines.length - 1 && (
               <span class="landing-marquee-separator">/</span>
             )}
           </span>

@@ -2,6 +2,7 @@
 import ArchiveProof from '@/components/landing/archive-proof.astro'
 import LandingAsciiField from '@/components/landing/ascii-field.astro'
 import FeaturedWork from '@/components/landing/featured-work.astro'
+import SignalMarquee from '@/components/landing/signal-marquee.astro'
 import Link from '@/components/link.astro'
 import PageHead from '@/components/page-head.astro'
 import { LANDING, PROFILE, SITE } from '@/consts'
@@ -36,7 +37,7 @@ const consoleNotes = [
   <PageHead slot="head" title={SITE.title} description={LANDING.description} />
 
   <section
-    class="relative isolate min-h-[calc(100svh-4.6rem)] overflow-hidden border-b border-white/10 bg-[#050505]"
+    class="relative isolate min-h-[calc(100svh-4.6rem)] overflow-hidden bg-[#050505]"
   >
     <LandingAsciiField class="opacity-[0.76]" />
     <div
@@ -176,6 +177,8 @@ const consoleNotes = [
       </div>
     </div>
   </section>
+
+  <SignalMarquee lines={LANDING.marqueeLines} />
 
   <FeaturedWork
     title={LANDING.featuredWorkTitle}
