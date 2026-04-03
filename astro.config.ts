@@ -5,6 +5,7 @@ import mdx from '@astrojs/mdx'
 import react from '@astrojs/react'
 import sitemap from '@astrojs/sitemap'
 import icon from 'astro-icon'
+import vercel from '@astrojs/vercel'
 
 import { rehypeHeadingIds } from '@astrojs/markdown-remark'
 import rehypeExpressiveCode from 'rehype-expressive-code'
@@ -25,6 +26,10 @@ const siteEnv = loadEnv(process.env.NODE_ENV ?? 'development', process.cwd(), ''
 
 export default defineConfig({
   site: resolveSiteUrl(siteEnv),
+  output: 'server',
+  adapter: vercel({
+    webAnalytics: { enabled: true },
+  }),
   integrations: [mdx(), react(), sitemap(), icon()],
   vite: {
     // Astro and the Tailwind Vite plugin can resolve slightly different Vite types.

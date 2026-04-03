@@ -224,10 +224,7 @@ export const PROFILE: Profile = {
       institution: 'Singapore Polytechnic',
       degree: 'Diploma in Information Technology',
       period: 'Apr 2020 - May 2023',
-      details: [
-        'GPA 3.99/4.00.',
-        'Graduated as valedictorian.',
-      ],
+      details: ['GPA 3.99/4.00.', 'Graduated as valedictorian.'],
     },
   ],
   awards: [
