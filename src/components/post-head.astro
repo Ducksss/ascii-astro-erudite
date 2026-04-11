@@ -42,7 +42,9 @@ const structuredData = {
     '@type': 'Person',
     name: author,
   },
-  keywords: post.data.tags ?? [],
+  ...(post.data.tags?.length
+    ? { keywords: post.data.tags.join(', ') }
+    : {}),
 }
 ---
 
@@ -80,6 +82,6 @@ const structuredData = {
 <script
   is:inline
   type="application/ld+json"
-  set:html={JSON.stringify(structuredData)}
+  set:html={JSON.stringify(structuredData).replace(/</g, '\\u003c')}
 >
 </script>
