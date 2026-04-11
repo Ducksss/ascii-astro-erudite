@@ -2,14 +2,21 @@
 import Breadcrumbs from '@/components/breadcrumbs.astro'
 import Link from '@/components/link.astro'
 import PageHead from '@/components/page-head.astro'
+import type { ProfileLink } from '@/types'
 import { PROFILE } from '@/consts'
 import Layout from '@/layouts/layout.astro'
 
-const heroFacts = PROFILE.facts.slice(0, 3)
+const heroFacts = [
+  { label: 'Base', value: 'Singapore' },
+  { label: 'Current track', value: 'NUS CS' },
+  { label: 'Best fit', value: 'Adoption / tooling / ops' },
+]
 const heroMetrics = PROFILE.metrics
-const heroLinks = PROFILE.links.filter((item) =>
-  ['LinkedIn', 'Email', 'GitHub'].includes(item.label),
-)
+const heroLinks = ['LinkedIn', 'Email', 'GitHub']
+  .flatMap((label): ProfileLink[] => {
+    const match = PROFILE.links.find((item) => item.label === label)
+    return match ? [match] : []
+  })
 ---
 
 <Layout variant="immersive">
@@ -50,52 +57,62 @@ const heroLinks = PROFILE.links.filter((item) =>
             operate, and trust.
           </p>
 
-          <div class="about-hero__meta">
-            {
-              heroFacts.map((fact) => (
-                <span class="about-hero__meta-item">
-                  <span class="about-hero__meta-label">{fact.label}</span>
-                  <span>{fact.value}</span>
-                </span>
-              ))
-            }
-          </div>
-
-          <div class="about-hero__links">
-            {heroLinks.map((item, index) => (
-              <Link
-                href={item.href}
-                external
-                class:list={[
-                  'about-hero__link',
-                  index >= 2 && 'hidden sm:inline-flex',
-                ]}
-              >
-                {item.label}
-              </Link>
-            ))}
+          <div class="about-hero__impact">
+            <p class="about-hero__impact-label">Impact snapshot</p>
+            <div class="about-hero__metrics">
+              {
+                heroMetrics.map((metric) => (
+                  <article class="about-hero__metric">
+                    <p class="about-hero__metric-value">{metric.value}</p>
+                    <p class="about-hero__metric-label">{metric.label}</p>
+                  </article>
+                ))
+              }
+            </div>
           </div>
         </div>
 
         <aside class="about-hero__rail immersive-animate-in">
-          <div class="about-hero__rail-copy">
-            <p class="about-hero__rail-label">Best fit</p>
-            <p class="about-hero__rail-note">
-              Recruiter-friendly proof from MetaLearner, Singapore Armed Forces,
-              GovTech, and client delivery work.
-            </p>
+          <div class="about-hero__rail-block">
+            <p class="about-hero__rail-label">Connect</p>
+            <div class="about-hero__links">
+              {
+                heroLinks.map((item, index) => (
+                  <Link
+                    href={item.href}
+                    external
+                    class:list={[
+                      'about-hero__link',
+                      index >= 2 && 'hidden sm:flex',
+                    ]}
+                  >
+                    <span class="about-hero__link-label">{item.label}</span>
+                    <span class="about-hero__link-note">{item.note}</span>
+                  </Link>
+                ))
+              }
+            </div>
           </div>
-          <div class="about-hero__metrics">
-            {
-              heroMetrics.map((metric) => (
-                <article class="about-hero__metric">
-                  <p class="about-hero__metric-value">{metric.value}</p>
-                  <p class="about-hero__metric-label">{metric.label}</p>
-                </article>
-              ))
-            }
+
+          <div class="about-hero__rail-block">
+            <p class="about-hero__rail-label">At a glance</p>
+            <div class="about-hero__meta">
+              {
+                heroFacts.map((fact) => (
+                  <div class="about-hero__meta-card">
+                    <p class="about-hero__meta-label">{fact.label}</p>
+                    <p class="about-hero__meta-value">{fact.value}</p>
+                  </div>
+                ))
+              }
+            </div>
           </div>
-        </div>
+
+          <p class="about-hero__rail-note">
+            Recruiter-friendly proof from MetaLearner, Singapore Armed Forces,
+            GovTech, and client delivery work.
+          </p>
+        </aside>
       </div>
     </div>
   </section>
@@ -369,20 +386,44 @@ const heroLinks = PROFILE.links.filter((item) =>
     color: rgba(255, 255, 255, 0.72);
   }
 
+  .about-hero__impact {
+    margin-top: 1.35rem;
+    display: grid;
+    gap: 0.7rem;
+    max-width: 46rem;
+  }
+
+  .about-hero__impact-label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.36);
+  }
+
   .about-hero__meta {
     margin-top: 1rem;
     display: grid;
-    gap: 0.6rem;
-    max-width: 40rem;
+    gap: 1px;
+    max-width: 44rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.06);
   }
 
-  .about-hero__meta-item {
-    display: inline-flex;
-    flex-wrap: wrap;
-    gap: 0.45rem;
-    font-size: 0.92rem;
-    line-height: 1.55;
-    color: rgba(255, 255, 255, 0.6);
+  .about-hero__meta-card {
+    display: flex;
+    min-height: 5rem;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.55rem;
+    padding: 0.95rem 1rem;
+    background:
+      linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.03),
+        rgba(255, 255, 255, 0.015)
+      ),
+      rgba(0, 0, 0, 0.48);
   }
 
   .about-hero__meta-label {
@@ -393,20 +434,34 @@ const heroLinks = PROFILE.links.filter((item) =>
     color: rgba(255, 255, 255, 0.38);
   }
 
+  .about-hero__meta-value {
+    font-size: clamp(0.96rem, 1.25vw, 1.08rem);
+    line-height: 1.35;
+    color: rgba(255, 255, 255, 0.78);
+    text-wrap: balance;
+  }
+
   .about-hero__links {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
     gap: 0.55rem;
-    margin-top: 1rem;
+    margin-top: 0.1rem;
   }
 
   .about-hero__link {
+    display: flex;
+    min-height: 4.8rem;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.45rem;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 0.65rem 0.82rem;
-    font-family: var(--font-mono);
-    font-size: 0.64rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
+    padding: 0.9rem 1rem;
+    background:
+      linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.03),
+        rgba(255, 255, 255, 0.015)
+      ),
+      rgba(0, 0, 0, 0.42);
     color: rgba(255, 255, 255, 0.76);
     transition:
       border-color 0.3s ease,
@@ -420,18 +475,30 @@ const heroLinks = PROFILE.links.filter((item) =>
     color: white;
   }
 
+  .about-hero__link-label {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .about-hero__link-note {
+    font-size: 0.94rem;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.58);
+  }
+
   .about-hero__rail {
     position: relative;
     display: grid;
-    gap: 1rem;
+    gap: 1.15rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     padding-top: 1rem;
   }
 
-  .about-hero__rail-copy {
+  .about-hero__rail-block {
     display: grid;
-    gap: 0.45rem;
-    max-width: 34rem;
+    gap: 0.7rem;
   }
 
   .about-hero__metrics {
@@ -554,7 +621,6 @@ const heroLinks = PROFILE.links.filter((item) =>
   @media (min-width: 768px) {
     .about-hero__meta {
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 1rem;
     }
 
     .about-hero__metrics {
@@ -595,26 +661,37 @@ const heroLinks = PROFILE.links.filter((item) =>
       line-height: 1.5;
     }
 
-    .about-hero__meta-item,
+    .about-hero__impact {
+      margin-top: 1rem;
+      gap: 0.6rem;
+    }
+
+    .about-hero__meta-value,
+    .about-hero__link-note,
     .about-hero__rail-note {
       font-size: 0.92rem;
       line-height: 1.55;
     }
 
     .about-hero__links {
-      margin-top: 0.85rem;
-      gap: 0.55rem;
+      gap: 0.5rem;
     }
 
     .about-hero__link {
-      padding: 0.58rem 0.74rem;
-      font-size: 0.62rem;
-      letter-spacing: 0.2em;
+      min-height: auto;
+      gap: 0.35rem;
+      padding: 0.75rem 0.82rem;
     }
 
     .about-hero__meta {
       margin-top: 0.85rem;
-      gap: 0.7rem;
+      gap: 1px;
+    }
+
+    .about-hero__meta-card {
+      min-height: auto;
+      gap: 0.45rem;
+      padding: 0.8rem 0.85rem;
     }
 
     .about-hero__rail {

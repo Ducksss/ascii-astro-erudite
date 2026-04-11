@@ -14,9 +14,9 @@ const getStringEnvValue = (value: SiteEnv[string]) =>
   typeof value === 'string' && value.trim().length > 0 ? value : undefined
 
 const getConfiguredSiteUrl = (env: SiteEnv) =>
+  getStringEnvValue(env.VERCEL_PROJECT_PRODUCTION_URL) ||
   getStringEnvValue(env.PUBLIC_SITE_URL) ||
   getStringEnvValue(env.SITE_URL) ||
-  getStringEnvValue(env.VERCEL_PROJECT_PRODUCTION_URL) ||
   getStringEnvValue(env.VERCEL_URL)
 
 const isDevelopmentEnv = (env: SiteEnv) =>
@@ -25,8 +25,9 @@ const isDevelopmentEnv = (env: SiteEnv) =>
   env.MODE === 'development' ||
   env.NODE_ENV === 'development'
 
-// Prefer an explicit site URL, then Vercel's stable production domain so
-// preview builds still emit production-safe canonical URLs.
+// Prefer Vercel's stable production domain so production and preview builds
+// keep emitting the same canonical metadata. Fall back to explicit site env
+// vars outside Vercel and finally to the request URL Vercel exposes.
 export const resolveSiteUrl = (env: SiteEnv) => {
   const configuredSiteUrl = getConfiguredSiteUrl(env)
   if (configuredSiteUrl) {

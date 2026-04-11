@@ -14,8 +14,36 @@ const {
 } = Astro.props
 const resolvedTitle =
   title === SITE.title ? SITE.title : `${title} | ${SITE.title}`
-const canonical = Astro.url.origin + Astro.url.pathname
-const image = new URL('/static/1200x630.png', Astro.url)
+const canonical = new URL(Astro.url.pathname, SITE.href).href
+const image = new URL('/static/1200x630.png', SITE.href).href
+const structuredData = noindex
+  ? null
+  : title === SITE.title
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: SITE.title,
+        url: canonical,
+        description,
+        inLanguage: SITE.locale,
+        author: {
+          '@type': 'Person',
+          name: SITE.author,
+        },
+      }
+    : {
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: title,
+        url: canonical,
+        description,
+        inLanguage: SITE.locale,
+        isPartOf: {
+          '@type': 'WebSite',
+          name: SITE.title,
+          url: SITE.href,
+        },
+      }
 ---
 
 <title>{resolvedTitle}</title>
@@ -25,7 +53,7 @@ const image = new URL('/static/1200x630.png', Astro.url)
 
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
-<meta property="og:image" content={image.href} />
+<meta property="og:image" content={image} />
 <meta property="og:image:alt" content={title} />
 <meta property="og:type" content="website" />
 <meta property="og:locale" content={SITE.locale} />
@@ -34,6 +62,17 @@ const image = new URL('/static/1200x630.png', Astro.url)
 
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
-<meta name="twitter:image" content={image.href} />
+<meta name="twitter:image" content={image} />
 <meta name="twitter:image:alt" content={title} />
 <meta name="twitter:card" content="summary_large_image" />
+
+{
+  structuredData && (
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify(structuredData)}
+    >
+    </script>
+  )
+}
