@@ -1,0 +1,98 @@
+---
+title: 'How This Astro Portfolio Is Structured'
+description: 'Why this site is split into a proof-first landing page, a recruiter-friendly about page, and an MDX archive with subposts and SEO plumbing.'
+date: 2026-04-05
+tags: ['astro', 'portfolio', 'seo', 'content-systems']
+authors: ['chai-pin-zheng']
+draft: false
+---
+
+I did not want a portfolio that asked every reader to solve the same navigation problem.
+
+A recruiter, a design curator, and an engineer do not arrive with the same question in mind. If I force all three through one long scroll page, I usually end up making all three do extra work.
+
+So this site is structured around intent first, not around the idea that "portfolio" has to mean one giant landing page.
+
+## The site does three jobs
+
+### The homepage is the fast proof scan
+
+The landing page in `src/pages/index.astro` is built to answer a simple question quickly: what kind of problems do I solve, and do I have enough evidence for that claim to be credible?
+
+That is why the copy is tight, the metric pills are close to the top, and the featured proof blocks are outcome-led instead of reflective. It is not the place where I try to tell the whole story. It is the place where I try to make the strongest pattern obvious.
+
+### The about page is the recruiter-friendly long read
+
+`src/pages/about.astro` is where I let the role-by-role evidence stretch out a bit more. The goal there is not novelty. The goal is legibility.
+
+That page exists because there is a real difference between "this person seems interesting" and "I can now map their experience across MetaLearner, GovTech, the Singapore Armed Forces, and client delivery work without opening six tabs."
+
+### The blog is the build-log layer
+
+The archive under `src/pages/blog/[...page].astro` and `src/pages/blog/[...id].astro` is the slower read. This is where I keep hackathon writeups, implementation notes, technical reflections, and the parts of a project that would clutter the landing page if I forced them up there.
+
+That split lets the site stay specific without becoming dense in the wrong places.
+
+## The content model had to stay boring
+
+I wanted the portfolio to be easy to maintain without editing giant page blobs every time I shipped something new.
+
+That is why the content lives in Astro collections instead of hardcoded page data dumps. `src/content.config.ts` keeps the schema simple:
+
+- `blog` for case studies, technical writing, and subposts
+- `authors` for profile data
+- `projects` for the featured project layer
+
+I like this because it keeps the content model legible. A new note is just a folder in `src/content/blog`. Author metadata stays separate from page layouts. Project cards do not have to be retyped in multiple places.
+
+That is not glamorous architecture, but it is very practical portfolio architecture.
+
+## I use subposts when one page would become sludge
+
+One of my favorite content decisions in this repo is the parent-and-subpost pattern.
+
+If a topic wants one overview page plus deeper chapters, I can create a folder with an `index.mdx` parent and sibling `.mdx` subposts. The site then handles the relationship automatically. The logic lives in `src/lib/data-utils.ts`, and the rendering behavior sits in `src/pages/blog/[...id].astro` with the subpost header, sidebar, and adjacent navigation.
+
+That structure is doing real work in posts like [MetaLearner](/blog/metalearner) and the older [mobile navigation + subposts writeup](/blog/mobile-nav-and-subposts). I like it because it lets me keep one coherent topic together without flooding the main archive with lots of tiny sibling posts.
+
+The alternative would be either:
+
+- one oversized page that gets harder to read the deeper you go
+- or several disconnected posts that lose the sense of one larger build
+
+I prefer the middle path.
+
+## The SEO layer is simple on purpose
+
+I do not think portfolio SEO needs to be clever. I think it needs to be consistent.
+
+The important plumbing here is straightforward:
+
+- `src/lib/site-config.ts` resolves the canonical domain from environment variables
+- `astro.config.ts` sets the site URL and sitemap integration
+- `src/pages/rss.xml.ts` keeps the archive subscribable
+- `src/pages/robots.txt.ts` and the sitemap keep crawling sane
+- `src/components/page-head.astro` and `src/components/post-head.astro` handle canonical, Open Graph, Twitter, and structured data metadata
+- Vercel Analytics only loads in production, which keeps the reporting cleaner than mixing local noise into it
+
+That stack is intentionally boring. I want the content and the distribution loop to do the interesting work. The metadata layer just needs to stop me from accidentally sabotaging myself.
+
+## The visual system is there to support the proof
+
+The monochrome direction is not there because I think all portfolio sites should be monochrome. It is there because I wanted the proof to feel sharper than the decoration.
+
+A louder palette would not have made the onboarding work stronger. More chrome would not have made the SAF or GovTech outcomes easier to trust. The visual system needed enough personality to feel deliberate, but not so much that it started competing with the evidence.
+
+That is also why the site keeps separating atmospheric surfaces from content-heavy ones. The landing page can carry more mood. The archive and about page still have to scan well.
+
+## The structure is meant to help distribution, not just browsing
+
+A good portfolio structure is also a distribution structure.
+
+If someone wants the broad story, the homepage works. If they want the career proof, the about page works. If they want a specific angle like Telegram workflows, onboarding systems, Astro content architecture, or hackathon product thinking, there is a deep page for that.
+
+That matters because most useful traffic does not enter through the front door. It lands on one page from search, a curator mention, a tool community, a Devpost link, or a teammate share.
+
+I want that first landing page to feel complete enough that the next click is a choice, not a rescue.
+
+That is the main structure in one sentence: one surface for fast proof, one for career context, one for deeper build logs, and enough boring content plumbing underneath that I can keep publishing without reorganizing the whole site every month.

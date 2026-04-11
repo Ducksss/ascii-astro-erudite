@@ -1,0 +1,144 @@
+---
+title: 'How I Write Product and Engineering Case Studies'
+description: 'The structure I use to turn shipped work into case studies that recruiters, collaborators, and tool teams can scan without getting lost.'
+date: 2026-04-05
+tags: ['writing', 'case-studies', 'product-engineering', 'portfolio']
+authors: ['chai-pin-zheng']
+draft: false
+---
+
+Most case studies lose me for the same reason: they start too far away from the proof.
+
+I do not need three paragraphs about inspiration before I know what changed. I want to know what the product was, why it was hard, what you personally drove, and whether there is anything I can inspect besides your own description of it.
+
+That is the standard I now use on my own site.
+
+## I write for skeptical readers first
+
+When someone lands on a case study from search, a curator roundup, or a link in a DM, they are usually not arriving with patience to spare. They are trying to answer a small set of questions very quickly:
+
+- Is this work real?
+- What part did this person actually own?
+- Did anything measurable or visible improve?
+- Is there a deeper artifact if I want to inspect the work more seriously?
+
+If a page hides those answers behind autobiography, I assume the underlying project was either thin or badly framed.
+
+That is why the site is split into different proof surfaces. The [homepage](/) is the fast read. The [about page](/about) is the recruiter-friendly evidence layer. The deeper build logs live in posts like [MetaLearner](/blog/metalearner), [Beacon](/blog/beacon), and [EcoCart](/blog/ecocart).
+
+I do not want every reader to solve the same puzzle. I want each reader to reach the level of detail they actually need.
+
+## The case study has three jobs
+
+A good case study usually needs to work for at least three different audiences.
+
+### It should let a recruiter scan in under a minute
+
+This is the read that answers, "what kind of problems does this person tend to solve?"
+
+That means leading with the product category, the constraint, and the outcome. If I bury "reduced onboarding drop-offs," "70% training-efficiency lift," or "2.5k -> 6k weekly reach" too low on the page, I am making the reader work for information that should have been obvious immediately.
+
+### It should give a technical peer enough implementation detail to trust the story
+
+This is where vague verbs start failing. "Improved the experience" is not enough. Improved what? With what? In which surface? Under which constraint?
+
+The technical reader wants to see the shape of the work: onboarding flow changes, chart states, WebSocket architecture, extension behavior, Cypress automation, content model decisions, or whatever the work actually was. They do not need every file, but they do need enough specificity to see that I am not hand-waving.
+
+### It should leave an inspection trail
+
+The strongest case studies usually point somewhere outside themselves:
+
+- a public repo
+- a live demo
+- a Devpost page
+- a Figma file
+- screenshots
+- a handoff deck
+- a video
+- subposts that go deeper into one subsystem
+
+I like leaving that trail because it lowers the amount of trust the reader has to donate. They can verify the work instead of just taking my word for it.
+
+## The structure I keep reusing
+
+I do not follow a rigid template, but the underlying shape is pretty consistent.
+
+### Start with the smallest real problem sentence
+
+The first useful sentence is usually not "we built X."
+
+It is closer to "committees were forwarding the same update across multiple Telegram chats manually," or "a forecasting product was too hard to enter cleanly without field engineers," or "shopping tradeoffs were invisible at the exact moment a user was about to buy."
+
+That sentence matters because it tells the reader whether the project was actually attached to behavior. If the problem is fuzzy, the solution usually becomes fuzzy too.
+
+### Explain why the constraint mattered
+
+I care less about generic "challenges" than I do about the constraint that shaped the build.
+
+For [Beacon](/blog/beacon), the constraint was absurdly short time. For [EcoCart](/blog/ecocart), it was making an extension feel like it belonged inside a live shopping flow. For [MetaLearner](/blog/metalearner), it was making a technically strong product easier to enter, read, and keep extending after I handed it off.
+
+The constraint is what gives the project its shape. Without it, the writeup reads like a feature inventory.
+
+### Separate my scope from the team scope
+
+This is one of the easiest places to get sloppy.
+
+If a project was collaborative, I try to mark the team shape clearly and then state what I personally drove. That does not make the story smaller. It makes it more believable.
+
+I would rather sound precise than accidentally claim a wider blast radius than I earned.
+
+### Show the artifact loop
+
+I like case studies more when they move through visible artifacts instead of abstract narration. Screens, charts, UI flows, repos, videos, and linked references give the reader places to stop and inspect.
+
+That is why I often keep screenshots close to the section they support, and why I like subposts when a parent post would otherwise turn into sludge.
+
+### End with what changed, not with a motivational speech
+
+If the page lands properly, I do not need a grand moral. I need the reader to walk away remembering the thing that became clearer, easier, faster, more legible, or more usable because the work existed.
+
+That is the real close.
+
+## I separate the recruiter read from the builder read
+
+This is probably the biggest structural choice on the site.
+
+The [about page](/about) is not trying to be a full narrative archive. It is there to make the strongest evidence easy to scan. The blog is where I let the work breathe a bit more. And when one topic wants both a surface read and a deeper implementation read, I use parent posts with subposts instead of turning everything into one oversized page.
+
+That separation matters because different readers hit different stopping points.
+
+A recruiter might stop after the proof blocks on the homepage and the role-by-role evidence on the about page. A curious engineer might keep going into subposts like the chart work or handoff layer inside [MetaLearner](/blog/metalearner). A curator might only need one clean page and a sharp summary sentence.
+
+I want all three of those outcomes to be valid.
+
+## I cut anything I cannot attribute cleanly
+
+The easiest way to make a case study worse is to keep sentences that sound good but are hard to defend.
+
+I cut:
+
+- inflated ownership language
+- outcome claims I cannot source
+- generic collaboration praise that says nothing concrete
+- long background sections that do not change how the work is understood
+- implementation detail that is technically true but not decision-relevant
+
+This is less about modesty than about signal.
+
+Once a reader notices one fuzzy claim, every other claim on the page gets weaker. I would rather keep the page a little leaner and more checkable.
+
+## What I publish after the main writeup
+
+The case study is not the whole distribution system. It is the source asset.
+
+After that, I usually want three more things:
+
+- one canonical republish on a platform like DEV or Hashnode
+- one short social teaser that makes the angle legible quickly
+- one targeted pitch to a curator, tool team, or community that already cares about the specific kind of problem the post covers
+
+That is also why I prefer deep links over homepage links whenever possible. If someone is interested in Telegram workflow products, I want them landing on [Beacon](/blog/beacon), not on a generic homepage. If they care about onboarding and product adoption, [MetaLearner](/blog/metalearner) is the better first click.
+
+The homepage earns the broad introduction. The case study earns the specific one.
+
+I do not think a case study needs to sound polished to feel strong. It needs to reduce the reader's uncertainty. If they can tell what changed, where I touched it, and why the work mattered, the page has done its job.

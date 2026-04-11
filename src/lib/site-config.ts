@@ -25,8 +25,9 @@ const isDevelopmentEnv = (env: SiteEnv) =>
   env.MODE === 'development' ||
   env.NODE_ENV === 'development'
 
-// Prefer an explicit site URL, then Vercel's stable production domain so
-// preview builds still emit production-safe canonical URLs.
+// Prefer explicit site env vars first so deployments can override the canonical
+// host. Fall back to Vercel's production domain and finally the request URL
+// Vercel exposes.
 export const resolveSiteUrl = (env: SiteEnv) => {
   const configuredSiteUrl = getConfiguredSiteUrl(env)
   if (configuredSiteUrl) {

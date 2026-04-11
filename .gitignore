@@ -17,7 +17,11 @@ teaser.pptx
 playwright-report/
 test-results/
 scripts/
+!scripts/
+scripts/*
+!scripts/capture-remotion-pages.ts
 reports/
 output/*
 !tests/
 !tests/**/*.test.ts
+video/
