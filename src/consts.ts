@@ -33,10 +33,6 @@ export const NAV_LINKS: SocialLink[] = [
     href: '/blog',
     label: 'writing',
   },
-  {
-    href: '/rss.xml',
-    label: 'rss',
-  },
 ]
 
 export const PROFILE: Profile = {
@@ -394,6 +390,10 @@ export const FOOTER: FooterContent = {
     {
       href: githubLink?.href ?? 'https://github.com/Ducksss',
       label: 'GitHub',
+    },
+    {
+      href: '/rss.xml',
+      label: 'RSS',
     },
     {
       href: '/signal-room/ascii-signal',
