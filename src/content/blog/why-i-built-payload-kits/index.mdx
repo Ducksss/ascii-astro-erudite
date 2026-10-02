@@ -1,41 +1,50 @@
 ---
-title: 'Why I Built Payload Components'
-description: 'Repeated client website work led me to build an MIT registry and CLI that install typed Payload blocks with their configuration, renderer and generated artefacts wired together.'
+title: 'Why I built Payload Components'
+description: 'Copying a CMS block is easy. Making its editor fields, renderer and generated types agree is the repeated work I wanted to remove.'
 date: 2026-04-16
+updated: 2026-10-03
+image: './cover.png'
 tags: ['payloadcms', 'nextjs', 'freelancing', 'product-engineering']
 authors: ['chai-pin-zheng']
 draft: false
 ---
 
-> Updated 3 October 2026: the project is now called Payload Components. I have updated this article to reflect the shipped registry and CLI.
+On client websites, a familiar section could still take an unfamiliar amount of setup. I would have a hero or FAQ component ready, but it could not appear in Payload's editor until its configuration was registered. Even then, the frontend needed to know which component should render it, and the generated types needed to catch up.
 
-The idea grew out of repeated client website work. I contributed to design direction and development on collaborative projects for [Genium](https://genium.sg/) and [Octilyon](https://octilyon.com/), working alongside other designers and developers. Across projects, familiar section patterns kept returning: heroes, feature grids, FAQs and testimonials.
+I kept meeting that repetition while contributing to design and development on collaborative projects for [Genium](https://genium.sg/) and [Octilyon](https://octilyon.com/). The sites had different needs, but the route from “we need this section” to a working content-managed page was often the same.
 
-With Payload, building the section was only part of the job. I still had to connect its fields, frontend renderer and generated types to the host project. Recreating that setup took time away from the client's actual problem. [Payload Components](https://www.payload-components.xyz/) is my attempt to make that repeated work reusable.
+[Payload Components](https://www.payload-components.xyz/) grew out of that work. It is an MIT registry and CLI that install the source for a block together with the wiring that makes it usable in a supported Payload v3 and Next.js project.
 
-## The repeated pain was not the blocks themselves
+## A block has several places to exist
 
-A block in a Payload v3 and Next.js project needs several pieces to agree:
+Consider a basic hero. The editor needs fields for its content, while the frontend needs a component that knows how to display that content. Those two files are only part of the path:
 
-- a typed block config defining its editor fields
-- a frontend component rendering that content
-- registration in the Pages collection's layout field
-- a matching entry in `RenderBlocks`
-- regenerated Payload types and the admin import map
+```text wrap=false
+Block configuration
+  | defines the fields an editor can fill in
+  v
+Pages collection's layout field
+  | makes the block available in the admin
+  v
+Saved page content
+  | carries a blockType and field values
+  v
+RenderBlocks mapping
+  | selects the matching frontend component
+  v
+Rendered page
 
-Copying the component files leaves the rest of that work to the developer. When teams repeat the same setup across projects, a missed registration or stale generated file can leave a block unavailable in the editor or absent from the page.
+Generated types and the admin import map
+must agree with the configuration alongside this path.
+```
 
-I wanted the source and the installation instructions to travel together.
+Copying a JSX file does not establish those connections. A missing collection registration means the editor cannot select the block. A missing renderer mapping means the frontend does not know what to do with the saved content. A stale generated file can leave the code and the configuration describing different versions of the same thing.
 
-## Why I built Payload Components
+I wanted the installation instructions to travel with the source, because the connections were the part I kept having to reconstruct.
 
-Payload Components is an MIT, community-first registry and CLI for typed Payload CMS blocks. I maintain the project, including releases, issue triage and reviews. The source, installer and documentation are open, and contributions help decide what the catalog needs next.
+## What the installer changes
 
-Each block ships with an install contract describing its files, dependencies, Payload wiring and generation tasks. The CLI applies that contract in a supported project and leaves the result as a reviewable git diff. Developers keep the installed source in their own repository and can adapt it to their site.
-
-## What it does
-
-From the root of a supported Payload v3 and Next.js project, I can check the setup, preview an install and add a block:
+Each block has an install contract describing its files, dependencies, wiring fragments and generation tasks. For a supported project, I can inspect that plan before applying it:
 
 ```sh
 npx payload-components doctor
@@ -43,11 +52,17 @@ npx payload-components add hero-basic --dry-run
 npx payload-components add hero-basic
 ```
 
-The install copies the source, installs missing dependencies, registers the block in Pages, maps its renderer in `RenderBlocks`, and runs `generate:types` and `generate:importmap`. It records the result in `.payload-components/state.json` so a repeated install can check what is already present without duplicating the wiring.
+`doctor` checks the project shape and the files and scripts the install needs. The dry run shows the planned changes without copying files, installing dependencies or running generation commands. For `hero-basic`, the plan includes the block source, its registration in the Pages collection, its entry in `RenderBlocks`, and the generation tasks.
 
-A bare `create-payload-app` project can establish the starter files with `npx payload-components init --scaffold`. That is an explicit setup step. Follow its registration guidance and run `doctor` before adding blocks.
+The real install applies that plan and runs `generate:types` and `generate:importmap`. The result stays in the host repository as source that the developer can read and change, rather than being hidden behind a hosted rendering service.
 
-The project also supports checking and maintaining recorded installs:
+This depends on recognising the project. The CLI does not promise to understand every custom Payload layout. A bare `create-payload-app` project can use `npx payload-components init --scaffold` to establish the starter files, but that is a separate setup step with registration guidance to follow. The [installation guide](https://www.payload-components.xyz/docs/installation) describes the supported route.
+
+## The second install matters as much as the first
+
+A successful first run is only the beginning. Running the same command again should not add the same block registration twice, and updating a block should not quietly erase a client's changes.
+
+The CLI records successful installs in `.payload-components/state.json`. That gives later commands a baseline for checking source and wiring rather than guessing from filenames alone:
 
 ```sh
 npx payload-components list
@@ -55,30 +70,14 @@ npx payload-components diff
 npx payload-components update
 ```
 
-`diff` reports source and wiring drift. `update` checks the recorded source before replacing files and refuses to overwrite local edits without an explicit override. Installation and maintenance are part of the same workflow.
+`diff` reports version, file and wiring drift. `update` compares the installed files with the source hashes recorded at the previous successful install. If I have edited a component locally, it skips that component and reports the conflict unless I explicitly override the protection.
 
-## Who it is really for
+That is a useful boundary for a source-copying tool. Once a file belongs to a project, it can contain work the registry has never seen. Having a newer registry version does not make that local work disposable.
 
-Agencies and freelancers were the starting point because client websites made the repetition visible to me. The same problem applies to any team building content-managed sites with supported Payload project shapes.
+## The preview is only one part of the component
 
-The catalog includes families of website sections, with structural variants chosen by name. A team can pick the block it needs, inspect its fields and source, then install it into a project it already owns. The [component catalog](https://www.payload-components.xyz/components) is the current inventory.
+The visible section is the easy part to demonstrate. The less visible questions take more maintenance: does it install in the supported starter, do its fields match what the renderer expects, does regeneration succeed, and does a repeated install converge on the same wiring?
 
-## Payload-native integration
+Those questions are why the installer is part of the project rather than a footnote in the documentation. A component gallery can show the section I want. An install contract has to explain how that section joins the code I already have.
 
-Shipping this taught me that developer experience is a systems problem. The component, installation, types, examples, error messages and documentation all need to agree.
-
-The installer has to work with code I do not control. That means checking the host project before changing it, preserving local work, and testing the integration path. A block that looks right in a preview still needs to compile and render after installation in a real Payload project.
-
-Those checks are where I spend much of the maintenance effort. They make the source easier to reuse without asking every developer to rediscover the same setup.
-
-## What I do not want this to become
-
-I want to keep the scope clear: useful, documented blocks for Payload v3 and Next.js, with an installer that respects the host repository.
-
-The project is community-first. Its MIT source is available to use and contribute to, and the catalog grows through real installs, bug reports and pull requests. That is the kind of project I wanted when I kept rebuilding the same integration work for clients.
-
-## Links
-
-- [Payload Components](https://www.payload-components.xyz/)
-- [Installation guide](https://www.payload-components.xyz/docs/installation)
-- [Source and contributions](https://github.com/Ducksss/payload-components)
+The [catalog](https://www.payload-components.xyz/components) shows the current blocks. The [registry and CLI source](https://github.com/Ducksss/payload-components) show how they are packaged and installed. Both are open under MIT, so the useful place to start is one block in a project you can inspect, followed by the diff it leaves behind.

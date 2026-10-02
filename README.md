@@ -96,20 +96,21 @@ otherwise remain in canonical links, the sitemap and RSS.
 
 ## Available Scripts
 
-| Command                               | Description                                                                                       |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| `npm run dev`                         | Start the local Astro development server on port `1234`                                           |
-| `npm run start`                       | Alias for `npm run dev`                                                                           |
-| `npm run build`                       | Run Astro checks and create a production build in `dist/`                                         |
-| `npm run check`                       | Run Astro and TypeScript diagnostics                                                              |
-| `npm test`                            | Run the ASCII engine, ASCII generator, date and sitemap regression tests                          |
-| `npm run test:build`                  | Check the generated routes, links, assets, RSS, and sitemap after a build                         |
-| `npm run test:browser`                | Check responsive design, keyboard navigation, TOC, and the ASCII island in Chromium after a build |
-| `npm run verify`                      | Run tests, checks, production build, and production/browser regression tests                      |
-| `npm run preview`                     | Preview the production build locally                                                              |
-| `npm run astro -- <args>`             | Run Astro CLI commands directly                                                                   |
-| `npm run prettier`                    | Format `ts`, `tsx`, `css`, and `astro` files                                                      |
-| `npx tsx scripts/capture-previews.ts` | Regenerate the social card and README previews after `npm run build`                              |
+| Command                                   | Description                                                                                       |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `npm run dev`                             | Start the local Astro development server on port `1234`                                           |
+| `npm run start`                           | Alias for `npm run dev`                                                                           |
+| `npm run build`                           | Run Astro checks and create a production build in `dist/`                                         |
+| `npm run check`                           | Run Astro and TypeScript diagnostics                                                              |
+| `npm test`                                | Run the ASCII engine, ASCII generator, date and sitemap regression tests                          |
+| `npm run test:build`                      | Check the generated routes, links, assets, RSS, and sitemap after a build                         |
+| `npm run test:browser`                    | Check responsive design, keyboard navigation, TOC, and the ASCII island in Chromium after a build |
+| `npm run verify`                          | Run tests, checks, production build, and production/browser regression tests                      |
+| `npm run preview`                         | Preview the production build locally                                                              |
+| `npm run astro -- <args>`                 | Run Astro CLI commands directly                                                                   |
+| `npm run prettier`                        | Format `ts`, `tsx`, `css`, and `astro` files                                                      |
+| `npx tsx scripts/capture-previews.ts`     | Regenerate the social card and README previews after `npm run build`                              |
+| `npx tsx scripts/generate-blog-covers.ts` | Regenerate the seven ASCII blog covers from local fonts and text artwork                          |
 
 Before the first browser test or `npm run verify`, install Chromium once:
 
@@ -185,16 +186,31 @@ Example blog post frontmatter:
 title: 'Post title'
 description: 'Short summary'
 date: 2026-04-03
+updated: 2026-10-03
+image: './cover.png'
 tags: ['astro', 'portfolio']
 authors: ['chai-pin-zheng']
 draft: false
 ---
 ```
 
-Legacy posts carried over from the original `astro-erudite` template can stay in
-the repo as writing or implementation references. Mark those entries with
-`draft: true` so they are excluded from blog listings, RSS, and generated static
-paths until you intentionally republish them.
+Write for readers who want to understand the work. Explain a concrete mechanism
+or decision, link to the relevant source, and distinguish implemented behaviour
+from mock data, simulations and proposals. Do not turn a technology list or an
+award into a claim about effectiveness. Keep personal memories specific rather
+than filling gaps with a generic lesson.
+
+The archive contains seven project and personal notes, with deeper chapters for
+Beacon and MetaLearner. The former recruiter-writing guide and inherited
+first-person template articles have been removed. The SAF chapters are combined
+in one account. New drafts use `draft: true` until they are ready to publish.
+
+Use `updated` when revising an existing post without changing its publication
+date. It appears in the reading panel and supplies the modification date in
+article metadata. ASCII covers are generated with
+`npx tsx scripts/generate-blog-covers.ts` before building. Keep screenshots
+readable when their interface details matter, and caption photos and prototype
+screens without treating them as evidence of outcomes.
 
 Publication dates and archive years use UTC so builds show the same calendar
 date in every time zone. Subposts, author profiles, and tag detail pages remain

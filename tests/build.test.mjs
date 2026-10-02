@@ -100,6 +100,78 @@ test('portfolio publishes the current career and source-qualified record', () =>
     )
 })
 
+test('writing publishes the curated archive with ASCII covers and revision dates', () => {
+  const parents = [
+    'beacon',
+    'daybreak',
+    'ecocart',
+    'metalearner',
+    'saf-journey',
+    'safesteps-agewell',
+    'why-i-built-payload-kits',
+  ]
+  const rss = read('rss.xml')
+  assert.equal([...rss.matchAll(/<item>/g)].length, parents.length)
+  for (const id of parents) {
+    const cover = readFileSync(new URL(`${id}/cover.png`, content))
+    assert.deepEqual(
+      cover.subarray(0, 8),
+      Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]),
+    )
+    assert.equal(cover.readUInt32BE(16), 1200, `${id}: cover width`)
+    assert.equal(cover.readUInt32BE(20), 630, `${id}: cover height`)
+    const html = read(`blog/${id}/index.html`)
+    const attributes = tags(html)
+    const metadata = JSON.parse(
+      html.match(
+        /<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/,
+      )[1],
+    )
+    assert.equal(metadata.dateModified, '2026-10-03T00:00:00.000Z')
+    assert.ok(metadata.datePublished < metadata.dateModified)
+    assert.ok(
+      attributes.some(
+        ([name, attrs]) =>
+          name === 'meta' &&
+          attrs.property === 'article:modified_time' &&
+          attrs.content === metadata.dateModified,
+      ),
+    )
+    const social = attributes.find(
+      ([name, attrs]) => name === 'meta' && attrs.property === 'og:image',
+    )[1].content
+    assert.doesNotMatch(social, /\/static\/1200x630\.png$/)
+    assert.match(social, /cover/)
+    assert.ok(
+      attributes.some(
+        ([name, attrs]) =>
+          name === 'img' && attrs.class?.includes('post-figure__image'),
+      ),
+    )
+    assert.match(rss, new RegExp(`/blog/${id}(?:/|<)`))
+  }
+  const retired = [
+    'how-i-write-product-and-engineering-case-studies',
+    'how-this-astro-portfolio-is-structured',
+    'callouts-component',
+    'mobile-nav-and-subposts',
+    'rehype-patch',
+    'the-state-of-static-blogs',
+    'saf-journey/bmt',
+    'saf-journey/enlistment',
+    'saf-journey/ocs',
+    'saf-journey/leading-men',
+  ]
+  const files = readdirSync(dist, { recursive: true })
+  for (const id of retired) {
+    assert.ok(
+      !files.includes(`blog/${id}/index.html`),
+      `${id}: retired post published`,
+    )
+    assert.ok(!rss.includes(`/blog/${id}`), `${id}: retired post in feed`)
+  }
+})
+
 test('production build preserves routes, content, local links and SEO metadata', () => {
   const files = new Set(
     readdirSync(dist, { recursive: true }).filter((file) =>

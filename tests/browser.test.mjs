@@ -5,6 +5,90 @@ import { fileURLToPath } from 'node:url'
 import { preview } from 'astro'
 import { chromium } from 'playwright'
 
+test('rewritten articles keep covers, screenshots and diagrams readable', async () => {
+  const server = await preview({
+    configFile: false,
+    root: fileURLToPath(new URL('../', import.meta.url)),
+    server: { host: '127.0.0.1', port: 0 },
+    logLevel: 'silent',
+  })
+  let browser
+  try {
+    browser = await chromium.launch()
+    const page = await browser.newPage({ reducedMotion: 'reduce' })
+    const errors = []
+    page.on('pageerror', (error) => errors.push(error.message))
+    const posts = [
+      'beacon',
+      'beacon/workflow',
+      'beacon/telegram-stack',
+      'metalearner',
+      'metalearner/onboarding',
+      'metalearner/charts',
+      'metalearner/redesign',
+      'metalearner/handoff',
+      'daybreak',
+      'ecocart',
+      'safesteps-agewell',
+      'saf-journey',
+      'why-i-built-payload-kits',
+    ]
+    for (const width of [1440, 390, 320]) {
+      await page.setViewportSize({ width, height: 900 })
+      for (const id of posts) {
+        await page.goto(`http://127.0.0.1:${server.port}/blog/${id}`)
+        await page.evaluate(() => document.fonts.ready)
+        const context = `${id} at ${width}px`
+        assert.ok(
+          await page.locator('.prose h2').count(),
+          `${context}: missing article sections`,
+        )
+        if (!id.includes('/')) {
+          const cover = page.locator('.post-figure__image')
+          assert.equal(await cover.count(), 1, `${context}: missing cover`)
+          assert.ok(
+            await cover.getAttribute('alt'),
+            `${context}: cover has no description`,
+          )
+          const size = await cover.boundingBox()
+          assert.ok(
+            Math.abs(size.width / size.height - 1200 / 630) < 0.01,
+            `${context}: cropped cover`,
+          )
+        }
+        for (const image of await page.locator('main img').all()) {
+          await image.scrollIntoViewIfNeeded()
+          await image.evaluate((element) => element.decode())
+          assert.ok(
+            await image.evaluate((element) => element.naturalWidth > 0),
+            `${context}: unloaded image`,
+          )
+        }
+        assert.equal(
+          await page.evaluate(
+            () => document.documentElement.scrollWidth > innerWidth + 1,
+          ),
+          false,
+          `${context}: horizontal overflow`,
+        )
+        for (const block of await page
+          .locator('.prose pre, .prose table')
+          .all()) {
+          const bounds = await block.boundingBox()
+          assert.ok(
+            bounds.x >= -1 && bounds.x + bounds.width <= width + 1,
+            `${context}: diagram or table escapes article`,
+          )
+        }
+      }
+    }
+    assert.deepEqual(errors, [])
+  } finally {
+    await browser?.close()
+    await server.stop()
+  }
+})
+
 test('editorial design stays readable, responsive and navigable across the site', async () => {
   const server = await preview({
     configFile: false,
@@ -197,6 +281,25 @@ test('editorial design stays readable, responsive and navigable across the site'
           [],
           `${context}: empty link destinations`,
         )
+
+        if (path === '/blog' && width >= 768) {
+          for (const image of await page
+            .locator('.post-row__thumb img')
+            .all()) {
+            const bounds = await image.boundingBox()
+            assert.ok(
+              Math.abs(bounds.width / bounds.height - 1200 / 630) < 0.01,
+              `${context}: archive crops the cover`,
+            )
+            assert.equal(
+              await image.evaluate(
+                (element) => getComputedStyle(element).filter,
+              ),
+              'none',
+              `${context}: archive changes cover colours`,
+            )
+          }
+        }
 
         if (path === '/') {
           const colors = await page

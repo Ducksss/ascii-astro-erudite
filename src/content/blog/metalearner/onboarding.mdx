@@ -1,78 +1,60 @@
 ---
-title: 'Building self-serve onboarding inside MetaLearner'
-description: 'How guided onboarding, a 4-category User Guide, and i18n-aware guidance reduced the amount of interpretation customers needed in a supply chain forecasting product built on ERP data.'
+title: 'MetaLearner onboarding: the first useful question'
+description: 'How a dashboard tour and four guide categories introduce MetaLearner, with examples of giving an AI conversation a useful scope.'
 date: 2026-04-03
-tags: ['projects', 'product-engineering', 'fastapi', 'redis', 'data-visualization']
+updated: 2026-10-03
+tags:
+  ['projects', 'product-engineering', 'fastapi', 'redis', 'data-visualization']
 authors: ['chai-pin-zheng']
 order: 1
 ---
 
-The onboarding modal and four-category User Guide were the highest-ROI pieces of product work I shipped in MetaLearner.
+I implemented two kinds of guidance in MetaLearner: a short onboarding modal over the BI dashboard and a User Guide for the details that would not fit comfortably in a tour.
 
-That was the framing I used in the handoff deck, and after looking back through the implemented work, I still think it is the right one. If product value stays hidden behind vague first steps, adoption slows down, demos get weaker, and the team spends more time translating the product than extending it.
+They answer different questions. The tour helps someone recognise the interface in front of them, while the guide helps them do something with it. Explaining where the chat panel lives is a smaller task than explaining how to ask it for a useful comparison.
 
-MetaLearner asked users to understand ERP-backed forecasting surfaces, KPI dashboards, chart interactions, and an AI assistant for asking and extracting data. That is a lot of value, but it is also a lot of surface area to drop on someone too early.
+## A tour anchored to the dashboard
 
-## Problem framing
-
-MetaLearner had enough surface area that weak onboarding would not fail in one dramatic way. It would fail gradually:
-
-- setup would feel heavier than it needed to
-- feature entry points would feel more ambiguous than they really were
-- customers would need more hand-holding to become productive
-- support and field engineers would absorb explanatory work that should have been designed out
-- documentation would live outside the workflow instead of helping users move through it
-
-That is why I think of onboarding here as infrastructure, not as a support layer sitting beside the product.
-
-## What I actually shipped
-
-The work in this track was more concrete than "better onboarding" makes it sound.
-
-The onboarding flow itself included:
-
-- an onboarding modal with **swipe gestures** and **step navigation**
-- explanations tied to the **BI dashboard** and key product surfaces
-- **"Find out more"** links into deeper guidance
-- clearer sequencing so users could connect interface elements to product value
-- implementation prepared to work alongside MetaLearner's language support
-
-That then expanded into a fuller **User Guide system** inside the frontend repo. The guide was organized into four categories:
-
-- **Dashboard Overview**
-- **Drill Down into the Details**
-- **Ask and Extract Your Data**
-- **Settings**
-
-What made the guide more than a static help page was that it also included:
-
-- suggested questions for first-time usage
-- examples of stronger and weaker prompts
-- multi-turn conversation guidance for deeper extraction work
-- content structured with i18n support in mind
-
-The point was not only to explain the product. It was to reduce the amount of interpretation the user had to do before the product became useful.
+The modal used swipe gestures and step navigation to move through the introduction, with feature explanations and “Find out more” links into deeper guidance. It was prepared to work with the product's language support.
 
 <div class="border [&_img,p]:m-0">
-![Guided onboarding modal inside the MetaLearner BI dashboard](assets/onboarding-modal.png)
+  ![MetaLearner onboarding modal over a dashboard, with step indicators and a
+  Next button](assets/onboarding-modal.png)
 </div>
 
-_A real onboarding capture from the frontend: the BI dashboard remains visible in the background while the modal explains where to start and how to read the product._
+_The dashboard stays visible behind the introduction. The first step describes KPIs and immediate action items, giving the reader a reference for what they will see when the modal closes._
 
-## Why keeping the guidance in-product matters
+That placement has a useful tradeoff. Keeping the dashboard in view connects the explanation to the actual screen, but the modal also interrupts the screen. A tour should therefore carry enough information to orient someone, while leaving detailed instructions somewhere they can consult during a task.
 
-One of the strongest lessons in this internship was that documentation gets dramatically better when it sits close to the decision it is trying to support.
+The step controls help with pacing. Someone can move through the introduction at their own speed instead of reading a single wall of text, and the deeper links give a path beyond the summary.
 
-If a user has to pause, leave the workflow, open a separate document, map the terminology back to the interface, and then return, that is already friction. In a complex product, enough small frictions turn into avoidance.
+## Four ways to enter the guide
 
-So the real value here was not that I "wrote docs." It was that the distance between confusion and help got shorter.
+The User Guide was organised around four categories:
 
-## Why this still feels like the core of the internship
+| Category                    | Reader's task                                      |
+| --------------------------- | -------------------------------------------------- |
+| Dashboard Overview          | Understand the layout, KPIs and basic interactions |
+| Drill Down into the Details | Explore charts and inspect data more closely       |
+| Ask and Extract Your Data   | Form a question and follow up on the response      |
+| Settings                    | Find preferences and usage guidance                |
 
-This track clarified why I like this kind of work. It is not flashy in the way a brand-new feature can be, but it changes whether the rest of the product has a fair chance to succeed.
+This gives the guide more than one entry point. Someone trying to interpret a chart does not need to read the assistant instructions first, and someone trying the assistant can go directly to question examples.
 
-The best validation line from the handoff deck still captures it well:
+The content included suggested questions, examples of stronger and weaker prompts, and guidance for continuing a conversation across several turns. I reviewed the guidance against the product rather than treating it as a separate description of what the product might eventually do.
 
-> "I like the flow, especially the addition of user guide..."
+## Giving a question a scope
 
-That matters because it points to the real outcome. The work was not just visible. It was useful.
+An illustrative prompt-writing example is the difference between “Show me costs” and “Compare shipping costs by supplier for March”. The second question names a measure, a grouping and a period, so there is less left for the assistant to infer.
+
+That is a useful pattern to teach because it applies beyond one suggested question:
+
+- Name the measure you want, such as shipping cost or expected demand.
+- Name the grouping or filter, such as supplier or product category.
+- Include a period when the question depends on time.
+
+A follow-up can change one part of that scope. “Break that down by product” is easier to interpret after a supplier comparison than as an opening message with no context. It also gives the user a way to explore the answer without composing a large request containing every possible question at once.
+
+More specific wording does not establish whether an answer is correct. It makes the intended question easier to identify, so the reader can compare the response with what they asked for.
+
+The [handoff](https://metalearner-internship-logs.vercel.app/) records the implemented tour and guide. The useful division is between an introduction you pass through once and instructions you return to when a particular task needs them.

@@ -1,85 +1,54 @@
 ---
-title: 'Making MetaLearner charts easier to inspect'
-description: 'How a 9-demo chart gallery, zoom and hover interactions, and mobile frontend work made MetaLearner’s data surfaces more legible.'
+title: 'MetaLearner: inspecting time series with zoom and hover'
+description: 'Inside a nine-demo chart gallery, with S&P 500 range controls, hover inspection and the tradeoffs of a dynamically scaled axis.'
 date: 2026-04-03
-tags: ['projects', 'product-engineering', 'fastapi', 'redis', 'data-visualization']
+updated: 2026-10-03
+tags:
+  ['projects', 'product-engineering', 'fastapi', 'redis', 'data-visualization']
 authors: ['chai-pin-zheng']
 order: 2
 ---
 
-The clearest visible frontend delivery track in MetaLearner was a chart gallery with **9 demos**, **6 categories**, and **3 locales**.
+The MetaLearner chart gallery let a reader try a chart and read its explanation on the same page. I handed over nine demos across six categories, with content for English, Spanish and Portuguese, under the `/graphs/*` routes.
 
-That framing matters because it avoids underselling the work. This was not one chart polish pass. It was a reusable chart-detail system, a clearer information-design layer, and one of the easiest places for someone outside the team to see the difference between "the product has charts" and "the product helps users read data."
+Each detail page combined a live demo, sample code, related navigation and an explanation of when the chart type was useful. Before-and-after examples described the changes rather than asking the reader to judge them from appearance alone. The [gallery walkthrough](https://www.youtube.com/watch?v=vEYGuY5jr-U) shows the interactions.
 
-## The graph gallery was more than a demo
+## A stock chart as an interaction example
 
-The implementation I handed over included an interactive chart gallery under the public `/graphs/*` routes. I shared the implementation with Lim as a zip, and the public proof of the work is the [demo video](https://www.youtube.com/watch?v=vEYGuY5jr-U).
-
-The handoff site gives the scope cleanly: **9 demos**, **6 categories**, **3 locales**.
-
-Each chart page was built to do more than render a visualization. It included:
-
-- a **live demo**
-- an **explanation** of what the chart was doing
-- **sample code**
-- **related navigation**
-- **before/after comparisons**
-- chart education explaining **when each chart type makes sense**
-- routing and content that were **set up to be i18n-ready**
-
-That structure mattered because it turned the gallery into a teaching surface as well as a product surface. A chart page was not just there to look impressive. It was there to show the behavior, explain it, and make the implementation easier to reason about.
+The S&P 500 chart fetched data through `/api/yfinance` and used D3 for zooming and panning. It also offered time-range controls, hover inspection and a vertical axis that adjusted to the visible data.
 
 <div class="border [&_img,p]:m-0">
-![Graph work summary slide from the MetaLearner handoff deck](assets/graph-work-slide.png)
+  ![Stock-chart detail page comparing a basic line chart with an S&P 500 chart
+  and time-range controls](assets/stock-chart.png)
 </div>
 
-_The graph-work slide made the gallery legible as a system, not just a collection of demos: reusable detail pages, before/after framing, chart education, and multilingual structure._
+_The detail page shows the chart, the changes and the intended use together. The example changes both the data source and the interface, so its before-and-after images are not a comparison of the same dataset._
 
-## The interaction layer mattered
+A time series has several levels of detail, and each control exposes a different one:
 
-The best proof of depth in the gallery was the final chart in the demo. It supported zoom and hover interactions so users could inspect time-series data more closely instead of just reading a static picture of it.
+| Interaction               | What it lets you inspect                                               |
+| ------------------------- | ---------------------------------------------------------------------- |
+| Change the time range     | Read a day or a longer period without fitting all of it into one view  |
+| Zoom and pan              | Concentrate on a section of the timeline                               |
+| Hover                     | Read a point's value and context rather than estimate it from the axis |
+| Rescale the vertical axis | See variation within the selected part of the series                   |
 
-That kind of interaction matters more than people sometimes admit:
+For example, a narrow dip can disappear into a long history when many points occupy the same few pixels. Zooming gives that section more horizontal space, and hovering lets you inspect the values around it. Changing the range answers a broader question about whether that dip belongs to a longer trend.
 
-- **hover states** give users exact values and local context
-- **zoom** gives dense data room to breathe
-- **legends and cues** reduce visual guesswork
-- **responsive behavior** determines whether the chart still makes sense on smaller screens
+## The axis changes the apparent movement
 
-The handoff deck also calls out the details that made the charts feel more mature:
+Dynamic vertical scaling makes small movements visible, but it also changes the frame of reference. A line can look dramatic in a tightly scaled view even when the absolute change is small.
 
-- better legends and more intentional colour palettes
-- cleaner tooltips with clearer emphasis
-- improved hover behavior and cursor tracking
-- better guidance on what each chart type is good for
+That is a tradeoff to keep in mind when inspecting the stock-chart demo. Compare the axis labels and time range as well as the shape of the line, especially after zooming. The chart gives more detail about a selected interval, but the picture alone no longer tells you how large that movement is relative to a wider period.
 
-What I like about this kind of work is that it sits right on the border between interface design and trust. If a chart is hard to inspect, the product feels less reliable even when the underlying data is correct.
+The same interaction problem occurs in demand and forecast charts. A user may want to investigate a short interval without losing track of the scale of the larger series. The gallery demonstrated an interaction pattern that could be considered for those views, rather than establishing that it had been integrated into every forecasting screen.
 
-## There was real frontend depth underneath the polish
+## Explaining the behaviour beside the demo
 
-Looking back through the handoff site helped me see how much of this track was actually system work.
+Other improvements included legends, tooltip emphasis, cursor tracking and categorical grouping. Carl's early feedback specifically called out “the tooltips and the categorical grouping on focus”, which is more useful detail than a general preference for the new appearance.
 
-According to the implementation summary, the chart gallery was driven by:
+The reusable pages were driven by chart configuration and shared routing, with D3 handling chart behaviour, Framer Motion handling transitions and i18next supporting the content. The value of that structure was practical: a chart's demo, explanation and related links could follow the same page pattern without each becoming a separate page design.
 
-- structured **config** rather than one-off pages
-- reusable **routing** for gallery and detail views
-- **D3** for chart behavior
-- **Framer Motion** for transitions
-- an i18n-ready content model supporting **English, Spanish, and Portuguese**
-- a stack including **TypeScript**, **TanStack Router**, and **i18next**
+Mobile-friendly frontend work accompanied the gallery. A narrower plot leaves less room for labels and close-together points, which makes inspection controls and readable explanations especially relevant when reviewing a responsive chart.
 
-The live stock chart pushed that further. It was not only animated. It used `/api/yfinance`, supported zoom and hover inspection, and handled dynamic scaling on a real time-series surface. That made it a useful proof point for other MetaLearner contexts, not just a gallery showpiece.
-
-<div class="border [&_img,p]:m-0">
-![Live stock chart detail page from the MetaLearner graph gallery](assets/stock-chart.png)
-</div>
-
-_The live stock chart is still the strongest single proof-of-depth example in the gallery: zoomable, hoverable, dynamically scaled, and connected to a real data fetch rather than a static placeholder._
-
-## Why the mobile work belongs in the same conversation
-
-The graph work was not isolated from the rest of the frontend. It sat alongside broader mobile-friendly layout improvements in the MetaLearner frontend repo. That mattered because dense information gets even more fragile once the screen gets tighter.
-
-I do not think of responsive work here as cosmetic polish. It is usability engineering. If the product already asks the user to think carefully, the interface should not add more layout friction on top of that.
-
-This track reinforced a lesson I keep coming back to: information design is not secondary work. Make the product easier to inspect, and the product becomes easier to trust.
+The [handoff](https://metalearner-internship-logs.vercel.app/) records the gallery scope and stack. Lim received the implementation as a zip, alongside the walkthrough that shows how the charts respond to input.

@@ -112,7 +112,7 @@
     }
 
     :where(table):not(:where(.not-prose, .not-prose *)) {
-      @apply mx-auto my-6 block max-w-fit overflow-x-auto text-sm;
+      @apply mx-auto my-6 block max-w-full overflow-x-auto text-sm;
     }
 
     :where(thead):not(:where(.not-prose, .not-prose *)) {

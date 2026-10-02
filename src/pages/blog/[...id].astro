@@ -152,6 +152,14 @@ const tocSections = await getTOCSections(currentPostId)
                 <dt class="t-label">Published</dt>
                 <dd>{formatDate(post.data.date)}</dd>
               </div>
+              {
+                post.data.updated && (
+                  <div>
+                    <dt class="t-label">Updated</dt>
+                    <dd>{formatDate(post.data.updated)}</dd>
+                  </div>
+                )
+              }
               <div>
                 <dt class="t-label">Reading time</dt>
                 <dd>
@@ -215,7 +223,7 @@ const tocSections = await getTOCSections(currentPostId)
           )
         }
 
-        <div class="col-start-1 space-y-16 xl:col-start-2">
+        <div class="col-start-1 min-w-0 space-y-16 xl:col-start-2">
           <article class="prose max-w-none">
             <Content />
           </article>

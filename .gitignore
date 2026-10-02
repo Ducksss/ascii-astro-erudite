@@ -21,6 +21,7 @@ scripts/
 scripts/*
 !scripts/capture-remotion-pages.ts
 !scripts/capture-previews.ts
+!scripts/generate-blog-covers.ts
 reports/
 output/*
 !tests/
