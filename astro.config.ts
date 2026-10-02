@@ -6,7 +6,7 @@ import react from '@astrojs/react'
 import sitemap from '@astrojs/sitemap'
 import icon from 'astro-icon'
 
-import { rehypeHeadingIds } from '@astrojs/markdown-remark'
+import { rehypeHeadingIds, unified } from '@astrojs/markdown-remark'
 import rehypeExpressiveCode from 'rehype-expressive-code'
 import rehypeExternalLinks from 'rehype-external-links'
 import rehypeKatex from 'rehype-katex'
@@ -19,16 +19,20 @@ import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers'
 import type { ExpressiveCodeTheme } from 'rehype-expressive-code'
 
 import tailwindcss from '@tailwindcss/vite'
-import { resolveSiteUrl } from './src/lib/site-config'
+import { resolveSiteUrl, sitemapFilter } from './src/lib/site-config'
 
-const siteEnv = loadEnv(process.env.NODE_ENV ?? 'development', process.cwd(), '')
+const siteEnv = loadEnv(
+  process.env.NODE_ENV ?? 'development',
+  process.cwd(),
+  '',
+)
 
 export default defineConfig({
   site: resolveSiteUrl(siteEnv),
-  integrations: [mdx(), react(), sitemap(), icon()],
+  compressHTML: true,
+  integrations: [mdx(), react(), sitemap({ filter: sitemapFilter }), icon()],
   vite: {
-    // Astro and the Tailwind Vite plugin can resolve slightly different Vite types.
-    plugins: [tailwindcss() as any],
+    plugins: [tailwindcss()],
   },
   server: {
     port: 1234,
@@ -39,74 +43,76 @@ export default defineConfig({
   },
   markdown: {
     syntaxHighlight: false,
-    rehypePlugins: [
-      [
-        rehypeExternalLinks,
-        {
-          target: '_blank',
-          rel: ['nofollow', 'noreferrer', 'noopener'],
-        },
-      ],
-      rehypeHeadingIds,
-      rehypeKatex,
-      [
-        rehypeExpressiveCode,
-        {
-          themes: ['github-light', 'github-dark'],
-          plugins: [pluginCollapsibleSections(), pluginLineNumbers()],
-          useDarkModeMediaQuery: false,
-          themeCssSelector: (theme: ExpressiveCodeTheme) =>
-            `[data-theme="${theme.name.split('-')[1]}"]`,
-          defaultProps: {
-            wrap: true,
-            collapseStyle: 'collapsible-auto',
-            overridesByLang: {
-              'ansi,bat,bash,batch,cmd,console,powershell,ps,ps1,psd1,psm1,sh,shell,shellscript,shellsession,text,zsh':
-                {
-                  showLineNumbers: false,
-                },
-            },
+    processor: unified({
+      rehypePlugins: [
+        [
+          rehypeExternalLinks,
+          {
+            target: '_blank',
+            rel: ['nofollow', 'noreferrer', 'noopener'],
           },
-          styleOverrides: {
-            codeFontSize: '0.75rem',
-            borderColor: 'var(--border)',
-            codeFontFamily: 'var(--font-mono)',
-            codeBackground:
-              'color-mix(in oklab, var(--muted) 25%, transparent)',
-            frames: {
-              editorActiveTabForeground: 'var(--muted-foreground)',
-              editorActiveTabBackground:
+        ],
+        rehypeHeadingIds,
+        rehypeKatex,
+        [
+          rehypeExpressiveCode,
+          {
+            themes: ['github-light', 'github-dark'],
+            plugins: [pluginCollapsibleSections(), pluginLineNumbers()],
+            useDarkModeMediaQuery: false,
+            themeCssSelector: (theme: ExpressiveCodeTheme) =>
+              `[data-theme="${theme.type}"]`,
+            defaultProps: {
+              wrap: true,
+              collapseStyle: 'collapsible-auto',
+              overridesByLang: {
+                'ansi,bat,bash,batch,cmd,console,powershell,ps,ps1,psd1,psm1,sh,shell,shellscript,shellsession,text,zsh':
+                  {
+                    showLineNumbers: false,
+                  },
+              },
+            },
+            styleOverrides: {
+              codeFontSize: '0.75rem',
+              borderColor: 'var(--border)',
+              codeFontFamily: 'var(--font-mono)',
+              codeBackground:
                 'color-mix(in oklab, var(--muted) 25%, transparent)',
-              editorActiveTabIndicatorBottomColor: 'transparent',
-              editorActiveTabIndicatorTopColor: 'transparent',
-              editorTabBorderRadius: '0',
-              editorTabBarBackground: 'transparent',
-              editorTabBarBorderBottomColor: 'transparent',
-              frameBoxShadowCssValue: 'none',
-              terminalBackground:
-                'color-mix(in oklab, var(--muted) 25%, transparent)',
-              terminalTitlebarBackground: 'transparent',
-              terminalTitlebarBorderBottomColor: 'transparent',
-              terminalTitlebarForeground: 'var(--muted-foreground)',
+              frames: {
+                editorActiveTabForeground: 'var(--muted-foreground)',
+                editorActiveTabBackground:
+                  'color-mix(in oklab, var(--muted) 25%, transparent)',
+                editorActiveTabIndicatorBottomColor: 'transparent',
+                editorActiveTabIndicatorTopColor: 'transparent',
+                editorTabBorderRadius: '0',
+                editorTabBarBackground: 'transparent',
+                editorTabBarBorderBottomColor: 'transparent',
+                frameBoxShadowCssValue: 'none',
+                terminalBackground:
+                  'color-mix(in oklab, var(--muted) 25%, transparent)',
+                terminalTitlebarBackground: 'transparent',
+                terminalTitlebarBorderBottomColor: 'transparent',
+                terminalTitlebarForeground: 'var(--muted-foreground)',
+              },
+              lineNumbers: {
+                foreground: 'var(--muted-foreground)',
+              },
+              uiFontFamily: 'var(--font-sans)',
             },
-            lineNumbers: {
-              foreground: 'var(--muted-foreground)',
+          },
+        ],
+        [
+          rehypeShiki,
+          {
+            themes: {
+              light: 'github-light',
+              dark: 'github-dark',
             },
-            uiFontFamily: 'var(--font-sans)',
+            inline: 'tailing-curly-colon',
           },
-        },
+        ],
       ],
-      [
-        rehypeShiki,
-        {
-          themes: {
-            light: 'github-light',
-            dark: 'github-dark',
-          },
-          inline: 'tailing-curly-colon',
-        },
-      ],
-    ],
-    remarkPlugins: [remarkMath, remarkEmoji],
+      remarkPlugins: [remarkMath, remarkEmoji],
+    }),
   },
 })

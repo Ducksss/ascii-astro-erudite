@@ -1,7 +1,7 @@
 # Chai Pin Zheng
 
 Portfolio and writing site for case studies, shipped work, and technical
-reflections, built with Astro 6, Tailwind CSS 4, and MDX.
+reflections, built with Astro 7, Tailwind CSS 4, and MDX.
 
 This repository powers a custom monochrome portfolio experience with an
 immersive landing page, a case-study-driven about page, and a writing archive
@@ -32,7 +32,7 @@ rewrite of `astro-erudite`.
 
 ## Tech Stack
 
-- [Astro 6](https://astro.build/)
+- [Astro 7](https://astro.build/)
 - [React 19](https://react.dev/) for interactive islands
 - [Tailwind CSS 4](https://tailwindcss.com/)
 - [MDX](https://mdxjs.com/)
@@ -43,7 +43,7 @@ rewrite of `astro-erudite`.
 
 ### Prerequisites
 
-- Node.js `22.x`
+- Node.js `22.12.0` or newer in the `22.x` release line
 - npm
 
 ### Local Development
@@ -51,7 +51,7 @@ rewrite of `astro-erudite`.
 1. Install dependencies:
 
    ```bash
-   npm install
+   npm ci
    ```
 
 2. Copy the example environment file:
@@ -86,6 +86,11 @@ following order:
 For `npm run dev`, the site falls back to `http://localhost:1234`. Production
 builds intentionally fail fast if no site URL is configured.
 
+This fork uses `https://www.chai-pin-zheng.xyz` as its canonical URL. Set
+`PUBLIC_SITE_URL` to that address in Vercel's Production and Preview
+environments, then redeploy after changing it. An older Vercel domain can
+otherwise remain in canonical links, the sitemap and RSS.
+
 ## Available Scripts
 
 | Command | Description |
@@ -93,9 +98,23 @@ builds intentionally fail fast if no site URL is configured.
 | `npm run dev` | Start the local Astro development server on port `1234` |
 | `npm run start` | Alias for `npm run dev` |
 | `npm run build` | Run Astro checks and create a production build in `dist/` |
+| `npm run check` | Run Astro and TypeScript diagnostics |
+| `npm test` | Run the ASCII generator, date and sitemap regression tests |
+| `npm run test:build` | Check the generated routes, links, assets, RSS, and sitemap after a build |
+| `npm run test:browser` | Check desktop/mobile navigation, TOC, and the ASCII island in Chromium after a build |
+| `npm run verify` | Run tests, checks, production build, and production/browser regression tests |
 | `npm run preview` | Preview the production build locally |
 | `npm run astro -- <args>` | Run Astro CLI commands directly |
 | `npm run prettier` | Format `ts`, `tsx`, `css`, and `astro` files |
+
+Before the first browser test or `npm run verify`, install Chromium once:
+
+```bash
+npx playwright install chromium
+```
+
+Browser tests start and stop their own local production preview. GitHub Actions
+installs Chromium and runs the same checks on Linux.
 
 ## Project Structure
 
@@ -155,6 +174,12 @@ the repo as writing or implementation references. Mark those entries with
 `draft: true` so they are excluded from blog listings, RSS, and generated static
 paths until you intentionally republish them.
 
+Publication dates and archive years use UTC so builds show the same calendar
+date in every time zone. Subposts, author profiles, and tag detail pages remain
+accessible but are excluded from the sitemap to match their `noindex` metadata.
+Social previews use emitted PNG assets; SVG post artwork uses the default
+raster preview image for compatibility with social platforms.
+
 Example author profile frontmatter:
 
 ```yml
@@ -182,9 +207,45 @@ sites are supported. Vercel is the intended hosting target for this repo.
 Before deploying:
 
 1. Set `PUBLIC_SITE_URL` to the production domain.
-2. Run `npm run build`.
+2. Run `npm run verify`.
 3. Verify canonical URLs, sitemap output, and RSS metadata use the expected
    domain.
+
+## Upstream updates
+
+Reviewed against upstream `astro-erudite` v2.0.1 at `1ffdf62` on 2 October 2026.
+The Astro 7 migration follows the [official upgrade guide](https://docs.astro.build/en/guides/upgrade-to/v7/).
+The custom ASCII theme, MDX, React islands, Tailwind, KaTeX, page URLs, and
+content are retained. Upstream v2 replaces these systems, so its template
+rewrite is not merged wholesale.
+
+Markdown uses Astro 7's supported `unified()` processor with the existing
+remark/rehype plugins. `compressHTML: true` preserves the previous inline
+whitespace handling. Compatible date, code theme, Safari, and sitemap fixes
+are included. TypeScript stays on 6 because Astro Check does not yet support 7.
+The Astro formatter stays on 0.14.1 until the released Tailwind formatter
+supports the newer Astro syntax tree.
+The obsolete import-organising formatter plugin was removed because it
+interferes with Tailwind class sorting.
+
+Astro 7.3.5 currently emits a harmless `MODULE_LEVEL_DIRECTIVE` build warning
+for its generated `use astro:head-inject` marker. The [upstream fix](https://github.com/withastro/astro/pull/18088)
+is pending; the marker is unused, and production checks verify that MDX styles
+and assets are still emitted. Other build warnings are not suppressed.
+
+npm and `package-lock.json` are the dependency source of truth; use `npm ci`
+for reproducible installs. The stale template `bun.lock` has been removed.
+GitHub Actions runs `npm run verify` for pushes and pull requests.
+
+To review future upstream changes without overwriting customisations:
+
+```bash
+git fetch upstream
+git log --oneline HEAD..upstream/main
+git diff upstream/main -- package.json astro.config.ts src/lib
+```
+
+Port applicable changes individually and run `npm run verify` before deploying.
 
 ## Credits
 

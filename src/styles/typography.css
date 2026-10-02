@@ -147,6 +147,10 @@
       @apply [&~*]:small [&~*>*]:first:mt-0! [&~*>*]:last:mb-0!;
     }
 
+    .ec-section summary {
+      list-style: none;
+    }
+
     :where(kbd):not(:where(.not-prose, .not-prose *)) {
       @apply text-foreground bg-muted rounded-md border px-2 py-1 text-xs font-medium;
     }

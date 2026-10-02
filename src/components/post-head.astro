@@ -2,6 +2,7 @@
 import { SITE } from '@/consts'
 import { isSubpost } from '@/lib/data-utils'
 import type { CollectionEntry } from 'astro:content'
+import { getImage } from 'astro:assets'
 
 interface Props {
   post: CollectionEntry<'blog'>
@@ -15,9 +16,17 @@ const resolvedTitle =
   title === SITE.title ? SITE.title : `${title} | ${SITE.title}`
 const canonical = new URL(Astro.url.pathname, SITE.href).href
 const image = new URL('/static/1200x630.png', SITE.href).href
-const imageUrl = post?.data?.image?.src
-  ? new URL(post.data.image.src, SITE.href).href
-  : image
+const socialImage =
+  post.data.image && post.data.image.format !== 'svg'
+    ? await getImage({
+        src: post.data.image,
+        width: 1200,
+        height: 630,
+        format: 'png',
+        fit: 'cover',
+      })
+    : null
+const imageUrl = socialImage ? new URL(socialImage.src, SITE.href).href : image
 const author = SITE.author
 const publishedTime = post.data.date.toISOString()
 const structuredData = {
@@ -42,9 +51,7 @@ const structuredData = {
     '@type': 'Person',
     name: author,
   },
-  ...(post.data.tags?.length
-    ? { keywords: post.data.tags.join(', ') }
-    : {}),
+  ...(post.data.tags?.length ? { keywords: post.data.tags.join(', ') } : {}),
 }
 ---
 
@@ -83,5 +90,4 @@ const structuredData = {
   is:inline
   type="application/ld+json"
   set:html={JSON.stringify(structuredData).replace(/</g, '\\u003c')}
->
-</script>
+/>

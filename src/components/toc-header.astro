@@ -98,6 +98,8 @@ const { headings } = Astro.props
   const HEADER_OFFSET = 102 + 36
   const PROGRESS_CIRCLE_RADIUS = 10
   const PROGRESS_CIRCLE_CIRCUMFERENCE = 2 * Math.PI * PROGRESS_CIRCLE_RADIUS
+  const documentTop = (element: HTMLElement) =>
+    element.getBoundingClientRect().top + window.scrollY
 
   class MobileTOCState {
     progressCircle: HTMLElement | null = null
@@ -155,8 +157,10 @@ const { headings } = Astro.props
         const nextHeading = state.headings[index + 1]
         return {
           id: heading.id,
-          start: heading.offsetTop,
-          end: nextHeading ? nextHeading.offsetTop : document.body.scrollHeight,
+          start: documentTop(heading),
+          end: nextHeading
+            ? documentTop(nextHeading)
+            : document.body.scrollHeight,
         }
       })
     }
@@ -174,8 +178,9 @@ const { headings } = Astro.props
         (top <= viewportTop && bottom >= viewportBottom)
 
       state.headings.forEach((heading) => {
-        const headingBottom = heading.offsetTop + heading.offsetHeight
-        if (isInViewport(heading.offsetTop, headingBottom)) {
+        const headingTop = documentTop(heading)
+        const headingBottom = headingTop + heading.offsetHeight
+        if (isInViewport(headingTop, headingBottom)) {
           visibleIds.add(heading.id)
         }
       })
@@ -184,7 +189,7 @@ const { headings } = Astro.props
         if (region.start <= viewportBottom && region.end >= viewportTop) {
           const heading = document.getElementById(region.id)
           if (heading) {
-            const headingBottom = heading.offsetTop + heading.offsetHeight
+            const headingBottom = documentTop(heading) + heading.offsetHeight
             if (
               region.end > headingBottom &&
               (headingBottom < viewportBottom || viewportTop < region.end)
@@ -388,10 +393,6 @@ const { headings } = Astro.props
   }
 
   document.addEventListener('astro:page-load', () => MobileTOCController.init())
-  document.addEventListener('astro:after-swap', () => {
-    MobileTOCController.cleanup()
-    MobileTOCController.init()
-  })
   document.addEventListener('astro:before-swap', () =>
     MobileTOCController.cleanup(),
   )

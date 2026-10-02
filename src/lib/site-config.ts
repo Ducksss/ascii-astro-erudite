@@ -1,6 +1,11 @@
 const LOCAL_SITE_URL = 'http://localhost:1234'
 type SiteEnv = Record<string, string | boolean | undefined>
 
+export const sitemapFilter = (page: string) =>
+  !/^\/(?:blog\/[^/]+\/[^/]+|authors\/[^/]+|tags\/[^/]+)/.test(
+    new URL(page).pathname,
+  )
+
 const toAbsoluteSiteUrl = (value: string) => {
   const normalized = value.trim()
   const withProtocol = /^https?:\/\//.test(normalized)

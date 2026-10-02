@@ -144,6 +144,8 @@ const parentId = isCurrentSubpost ? getParentId(currentPostId) : currentPostId
 
 <script>
   const HEADER_OFFSET = 150
+  const documentTop = (element: HTMLElement) =>
+    element.getBoundingClientRect().top + window.scrollY
 
   class TOCState {
     links: NodeListOf<Element> = document.querySelectorAll(
@@ -189,8 +191,10 @@ const parentId = isCurrentSubpost ? getParentId(currentPostId) : currentPostId
         const nextHeading = state.headings[index + 1]
         return {
           id: heading.id,
-          start: heading.offsetTop,
-          end: nextHeading ? nextHeading.offsetTop : document.body.scrollHeight,
+          start: documentTop(heading),
+          end: nextHeading
+            ? documentTop(nextHeading)
+            : document.body.scrollHeight,
         }
       })
     }
@@ -208,8 +212,9 @@ const parentId = isCurrentSubpost ? getParentId(currentPostId) : currentPostId
         (top <= viewportTop && bottom >= viewportBottom)
 
       state.headings.forEach((heading) => {
-        const headingBottom = heading.offsetTop + heading.offsetHeight
-        if (isInViewport(heading.offsetTop, headingBottom)) {
+        const headingTop = documentTop(heading)
+        const headingBottom = headingTop + heading.offsetHeight
+        if (isInViewport(headingTop, headingBottom)) {
           visibleIds.add(heading.id)
         }
       })
@@ -218,7 +223,7 @@ const parentId = isCurrentSubpost ? getParentId(currentPostId) : currentPostId
         if (region.start <= viewportBottom && region.end >= viewportTop) {
           const heading = document.getElementById(region.id)
           if (heading) {
-            const headingBottom = heading.offsetTop + heading.offsetHeight
+            const headingBottom = documentTop(heading) + heading.offsetHeight
             if (
               region.end > headingBottom &&
               (headingBottom < viewportBottom || viewportTop < region.end)
@@ -357,9 +362,5 @@ const parentId = isCurrentSubpost ? getParentId(currentPostId) : currentPostId
   }
 
   document.addEventListener('astro:page-load', () => TOCController.init())
-  document.addEventListener('astro:after-swap', () => {
-    TOCController.cleanup()
-    TOCController.init()
-  })
   document.addEventListener('astro:before-swap', () => TOCController.cleanup())
 </script>
