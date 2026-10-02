@@ -1,6 +1,5 @@
 ---
 import Link from '@/components/link.astro'
-import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Icon } from 'astro-icon/components'
 
@@ -9,6 +8,7 @@ const isSubpost = !!parentPost
 ---
 
 <nav
+  aria-label="Post navigation"
   class={cn(
     'col-start-2 grid grid-cols-1 gap-4',
     isSubpost ? 'sm:grid-cols-3' : 'sm:grid-cols-2',
@@ -17,18 +17,18 @@ const isSubpost = !!parentPost
   <Link
     href={olderPost ? `/blog/${olderPost.id}#post-title` : '#'}
     class={cn(
-      buttonVariants({ variant: 'outline' }),
-      'rounded-lg group flex items-center justify-start size-full',
+      'post-navigation__link group flex items-center justify-start',
       !olderPost && 'pointer-events-none opacity-50 cursor-not-allowed',
     )}
     aria-disabled={!olderPost}
+    tabindex={olderPost ? undefined : -1}
   >
     <Icon
       name="lucide:arrow-left"
       class="mr-2 size-4 transition-transform group-hover:-translate-x-1"
     />
     <div class="flex flex-col items-start overflow-hidden text-wrap">
-      <span class="text-muted-foreground text-left text-xs">
+      <span class="text-left text-xs text-muted-foreground">
         {isSubpost ? 'Previous Subpost' : 'Previous Post'}
       </span>
       <span class="w-full text-left text-sm text-balance text-ellipsis">
@@ -45,8 +45,7 @@ const isSubpost = !!parentPost
       <Link
         href={parentPost ? `/blog/${parentPost.id}#post-title` : '#'}
         class={cn(
-          buttonVariants({ variant: 'outline' }),
-          'group flex size-full items-center justify-center rounded-lg',
+          'post-navigation__link group flex items-center justify-center',
           !parentPost && 'pointer-events-none cursor-not-allowed opacity-50',
         )}
       >
@@ -55,7 +54,7 @@ const isSubpost = !!parentPost
           class="mr-2 size-4 transition-transform group-hover:-translate-y-1"
         />
         <div class="flex flex-col items-center overflow-hidden text-wrap">
-          <span class="text-muted-foreground text-center text-xs">
+          <span class="text-center text-xs text-muted-foreground">
             Parent Post
           </span>
           <span class="w-full text-center text-sm text-balance text-ellipsis">
@@ -69,14 +68,14 @@ const isSubpost = !!parentPost
   <Link
     href={newerPost ? `/blog/${newerPost.id}#post-title` : '#'}
     class={cn(
-      buttonVariants({ variant: 'outline' }),
-      'rounded-lg group flex items-center justify-end size-full',
+      'post-navigation__link group flex items-center justify-end',
       !newerPost && 'pointer-events-none opacity-50 cursor-not-allowed',
     )}
     aria-disabled={!newerPost}
+    tabindex={newerPost ? undefined : -1}
   >
     <div class="flex flex-col items-end overflow-hidden text-wrap">
-      <span class="text-muted-foreground text-right text-xs">
+      <span class="text-right text-xs text-muted-foreground">
         {isSubpost ? 'Next Subpost' : 'Next Post'}
       </span>
       <span class="w-full text-right text-sm text-balance text-ellipsis">
@@ -92,3 +91,17 @@ const isSubpost = !!parentPost
     />
   </Link>
 </nav>
+
+<style>
+  .post-navigation__link {
+    min-height: 6rem;
+    gap: 0.5rem;
+    border: 1px solid var(--border);
+    padding: 1rem;
+    transition: background-color 0.2s ease;
+  }
+
+  .post-navigation__link:hover {
+    background: var(--muted);
+  }
+</style>

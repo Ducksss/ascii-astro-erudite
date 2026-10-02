@@ -43,9 +43,9 @@ type DotMassOptions = {
 }
 
 const ART_FRAME_THEME = {
-  background: '#050505',
-  surfaceHighlightTop: 'rgba(255,255,255,0.05)',
-  surfaceHighlightBottom: 'rgba(255,255,255,0.015)',
+  background: '#060d1b',
+  surfaceHighlightTop: 'transparent',
+  surfaceHighlightBottom: 'transparent',
   border: 'rgba(255,255,255,0.12)',
   innerBorder: 'rgba(255,255,255,0.04)',
   barBorder: 'rgba(255,255,255,0.08)',
@@ -56,7 +56,7 @@ const ART_FRAME_THEME = {
   labelText: 'rgba(255,255,255,0.42)',
   scanline: 'rgba(255,255,255,0.05)',
   pageGrid: 'rgba(255,255,255,0.045)',
-  shadow: 'rgba(0,0,0,0.42)',
+  shadow: 'transparent',
   exportScale: 2,
   scanlineStep: 14,
   minFrameWidth: 680,
@@ -711,10 +711,7 @@ export default function AsciiGenerator() {
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(320px,0.44fr)_minmax(0,1fr)] lg:items-start xl:gap-8">
-      <section
-        className="landing-terminal relative overflow-hidden"
-        style={TERMINAL_SURFACE_STYLE}
-      >
+      <section className="playground-controls relative overflow-hidden">
         <div className="landing-terminal-bar">
           <span>Playground</span>
           <span>ASCII art playground</span>
@@ -723,13 +720,13 @@ export default function AsciiGenerator() {
           <div className="space-y-4">
             <div>
               <p className="landing-kicker">Public tool</p>
-              <h1 className="mt-4 max-w-md text-[clamp(2.4rem,6vw,4.8rem)] leading-[0.9] font-semibold tracking-[-0.08em] text-white">
-                Upload an image and export it as a landing-page ASCII frame.
+              <h1 className="mt-4 max-w-md text-[clamp(2.4rem,6vw,4.8rem)] leading-[0.9] font-light tracking-[-0.055em] text-foreground">
+                A little image. A lot of character.
               </h1>
             </div>
-            <p className="max-w-lg text-sm leading-7 text-white/58 sm:text-base">
-              This lives as a small footer-linked playground and locks the final
-              render to the same black, terminal treatment as the landing hero.
+            <p className="max-w-lg text-sm leading-7 text-foreground/75 sm:text-base">
+              Upload an image, find your favourite texture, and export your own
+              ASCII artwork as text or a PNG.
             </p>
           </div>
 
@@ -751,24 +748,24 @@ export default function AsciiGenerator() {
             className={cn(
               'group flex cursor-pointer flex-col gap-3 border px-4 py-5 transition-all duration-300',
               isDragging
-                ? 'border-white/40 bg-white/8'
-                : 'border-white/12 bg-white/[0.035] hover:border-white/24 hover:bg-white/[0.055]',
+                ? 'border-foreground/40 bg-foreground/8'
+                : 'border-foreground/12 bg-foreground/[0.035] hover:border-foreground/24 hover:bg-foreground/[0.055]',
             )}
           >
-            <span className="font-mono text-[0.68rem] tracking-[0.28em] text-white/42 uppercase">
+            <span className="font-mono text-[0.68rem] tracking-[0.04em] text-foreground/75 uppercase">
               Upload surface
             </span>
             <div className="space-y-2">
-              <p className="text-base font-medium text-white">
+              <p className="text-base font-medium text-foreground">
                 {fileName || 'Drop an image here or browse from disk.'}
               </p>
-              <p className="text-sm leading-6 text-white/48">
+              <p className="text-sm leading-6 text-foreground/75">
                 PNG, JPG, WebP, GIF, and any browser-decodable image format
                 should work.
               </p>
             </div>
             <div className="pt-1">
-              <span className="inline-flex items-center gap-2 border border-white/14 px-3 py-2 text-sm text-white/76 transition-colors group-hover:border-white/30 group-hover:text-white">
+              <span className="inline-flex items-center gap-2 border border-foreground/14 px-3 py-2 text-sm text-foreground/76 transition-colors group-hover:border-foreground/30 group-hover:text-foreground">
                 Choose image
               </span>
             </div>
@@ -785,7 +782,7 @@ export default function AsciiGenerator() {
 
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             <label className="space-y-2">
-              <span className="font-mono text-[0.66rem] tracking-[0.24em] text-white/36 uppercase">
+              <span className="font-mono text-[0.66rem] tracking-[0.04em] text-foreground/75 uppercase">
                 Character width
               </span>
               <input
@@ -795,13 +792,15 @@ export default function AsciiGenerator() {
                 step={4}
                 value={width}
                 onChange={(event) => setWidth(Number(event.target.value))}
-                className="w-full accent-white"
+                className="w-full accent-primary"
               />
-              <span className="text-sm text-white/62">{width} columns</span>
+              <span className="text-sm text-foreground/75">
+                {width} columns
+              </span>
             </label>
 
             <label className="space-y-2">
-              <span className="font-mono text-[0.66rem] tracking-[0.24em] text-white/36 uppercase">
+              <span className="font-mono text-[0.66rem] tracking-[0.04em] text-foreground/75 uppercase">
                 Character set
               </span>
               <select
@@ -809,7 +808,7 @@ export default function AsciiGenerator() {
                 onChange={(event) =>
                   setCharset(event.target.value as CharsetPreset)
                 }
-                className="h-11 w-full border border-white/12 bg-black/40 px-3 text-sm text-white transition-colors outline-none focus:border-white/28"
+                className="h-11 w-full border border-foreground/12 bg-background px-3 text-sm text-foreground transition-colors outline-none focus:border-foreground/28"
               >
                 {CHARSET_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -820,7 +819,7 @@ export default function AsciiGenerator() {
             </label>
 
             <label className="space-y-2">
-              <span className="font-mono text-[0.66rem] tracking-[0.24em] text-white/36 uppercase">
+              <span className="font-mono text-[0.66rem] tracking-[0.04em] text-foreground/75 uppercase">
                 ASCII gradient
               </span>
               <select
@@ -828,7 +827,7 @@ export default function AsciiGenerator() {
                 onChange={(event) =>
                   setGradient(event.target.value as GradientPreset)
                 }
-                className="h-11 w-full border border-white/12 bg-black/40 px-3 text-sm text-white transition-colors outline-none focus:border-white/28"
+                className="h-11 w-full border border-foreground/12 bg-background px-3 text-sm text-foreground transition-colors outline-none focus:border-foreground/28"
               >
                 {GRADIENT_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -839,7 +838,7 @@ export default function AsciiGenerator() {
             </label>
 
             <label className="space-y-2">
-              <span className="font-mono text-[0.66rem] tracking-[0.24em] text-white/36 uppercase">
+              <span className="font-mono text-[0.66rem] tracking-[0.04em] text-foreground/75 uppercase">
                 Brightness
               </span>
               <input
@@ -849,13 +848,13 @@ export default function AsciiGenerator() {
                 step={5}
                 value={brightness}
                 onChange={(event) => setBrightness(Number(event.target.value))}
-                className="w-full accent-white"
+                className="w-full accent-primary"
               />
-              <span className="text-sm text-white/62">{brightness}%</span>
+              <span className="text-sm text-foreground/75">{brightness}%</span>
             </label>
 
             <label className="space-y-2">
-              <span className="font-mono text-[0.66rem] tracking-[0.24em] text-white/36 uppercase">
+              <span className="font-mono text-[0.66rem] tracking-[0.04em] text-foreground/75 uppercase">
                 Contrast
               </span>
               <input
@@ -865,13 +864,13 @@ export default function AsciiGenerator() {
                 step={5}
                 value={contrast}
                 onChange={(event) => setContrast(Number(event.target.value))}
-                className="w-full accent-white"
+                className="w-full accent-primary"
               />
-              <span className="text-sm text-white/62">{contrast}%</span>
+              <span className="text-sm text-foreground/75">{contrast}%</span>
             </label>
 
             <label className="space-y-2">
-              <span className="font-mono text-[0.66rem] tracking-[0.24em] text-white/36 uppercase">
+              <span className="font-mono text-[0.66rem] tracking-[0.04em] text-foreground/75 uppercase">
                 Saturation
               </span>
               <input
@@ -881,13 +880,13 @@ export default function AsciiGenerator() {
                 step={5}
                 value={saturation}
                 onChange={(event) => setSaturation(Number(event.target.value))}
-                className="w-full accent-white"
+                className="w-full accent-primary"
               />
-              <span className="text-sm text-white/62">{saturation}%</span>
+              <span className="text-sm text-foreground/75">{saturation}%</span>
             </label>
 
             <label className="space-y-2">
-              <span className="font-mono text-[0.66rem] tracking-[0.24em] text-white/36 uppercase">
+              <span className="font-mono text-[0.66rem] tracking-[0.04em] text-foreground/75 uppercase">
                 Grayscale
               </span>
               <input
@@ -897,13 +896,13 @@ export default function AsciiGenerator() {
                 step={5}
                 value={grayscale}
                 onChange={(event) => setGrayscale(Number(event.target.value))}
-                className="w-full accent-white"
+                className="w-full accent-primary"
               />
-              <span className="text-sm text-white/62">{grayscale}%</span>
+              <span className="text-sm text-foreground/75">{grayscale}%</span>
             </label>
 
             <label className="space-y-2">
-              <span className="font-mono text-[0.66rem] tracking-[0.24em] text-white/36 uppercase">
+              <span className="font-mono text-[0.66rem] tracking-[0.04em] text-foreground/75 uppercase">
                 Space density
               </span>
               <input
@@ -915,13 +914,15 @@ export default function AsciiGenerator() {
                 onChange={(event) =>
                   setSpaceDensity(Number(event.target.value))
                 }
-                className="w-full accent-white"
+                className="w-full accent-primary"
               />
-              <span className="text-sm text-white/62">{spaceDensity}%</span>
+              <span className="text-sm text-foreground/75">
+                {spaceDensity}%
+              </span>
             </label>
 
             <label className="space-y-2">
-              <span className="font-mono text-[0.66rem] tracking-[0.24em] text-white/36 uppercase">
+              <span className="font-mono text-[0.66rem] tracking-[0.04em] text-foreground/75 uppercase">
                 Transparent frame
               </span>
               <input
@@ -933,50 +934,50 @@ export default function AsciiGenerator() {
                 onChange={(event) =>
                   setTransparentPadding(Number(event.target.value))
                 }
-                className="w-full accent-white"
+                className="w-full accent-primary"
               />
-              <span className="text-sm text-white/62">
+              <span className="text-sm text-foreground/75">
                 {transparentPadding}px PNG padding
               </span>
             </label>
           </div>
 
-          <label className="flex items-center gap-3 border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white/72">
+          <label className="flex items-center gap-3 border border-foreground/10 bg-foreground/[0.03] px-4 py-3 text-sm text-foreground/72">
             <input
               type="checkbox"
               checked={invert}
               onChange={(event) => setInvert(event.target.checked)}
-              className="size-4 accent-white"
+              className="size-4 accent-primary"
             />
             Invert density mapping for bright-on-dark source images.
           </label>
 
-          <div className="grid gap-px border border-white/10 bg-white/6 sm:grid-cols-3">
-            <div className="bg-black/25 px-4 py-4">
-              <p className="font-mono text-[0.64rem] tracking-[0.26em] text-white/34 uppercase">
+          <div className="grid gap-px border border-foreground/10 bg-foreground/6 sm:grid-cols-3">
+            <div className="bg-muted/50 px-4 py-4">
+              <p className="font-mono text-[0.64rem] tracking-[0.04em] text-foreground/75 uppercase">
                 Source
               </p>
-              <p className="mt-2 text-xl font-medium text-white">
+              <p className="mt-2 text-xl font-medium text-foreground">
                 {rendered
                   ? `${rendered.sourceWidth} x ${rendered.sourceHeight}`
                   : '--'}
               </p>
             </div>
-            <div className="bg-black/25 px-4 py-4">
-              <p className="font-mono text-[0.64rem] tracking-[0.26em] text-white/34 uppercase">
+            <div className="bg-muted/50 px-4 py-4">
+              <p className="font-mono text-[0.64rem] tracking-[0.04em] text-foreground/75 uppercase">
                 Output
               </p>
-              <p className="mt-2 text-xl font-medium text-white">
+              <p className="mt-2 text-xl font-medium text-foreground">
                 {rendered
                   ? `${rendered.outputWidth} x ${rendered.outputHeight}`
                   : '--'}
               </p>
             </div>
-            <div className="bg-black/25 px-4 py-4">
-              <p className="font-mono text-[0.64rem] tracking-[0.26em] text-white/34 uppercase">
+            <div className="bg-muted/50 px-4 py-4">
+              <p className="font-mono text-[0.64rem] tracking-[0.04em] text-foreground/75 uppercase">
                 Text payload
               </p>
-              <p className="mt-2 text-xl font-medium text-white">
+              <p className="mt-2 text-xl font-medium text-foreground">
                 {rendered ? rendered.text.length.toLocaleString() : '--'}
               </p>
             </div>
@@ -997,7 +998,7 @@ export default function AsciiGenerator() {
               size="sm"
               disabled={!rendered?.text}
               onClick={() => void handleCopy()}
-              className="border border-white/12 bg-white/[0.03] text-white/72 hover:bg-white/[0.08] hover:text-white"
+              className="border border-foreground/12 bg-foreground/[0.03] text-foreground/72 hover:bg-foreground/[0.08] hover:text-foreground"
             >
               {copied ? 'Copied' : 'Copy ASCII'}
             </Button>
@@ -1007,7 +1008,7 @@ export default function AsciiGenerator() {
               size="sm"
               disabled={!rendered?.text}
               onClick={handleDownloadText}
-              className="border border-white/12 bg-white/[0.03] text-white/72 hover:bg-white/[0.08] hover:text-white"
+              className="border border-foreground/12 bg-foreground/[0.03] text-foreground/72 hover:bg-foreground/[0.08] hover:text-foreground"
             >
               Download .txt
             </Button>
@@ -1017,7 +1018,7 @@ export default function AsciiGenerator() {
               size="sm"
               disabled={!rendered?.text || isExportingPng}
               onClick={() => void handleDownloadPng()}
-              className="border border-white/12 bg-white/[0.03] text-white/72 hover:bg-white/[0.08] hover:text-white"
+              className="border border-foreground/12 bg-foreground/[0.03] text-foreground/72 hover:bg-foreground/[0.08] hover:text-foreground"
             >
               {isExportingPng ? 'Exporting PNG' : 'Download PNG'}
             </Button>
@@ -1028,7 +1029,7 @@ export default function AsciiGenerator() {
           {copyError ? (
             <div
               role="status"
-              className="border border-amber-300/30 bg-amber-300/10 px-4 py-3 text-sm leading-6 text-amber-50 xl:col-span-2"
+              className="border border-amber-300 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900 xl:col-span-2"
             >
               {copyError}
             </div>
@@ -1036,10 +1037,10 @@ export default function AsciiGenerator() {
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <p className="font-mono text-[0.68rem] tracking-[0.28em] text-white/42 uppercase">
+              <p className="font-mono text-[0.68rem] tracking-[0.04em] text-foreground/75 uppercase">
                 Input preview
               </p>
-              <div className="relative aspect-[4/5] overflow-hidden border border-white/10 bg-[#050505]">
+              <div className="relative aspect-[4/5] overflow-hidden border border-foreground/10 bg-[#050505]">
                 {imageUrl ? (
                   <img
                     src={imageUrl}
@@ -1047,7 +1048,7 @@ export default function AsciiGenerator() {
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <div className="flex h-full items-center justify-center px-6 text-center text-sm leading-7 text-white/42">
+                  <div className="flex h-full items-center justify-center px-6 text-center text-sm leading-7 text-white/75">
                     Upload an image to generate a live ASCII preview.
                   </div>
                 )}
@@ -1055,17 +1056,16 @@ export default function AsciiGenerator() {
             </div>
 
             <div className="space-y-2">
-              <p className="font-mono text-[0.68rem] tracking-[0.28em] text-white/42 uppercase">
+              <p className="font-mono text-[0.68rem] tracking-[0.04em] text-foreground/75 uppercase">
                 Export treatment
               </p>
-              <p className="text-sm leading-7 text-white/58">
-                The PNG locks to the landing palette: pure black base,
-                monochrome terminal chrome, grain, scanlines, and dot-mass
-                atmosphere. Transparent frame padding only affects the exported
-                PNG.
+              <p className="text-sm leading-7 text-foreground/75">
+                The PNG uses a dark navy frame, white characters, and a fine
+                technical grid. Transparent frame padding only affects the
+                exported PNG. Text downloads keep just the artwork.
               </p>
-              <div className="inline-flex items-center gap-2 border border-white/12 px-3 py-2 text-xs tracking-[0.2em] text-white/72 uppercase">
-                Exact landing treatment
+              <div className="inline-flex items-center gap-2 border border-foreground/12 px-3 py-2 text-xs tracking-[0.2em] text-foreground/72 uppercase">
+                Navy / white export frame
               </div>
             </div>
           </div>
@@ -1084,7 +1084,7 @@ export default function AsciiGenerator() {
               <div className="landing-dot-mass landing-dot-mass--reverse absolute -right-10 -bottom-[4.5rem] h-56 w-56 opacity-[0.28] sm:h-72 sm:w-72" />
               <div className="landing-grain pointer-events-none absolute inset-0" />
 
-              <div className="relative flex items-center justify-between border-b border-white/10 px-4 py-3 font-mono text-[0.68rem] tracking-[0.28em] text-white/46 uppercase">
+              <div className="relative flex items-center justify-between border-b border-foreground/10 px-4 py-3 font-mono text-[0.68rem] tracking-[0.04em] text-foreground/75 uppercase">
                 <span>ASCII art playground</span>
                 <span>Landing frame</span>
               </div>
@@ -1095,12 +1095,12 @@ export default function AsciiGenerator() {
                     {error}
                   </div>
                 ) : isRendering ? (
-                  <div className="flex min-h-[22rem] items-center justify-center text-sm tracking-[0.26em] text-white/42 uppercase">
+                  <div className="flex min-h-[22rem] items-center justify-center text-sm tracking-[0.04em] text-foreground/75 uppercase">
                     Rendering...
                   </div>
                 ) : rendered ? (
                   <pre
-                    className="min-h-[22rem] font-mono whitespace-pre text-white/92"
+                    className="min-h-[22rem] font-mono whitespace-pre text-foreground/92"
                     style={{
                       fontSize: `${displayFontSize.toFixed(3)}rem`,
                       lineHeight: 0.92,
@@ -1109,18 +1109,18 @@ export default function AsciiGenerator() {
                     {rendered.text}
                   </pre>
                 ) : (
-                  <div className="flex min-h-[22rem] items-center justify-center px-8 text-center text-sm leading-7 text-white/42">
+                  <div className="flex min-h-[22rem] items-center justify-center px-8 text-center text-sm leading-7 text-foreground/75">
                     The ASCII output will appear here once an image is selected.
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="border border-white/10 bg-black/30 px-4 py-4">
-              <p className="font-mono text-[0.66rem] tracking-[0.26em] text-white/34 uppercase">
+            <div className="border border-foreground/10 bg-black/30 px-4 py-4">
+              <p className="font-mono text-[0.66rem] tracking-[0.04em] text-foreground/75 uppercase">
                 Export frame
               </p>
-              <p className="mt-3 text-sm leading-7 text-white/56">
+              <p className="mt-3 text-sm leading-7 text-foreground/75">
                 PNG output captures this art frame only, not the upload controls
                 or surrounding page layout.
               </p>

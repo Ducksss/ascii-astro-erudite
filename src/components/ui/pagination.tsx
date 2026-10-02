@@ -53,6 +53,8 @@ function PaginationLink({
   return (
     <a
       aria-current={isActive ? 'page' : undefined}
+      aria-disabled={isDisabled || undefined}
+      tabIndex={isDisabled ? -1 : undefined}
       data-slot="pagination-link"
       data-active={isActive}
       data-disabled={isDisabled}
@@ -147,7 +149,7 @@ const PaginationComponent: React.FC<PaginationProps> = ({
             isDisabled={currentPage === 1}
             className={cn(
               isImmersive &&
-                'rounded-none border border-white/12 bg-white/[0.02] font-mono text-[0.68rem] tracking-[0.22em] text-white/62 uppercase hover:border-white/22 hover:bg-white/[0.05] hover:text-white',
+                'rounded-none border border-foreground/12 bg-foreground/[0.02] font-mono text-[0.68rem] tracking-[0.04em] text-foreground/75 uppercase hover:border-foreground/22 hover:bg-foreground/[0.05] hover:text-foreground',
             )}
           />
         </PaginationItem>
@@ -159,10 +161,10 @@ const PaginationComponent: React.FC<PaginationProps> = ({
               isActive={page === currentPage}
               className={cn(
                 isImmersive &&
-                  'rounded-none border border-white/12 bg-white/[0.02] font-mono text-[0.72rem] tracking-[0.2em] text-white/62 hover:border-white/22 hover:bg-white/[0.05] hover:text-white',
+                  'rounded-none border border-foreground/12 bg-foreground/[0.02] font-mono text-[0.72rem] tracking-[0.04em] text-foreground/75 hover:border-foreground/22 hover:bg-foreground/[0.05] hover:text-foreground',
                 isImmersive &&
                   page === currentPage &&
-                  'border-white/24 bg-white/[0.08] text-white',
+                  'border-primary bg-primary text-primary-foreground',
               )}
             >
               {page}
@@ -173,7 +175,7 @@ const PaginationComponent: React.FC<PaginationProps> = ({
         {totalPages > 5 && (
           <PaginationItem>
             <PaginationEllipsis
-              className={cn(isImmersive && 'text-white/34')}
+              className={cn(isImmersive && 'text-foreground/34')}
             />
           </PaginationItem>
         )}
@@ -186,7 +188,7 @@ const PaginationComponent: React.FC<PaginationProps> = ({
             isDisabled={currentPage === totalPages}
             className={cn(
               isImmersive &&
-                'rounded-none border border-white/12 bg-white/[0.02] font-mono text-[0.68rem] tracking-[0.22em] text-white/62 uppercase hover:border-white/22 hover:bg-white/[0.05] hover:text-white',
+                'rounded-none border border-foreground/12 bg-foreground/[0.02] font-mono text-[0.68rem] tracking-[0.04em] text-foreground/75 uppercase hover:border-foreground/22 hover:bg-foreground/[0.05] hover:text-foreground',
             )}
           />
         </PaginationItem>

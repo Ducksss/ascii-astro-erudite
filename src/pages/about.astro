@@ -12,30 +12,19 @@ const heroFacts = [
   { label: 'Best fit', value: 'Adoption / tooling / ops' },
 ]
 const heroMetrics = PROFILE.metrics
-const heroLinks = ['LinkedIn', 'Email', 'GitHub']
-  .flatMap((label): ProfileLink[] => {
+const heroLinks = ['LinkedIn', 'Email', 'GitHub'].flatMap(
+  (label): ProfileLink[] => {
     const match = PROFILE.links.find((item) => item.label === label)
     return match ? [match] : []
-  })
+  },
+)
 ---
 
 <Layout variant="immersive">
   <PageHead slot="head" title="About" description={PROFILE.summary} />
 
-  <section
-    class="relative overflow-hidden border-b border-white/10 bg-black/30"
-  >
-    <div
-      class="landing-dot-mass absolute top-0 right-[-6rem] h-[20rem] w-[20rem] opacity-[0.22] sm:right-[-4rem] sm:h-[28rem] sm:w-[28rem] lg:h-[34rem] lg:w-[34rem]"
-    >
-    </div>
-    <div
-      class="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-white/[0.06] via-transparent to-transparent"
-    >
-    </div>
-    <div
-      class="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 sm:py-14 lg:px-8 lg:py-20"
-    >
+  <section class="editorial-intro relative overflow-hidden">
+    <div class="site-container py-12 lg:py-20">
       <Breadcrumbs
         variant="immersive"
         items={[{ label: 'About', icon: 'lucide:info' }]}
@@ -47,14 +36,10 @@ const heroLinks = ['LinkedIn', 'Email', 'GitHub']
           transition:name="page-intro"
         >
           <p class="landing-section-label">About</p>
-          <h1 class="about-hero__title">
-            Product engineer for onboarding, internal tooling, and operational
-            systems.
-          </h1>
+          <h1 class="about-hero__title">Engineering, with people in mind.</h1>
 
           <p class="about-hero__summary">
-            I help technical teams make complex products easier to adopt,
-            operate, and trust.
+            {PROFILE.summary}
           </p>
 
           <div class="about-hero__impact">
@@ -77,15 +62,8 @@ const heroLinks = ['LinkedIn', 'Email', 'GitHub']
             <p class="about-hero__rail-label">Connect</p>
             <div class="about-hero__links">
               {
-                heroLinks.map((item, index) => (
-                  <Link
-                    href={item.href}
-                    external
-                    class:list={[
-                      'about-hero__link',
-                      index >= 2 && 'hidden sm:flex',
-                    ]}
-                  >
+                heroLinks.map((item) => (
+                  <Link href={item.href} external class="about-hero__link">
                     <span class="about-hero__link-label">{item.label}</span>
                     <span class="about-hero__link-note">{item.note}</span>
                   </Link>
@@ -109,27 +87,24 @@ const heroLinks = ['LinkedIn', 'Email', 'GitHub']
           </div>
 
           <p class="about-hero__rail-note">
-            Recruiter-friendly proof from MetaLearner, Singapore Armed Forces,
-            GovTech, and client delivery work.
+            Recent work spans MetaLearner, Singapore Armed Forces, GovTech, and
+            client delivery.
           </p>
         </aside>
       </div>
     </div>
   </section>
 
-  <section class="border-b border-white/10 bg-black/20">
-    <div
-      class="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20"
-    >
-      <div class="max-w-3xl border-b border-white/10 pb-8">
+  <section class="editorial-section border-b border-border">
+    <div class="site-container py-16 lg:py-24">
+      <div class="max-w-3xl border-b border-border pb-8">
         <p class="landing-section-label">Experience</p>
         <h2 class="landing-section-title mt-4 max-w-3xl">
-          Role-by-role proof from product, platform, client delivery, and cyber
-          operations.
+          A record of useful work.
         </h2>
         <p class="immersive-copy mt-6 max-w-2xl text-base leading-7">
-          This is the full experience read: what changed, what shipped, and
-          where the strongest outcomes came from.
+          Product onboarding, platform delivery, and operational systems. The
+          roles, decisions, and outcomes behind the work.
         </p>
       </div>
 
@@ -146,7 +121,7 @@ const heroLinks = ['LinkedIn', 'Email', 'GitHub']
               </div>
 
               <div class="mt-5 grid gap-5 sm:mt-6 sm:gap-8 lg:grid-cols-[minmax(0,0.76fr)_minmax(0,1.24fr)]">
-                <p class="text-base leading-8 text-white/62 sm:text-lg">
+                <p class="text-base leading-8 text-foreground/65 sm:text-lg">
                   {experience.caseStudyContext}
                 </p>
                 <div class="space-y-4">
@@ -168,14 +143,12 @@ const heroLinks = ['LinkedIn', 'Email', 'GitHub']
     </div>
   </section>
 
-  <section class="border-b border-white/10">
-    <div
-      class="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20"
-    >
-      <div class="max-w-3xl border-b border-white/10 pb-8">
+  <section class="editorial-section border-b border-border">
+    <div class="site-container py-16 lg:py-24">
+      <div class="max-w-3xl border-b border-border pb-8">
         <p class="landing-section-label">Impact work</p>
         <h2 class="landing-section-title mt-4 max-w-2xl">
-          Resumify applied the same product instinct to inclusive hiring.
+          Opening doors through better software.
         </h2>
         <p class="immersive-copy mt-6 max-w-2xl text-base leading-7">
           Outside internships and formal roles, this is the clearest example of
@@ -198,7 +171,7 @@ const heroLinks = ['LinkedIn', 'Email', 'GitHub']
               </div>
 
               <div class="mt-5 grid gap-5 sm:mt-6 sm:gap-8 lg:grid-cols-[minmax(0,0.76fr)_minmax(0,1.24fr)]">
-                <p class="text-base leading-8 text-white/62 sm:text-lg">
+                <p class="text-base leading-8 text-foreground/65 sm:text-lg">
                   {initiative.summary}
                 </p>
                 <div class="space-y-4">
@@ -220,10 +193,8 @@ const heroLinks = ['LinkedIn', 'Email', 'GitHub']
     </div>
   </section>
 
-  <section>
-    <div
-      class="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20"
-    >
+  <section class="editorial-section">
+    <div class="site-container py-16 lg:py-24">
       <div class="grid gap-4 sm:gap-6 xl:grid-cols-2">
         <section class="about-compact-panel immersive-panel p-5 sm:p-8">
           <p class="landing-section-label">Education</p>
@@ -232,12 +203,12 @@ const heroLinks = ['LinkedIn', 'Email', 'GitHub']
               PROFILE.education.map((entry) => (
                 <article class="about-block">
                   <div class="flex flex-wrap items-center justify-between gap-3">
-                    <h2 class="text-2xl leading-none font-medium tracking-[-0.04em] text-white">
+                    <h2 class="text-2xl leading-none font-normal tracking-[-0.04em] text-foreground">
                       {entry.institution}
                     </h2>
                     <p class="about-block__meta">{entry.period}</p>
                   </div>
-                  <p class="mt-3 text-base leading-7 text-white/68">
+                  <p class="mt-3 text-base leading-7 text-foreground/68">
                     {entry.degree}
                   </p>
                   <div class="mt-4 space-y-3">
@@ -265,7 +236,7 @@ const heroLinks = ['LinkedIn', 'Email', 'GitHub']
         <section class="about-compact-panel immersive-panel p-5 sm:p-8">
           <p class="landing-section-label">Hackathons</p>
           <div
-            class="about-stats-grid mt-5 grid grid-cols-3 gap-px border border-white/10 bg-white/[0.02] sm:mt-6"
+            class="about-stats-grid mt-5 grid grid-cols-3 gap-px border border-border bg-transparent sm:mt-6"
           >
             {
               PROFILE.hackathonStats.map((stat) => (
@@ -292,12 +263,12 @@ const heroLinks = ['LinkedIn', 'Email', 'GitHub']
               PROFILE.leadership.map((entry) => (
                 <article class="about-block">
                   <div class="flex flex-wrap items-center justify-between gap-3">
-                    <h2 class="text-2xl leading-none font-medium tracking-[-0.04em] text-white">
+                    <h2 class="text-2xl leading-none font-normal tracking-[-0.04em] text-foreground">
                       {entry.organization}
                     </h2>
                     <p class="about-block__meta">{entry.period}</p>
                   </div>
-                  <p class="mt-3 text-base leading-7 text-white/68">
+                  <p class="mt-3 text-base leading-7 text-foreground/68">
                     {entry.role}
                   </p>
                   <div class="mt-4 space-y-3">
@@ -345,284 +316,179 @@ const heroLinks = ['LinkedIn', 'Email', 'GitHub']
 </Layout>
 
 <style>
-  .about-mini-stat__label,
-  .about-case-study__eyebrow,
-  .about-block__meta,
-  .about-hero__rail-label,
-  .about-hero__metric-label {
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.38);
-  }
-
   .about-hero {
-    position: relative;
     display: grid;
-    gap: 1.25rem;
-  }
-
-  .about-hero__main {
-    max-width: 52rem;
+    gap: 3rem;
   }
 
   .about-hero__title {
-    margin-top: 0.7rem;
-    max-width: 10.2ch;
-    font-size: clamp(2.55rem, 11vw, 5.8rem);
-    line-height: 0.92;
-    letter-spacing: -0.1em;
-    font-weight: 600;
-    color: white;
+    margin-top: 1rem;
+    max-width: 14ch;
+    font-size: clamp(3rem, 6.4vw, 6.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.065em;
+    font-weight: 300;
     text-wrap: balance;
   }
 
   .about-hero__summary {
-    margin-top: 1rem;
-    max-width: 34rem;
-    font-size: clamp(1rem, 2vw, 1.16rem);
-    line-height: 1.6;
-    color: rgba(255, 255, 255, 0.72);
+    margin-top: 1.75rem;
+    max-width: 38rem;
+    font-size: 1rem;
+    line-height: 1.75;
+    color: rgb(255 255 255 / 80%);
   }
 
   .about-hero__impact {
-    margin-top: 1.35rem;
-    display: grid;
-    gap: 0.7rem;
-    max-width: 46rem;
+    margin-top: 3rem;
   }
 
-  .about-hero__impact-label {
+  .about-hero__impact-label,
+  .about-hero__metric-label,
+  .about-hero__rail-label,
+  .about-hero__meta-label,
+  .about-hero__link-label,
+  .about-mini-stat__label,
+  .about-case-study__eyebrow,
+  .about-block__meta {
     font-family: var(--font-mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.26em;
+    font-size: 0.625rem;
+    line-height: 1.6;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.36);
-  }
-
-  .about-hero__meta {
-    margin-top: 1rem;
-    display: grid;
-    gap: 1px;
-    max-width: 44rem;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.06);
-  }
-
-  .about-hero__meta-card {
-    display: flex;
-    min-height: 5rem;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 0.55rem;
-    padding: 0.95rem 1rem;
-    background:
-      linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.03),
-        rgba(255, 255, 255, 0.015)
-      ),
-      rgba(0, 0, 0, 0.48);
-  }
-
-  .about-hero__meta-label {
-    font-family: var(--font-mono);
-    font-size: 0.66rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.38);
-  }
-
-  .about-hero__meta-value {
-    font-size: clamp(0.96rem, 1.25vw, 1.08rem);
-    line-height: 1.35;
-    color: rgba(255, 255, 255, 0.78);
-    text-wrap: balance;
-  }
-
-  .about-hero__links {
-    display: grid;
-    gap: 0.55rem;
-    margin-top: 0.1rem;
-  }
-
-  .about-hero__link {
-    display: flex;
-    min-height: 4.8rem;
-    flex-direction: column;
-    justify-content: center;
-    gap: 0.45rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 0.9rem 1rem;
-    background:
-      linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.03),
-        rgba(255, 255, 255, 0.015)
-      ),
-      rgba(0, 0, 0, 0.42);
-    color: rgba(255, 255, 255, 0.76);
-    transition:
-      border-color 0.3s ease,
-      background-color 0.3s ease,
-      color 0.3s ease;
-  }
-
-  .about-hero__link:hover {
-    border-color: rgba(255, 255, 255, 0.22);
-    background: rgba(255, 255, 255, 0.03);
-    color: white;
-  }
-
-  .about-hero__link-label {
-    font-family: var(--font-mono);
-    font-size: 0.66rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-  }
-
-  .about-hero__link-note {
-    font-size: 0.94rem;
-    line-height: 1.45;
-    color: rgba(255, 255, 255, 0.58);
-  }
-
-  .about-hero__rail {
-    position: relative;
-    display: grid;
-    gap: 1.15rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 1rem;
-  }
-
-  .about-hero__rail-block {
-    display: grid;
-    gap: 0.7rem;
+    color: var(--muted-foreground);
   }
 
   .about-hero__metrics {
     display: grid;
-    gap: 1px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.06);
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 1rem;
+    border-top: 1px solid var(--border);
   }
 
   .about-hero__metric {
-    min-height: 6.25rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    gap: 0.45rem;
-    padding: 0.9rem;
-    background: rgba(0, 0, 0, 0.56);
+    padding: 1.2rem 0.8rem 0.25rem 0;
   }
 
   .about-hero__metric-value {
-    font-size: clamp(1.55rem, 6vw, 2.65rem);
-    line-height: 0.94;
-    letter-spacing: -0.08em;
-    font-weight: 600;
-    color: white;
+    font-size: clamp(1.75rem, 3vw, 2.75rem);
+    line-height: 1;
+    letter-spacing: -0.055em;
+    font-weight: 300;
   }
 
   .about-hero__metric-label {
-    letter-spacing: 0.2em;
-    line-height: 1.45;
+    margin-top: 0.65rem;
   }
 
+  .about-hero__rail,
+  .about-hero__rail-block {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .about-hero__rail {
+    align-self: end;
+    gap: 2rem;
+  }
+
+  .about-hero__links,
+  .about-hero__meta {
+    border-top: 1px solid var(--border);
+  }
+
+  .about-hero__link,
+  .about-hero__meta-card {
+    display: flex;
+    min-height: 44px;
+    flex-direction: column;
+    gap: 0.45rem;
+    border-bottom: 1px solid var(--border);
+    padding: 0.85rem 0;
+  }
+
+  .about-hero__link:hover .about-hero__link-label {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .about-hero__link-note,
+  .about-hero__meta-value,
   .about-hero__rail-note {
-    font-size: 0.92rem;
-    line-height: 1.55;
-    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: rgb(255 255 255 / 80%);
   }
 
   .about-case-study {
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background:
-      linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.04),
-        rgba(255, 255, 255, 0.015)
-      ),
-      rgba(0, 0, 0, 0.48);
-    padding: 1.4rem;
+    border-top: 1px solid var(--border);
+    padding: 2rem 0;
   }
 
   .about-case-study__header {
     display: flex;
     flex-wrap: wrap;
-    align-items: flex-end;
+    align-items: end;
     justify-content: space-between;
-    gap: 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    padding-bottom: 1.25rem;
+    gap: 1.5rem;
   }
 
   .about-case-study__title {
-    margin-top: 0.8rem;
+    margin-top: 0.75rem;
     font-size: clamp(2rem, 4vw, 3.5rem);
-    line-height: 0.95;
-    letter-spacing: -0.07em;
-    font-weight: 600;
-    color: white;
+    line-height: 1.05;
+    letter-spacing: -0.055em;
+    font-weight: 300;
   }
 
   .about-case-study__role {
-    max-width: 20rem;
-    text-align: left;
-    font-size: 1rem;
-    line-height: 1.7;
-    color: rgba(255, 255, 255, 0.58);
+    max-width: 24rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--muted-foreground);
   }
 
   .about-case-study__bullet,
   .about-line-item {
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid var(--border);
     padding-top: 0.85rem;
-    font-size: 0.98rem;
+    font-size: 0.95rem;
     line-height: 1.8;
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--muted-foreground);
   }
 
   .about-chip {
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    padding: 0.45rem 0.65rem;
+    border: 1px solid var(--border);
+    padding: 0.5rem 0.65rem;
     font-family: var(--font-mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.22em;
+    font-size: 0.625rem;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.56);
+    color: var(--muted-foreground);
   }
 
   .about-block + .about-block {
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid var(--border);
     padding-top: 1.5rem;
   }
 
   .about-mini-stat {
     display: flex;
-    min-height: 7rem;
+    min-height: 6rem;
     flex-direction: column;
-    justify-content: flex-end;
-    gap: 0.55rem;
+    justify-content: end;
+    gap: 0.6rem;
     padding: 1rem;
   }
 
   .about-mini-stat__value {
-    font-size: clamp(1.25rem, 2vw, 1.85rem);
-    line-height: 1;
+    color: var(--primary);
+    font-size: 2rem;
+    font-weight: 300;
     letter-spacing: -0.05em;
-    font-weight: 600;
-    color: white;
   }
 
   @media (min-width: 768px) {
-    .about-hero__meta {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
     .about-hero__metrics {
       grid-template-columns: repeat(4, minmax(0, 1fr));
     }
@@ -630,146 +496,32 @@ const heroLinks = ['LinkedIn', 'Email', 'GitHub']
 
   @media (min-width: 1280px) {
     .about-hero {
-      grid-template-columns: minmax(0, 1fr) minmax(24rem, 0.92fr);
-      gap: 2.5rem;
-      align-items: start;
-    }
-
-    .about-hero__rail {
-      border-top: 0;
-      padding-top: 0.2rem;
+      grid-template-columns: minmax(0, 1.5fr) minmax(18rem, 0.65fr);
+      gap: 5rem;
     }
   }
 
   @media (max-width: 767px) {
-    .about-case-study__eyebrow,
-    .about-block__meta,
-    .about-mini-stat__label,
-    .about-hero__rail-label,
-    .about-hero__metric-label {
-      font-size: 0.62rem;
-      letter-spacing: 0.22em;
-    }
-
-    .about-hero__title {
-      max-width: 11.5ch;
-      font-size: clamp(2rem, 10.5vw, 3rem);
-    }
-
-    .about-hero__summary {
-      margin-top: 0.85rem;
-      line-height: 1.5;
-    }
-
     .about-hero__impact {
-      margin-top: 1rem;
-      gap: 0.6rem;
-    }
-
-    .about-hero__meta-value,
-    .about-hero__link-note,
-    .about-hero__rail-note {
-      font-size: 0.92rem;
-      line-height: 1.55;
-    }
-
-    .about-hero__links {
-      gap: 0.5rem;
-    }
-
-    .about-hero__link {
-      min-height: auto;
-      gap: 0.35rem;
-      padding: 0.75rem 0.82rem;
-    }
-
-    .about-hero__meta {
-      margin-top: 0.85rem;
-      gap: 1px;
-    }
-
-    .about-hero__meta-card {
-      min-height: auto;
-      gap: 0.45rem;
-      padding: 0.8rem 0.85rem;
+      margin-top: 2rem;
     }
 
     .about-hero__rail {
-      gap: 0.8rem;
-      padding-top: 0.9rem;
-    }
-
-    .about-hero__metrics {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.5rem;
     }
 
-    .about-hero__metric {
-      min-height: 5.4rem;
-      padding: 0.8rem;
-    }
-
-    .about-case-study {
-      padding: 1rem;
+    .about-hero__rail-note {
+      grid-column: 1 / -1;
     }
 
     .about-mini-stat {
-      min-height: 4.9rem;
-      gap: 0.4rem;
       padding: 0.75rem;
     }
 
-    .about-case-study__header {
-      align-items: flex-start;
-      gap: 0.75rem;
-      padding-bottom: 0.95rem;
-    }
-
-    .about-case-study__title {
-      margin-top: 0.55rem;
-      font-size: clamp(1.5rem, 7.5vw, 2rem);
-      line-height: 0.98;
-      letter-spacing: -0.06em;
-    }
-
-    .about-case-study__role {
-      max-width: none;
-      font-size: 0.92rem;
-      line-height: 1.55;
-    }
-
-    .about-case-study__bullet,
-    .about-line-item {
-      padding-top: 0.7rem;
-      font-size: 0.93rem;
-      line-height: 1.6;
-    }
-
-    .about-chip {
-      padding: 0.36rem 0.52rem;
-      font-size: 0.62rem;
-      letter-spacing: 0.18em;
-    }
-
-    .about-block + .about-block {
-      padding-top: 1rem;
-    }
-
-    .about-compact-panel .about-block + .about-block {
-      padding-top: 0.85rem;
-    }
-
     .about-compact-panel h2 {
-      font-size: 1.35rem;
-      line-height: 1.05;
-    }
-
-    .about-compact-panel p.text-base,
-    .about-compact-panel p.text-sm {
-      line-height: 1.6;
-    }
-
-    .about-stats-grid .about-mini-stat__label {
-      line-height: 1.35;
+      font-size: 1.4rem;
+      line-height: 1.2;
     }
   }
 </style>

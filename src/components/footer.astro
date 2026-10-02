@@ -1,100 +1,122 @@
 ---
 import Link from '@/components/link.astro'
+import TechnicalSymbol from '@/components/technical-symbol.astro'
 import { FOOTER } from '@/consts'
-const isExternalLink = (href: string) =>
-  href.startsWith('http://') ||
-  href.startsWith('https://') ||
-  href.startsWith('mailto:')
 ---
 
-<footer
-  transition:persist
-  class="relative isolate w-full overflow-hidden border-t border-white/10 bg-[#050505] text-white"
->
-  <div
-    class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.06),transparent_30%),linear-gradient(180deg,rgba(255,255,255,0.015),transparent_18%)]"
-  >
-  </div>
-  <div
-    class="relative mx-auto w-full max-w-[1400px] px-4 py-12 sm:px-6 sm:py-14 lg:px-8 lg:py-16"
-  >
-    <div
-      class="grid gap-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(300px,0.92fr)] lg:gap-10"
-    >
-      <div class="max-w-3xl">
-        <p
-          class="font-mono text-[0.72rem] tracking-[0.34em] text-white/34 uppercase"
-        >
-          {FOOTER.eyebrow}
-        </p>
-        <h2
-          class="mt-6 max-w-[13ch] text-[clamp(2.5rem,5vw,4.4rem)] leading-[0.94] font-semibold tracking-[-0.075em] text-balance text-white/94"
-        >
-          {FOOTER.headline}
-        </h2>
-        <p
-          class="mt-6 max-w-xl text-base leading-7 text-white/54 sm:text-[1.02rem]"
-        >
-          {FOOTER.copy}
-        </p>
+<footer class="site-footer" transition:persist>
+  <div class="cross-field cross-field--footer" aria-hidden="true"></div>
+  <div class="site-container">
+    <div class="footer-invitation">
+      <p class="technical-label">
+        The next good thing starts with a conversation.
+      </p>
+      <h2>Real work. Real impact.<br />Let's build it.</h2>
+      <div class="footer-symbols" aria-hidden="true">
+        <div><TechnicalSymbol kind="delivery" /><span>Build</span></div>
+        <div><TechnicalSymbol kind="adoption" /><span>Adopt</span></div>
+        <div><TechnicalSymbol kind="systems" /><span>Operate</span></div>
+      </div>
+      <div class="footer-actions">
         <Link
           href={FOOTER.primaryContact.href}
-          external={isExternalLink(FOOTER.primaryContact.href)}
-          class="mt-8 inline-flex max-w-full items-center rounded-full border border-white/12 bg-white/[0.04] px-4 py-2.5 text-sm font-medium tracking-[-0.02em] text-white/84 transition-all duration-300 hover:border-white/18 hover:bg-white/[0.06] hover:text-white"
+          class="technical-button technical-button--blue"
         >
-          <span class="truncate">{FOOTER.primaryContact.label}</span>
+          Get in touch <span aria-hidden="true">↗</span>
         </Link>
-      </div>
-
-      <div class="border-l-0 border-white/10 lg:pl-12">
-        <div class="space-y-9 lg:border-l lg:border-white/10 lg:pl-12">
-          <section class="space-y-3">
-            <p
-              class="font-mono text-[0.72rem] tracking-[0.34em] text-white/30 uppercase"
-            >
-              {FOOTER.baseLabel}
-            </p>
-            <p
-              class="text-[1.4rem] leading-none tracking-[-0.05em] text-white/78 sm:text-[1.7rem]"
-            >
-              {FOOTER.baseValue}
-            </p>
-          </section>
-
-          <section class="space-y-3">
-            <p
-              class="font-mono text-[0.72rem] tracking-[0.34em] text-white/30 uppercase"
-            >
-              {FOOTER.linksLabel}
-            </p>
-            <div class="border-t border-white/8">
-              {
-                FOOTER.contactLinks.map((item) => (
-                  <Link
-                    href={item.href}
-                    external={isExternalLink(item.href)}
-                    class="group flex items-center justify-between gap-4 border-b border-white/8 py-3.5 font-mono text-[0.76rem] tracking-[0.28em] text-white/58 uppercase transition-colors duration-300 hover:text-white/84"
-                  >
-                    <span>{item.label}</span>
-                    <span
-                      aria-hidden="true"
-                      class="text-white/18 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-white/42"
-                    >
-                      &rarr;
-                    </span>
-                  </Link>
-                ))
-              }
-            </div>
-          </section>
-        </div>
-
-        <p
-          class="mt-10 font-mono text-[0.68rem] tracking-[0.34em] text-white/20 uppercase"
+        <Link href="/about" class="technical-button"
+          >More about me <span aria-hidden="true">↗</span></Link
         >
-          {FOOTER.signature}
-        </p>
       </div>
+    </div>
+
+    <div class="footer-directory">
+      <div class="footer-directory__intro">
+        <span class="technical-cross" aria-hidden="true">+ +</span>
+        <p>Making complex<br />systems feel simple.</p>
+        <span class="technical-label"
+          >{FOOTER.baseValue} / software engineer</span
+        >
+      </div>
+      <nav aria-label="Footer navigation">
+        <Link href="/#work"
+          >Selected work <span aria-hidden="true">↗</span></Link
+        >
+        <Link href="/about">About <span aria-hidden="true">↗</span></Link>
+        <Link href="/blog">Writing <span aria-hidden="true">↗</span></Link>
+        <Link href="/tags"
+          >Explore topics <span aria-hidden="true">↗</span></Link
+        >
+      </nav>
+      <div class="footer-directory__links">
+        {
+          FOOTER.contactLinks.map((item) => (
+            <Link href={item.href} external={item.href.startsWith('http')}>
+              {item.label} <span aria-hidden="true">↗</span>
+            </Link>
+          ))
+        }
+      </div>
+    </div>
+    <div class="footer-colophon technical-label">
+      <span>© {FOOTER.signature}. All rights reserved.</span>
+      <Link href={FOOTER.primaryContact.href}
+        >{FOOTER.primaryContact.label}</Link
+      >
+      <span>Built with intent <span aria-hidden="true">↗</span></span>
+    </div>
+    <div class="footer-wordmark" aria-hidden="true">
+      <svg viewBox="0 0 1200 270" fill="none">
+        <defs>
+          <pattern
+            id="wordmark-pixels"
+            x="800"
+            y="14"
+            width="408"
+            height="240"
+            patternUnits="userSpaceOnUse"
+            ><path
+              fill="currentColor"
+              d="M8 0h8v8h-8zM16 0h8v8h-8zM24 0h8v8h-8zM32 0h8v8h-8zM48 0h8v8h-8zM88 0h8v8h-8zM104 0h8v8h-8zM112 0h8v8h-8zM128 0h8v8h-8zM136 0h8v8h-8zM144 0h8v8h-8zM152 0h8v8h-8zM160 0h8v8h-8zM184 0h8v8h-8zM192 0h8v8h-8zM200 0h8v8h-8zM208 0h8v8h-8zM216 0h8v8h-8zM224 0h8v8h-8zM232 0h8v8h-8zM240 0h8v8h-8zM256 0h8v8h-8zM264 0h8v8h-8zM296 0h8v8h-8zM312 0h8v8h-8zM320 0h8v8h-8zM336 0h8v8h-8zM344 0h8v8h-8zM352 0h8v8h-8zM360 0h8v8h-8zM368 0h8v8h-8zM376 0h8v8h-8zM384 0h8v8h-8zM392 0h8v8h-8zM400 0h8v8h-8zM8 8h8v8h-8zM16 8h8v8h-8zM24 8h8v8h-8zM40 8h8v8h-8zM48 8h8v8h-8zM56 8h8v8h-8zM72 8h8v8h-8zM88 8h8v8h-8zM120 8h8v8h-8zM128 8h8v8h-8zM144 8h8v8h-8zM168 8h8v8h-8zM184 8h8v8h-8zM192 8h8v8h-8zM248 8h8v8h-8zM256 8h8v8h-8zM304 8h8v8h-8zM320 8h8v8h-8zM328 8h8v8h-8zM352 8h8v8h-8zM368 8h8v8h-8zM376 8h8v8h-8zM384 8h8v8h-8zM400 8h8v8h-8zM0 16h8v8h-8zM8 16h8v8h-8zM24 16h8v8h-8zM48 16h8v8h-8zM64 16h8v8h-8zM72 16h8v8h-8zM96 16h8v8h-8zM104 16h8v8h-8zM112 16h8v8h-8zM120 16h8v8h-8zM136 16h8v8h-8zM144 16h8v8h-8zM184 16h8v8h-8zM192 16h8v8h-8zM200 16h8v8h-8zM216 16h8v8h-8zM224 16h8v8h-8zM232 16h8v8h-8zM248 16h8v8h-8zM264 16h8v8h-8zM272 16h8v8h-8zM288 16h8v8h-8zM296 16h8v8h-8zM320 16h8v8h-8zM328 16h8v8h-8zM336 16h8v8h-8zM344 16h8v8h-8zM352 16h8v8h-8zM368 16h8v8h-8zM384 16h8v8h-8zM392 16h8v8h-8zM400 16h8v8h-8zM0 24h8v8h-8zM40 24h8v8h-8zM56 24h8v8h-8zM64 24h8v8h-8zM96 24h8v8h-8zM112 24h8v8h-8zM128 24h8v8h-8zM136 24h8v8h-8zM144 24h8v8h-8zM152 24h8v8h-8zM160 24h8v8h-8zM184 24h8v8h-8zM192 24h8v8h-8zM200 24h8v8h-8zM208 24h8v8h-8zM224 24h8v8h-8zM240 24h8v8h-8zM248 24h8v8h-8zM264 24h8v8h-8zM272 24h8v8h-8zM280 24h8v8h-8zM288 24h8v8h-8zM312 24h8v8h-8zM344 24h8v8h-8zM360 24h8v8h-8zM368 24h8v8h-8zM384 24h8v8h-8zM400 24h8v8h-8zM0 32h8v8h-8zM16 32h8v8h-8zM40 32h8v8h-8zM48 32h8v8h-8zM64 32h8v8h-8zM72 32h8v8h-8zM80 32h8v8h-8zM88 32h8v8h-8zM96 32h8v8h-8zM112 32h8v8h-8zM120 32h8v8h-8zM128 32h8v8h-8zM152 32h8v8h-8zM168 32h8v8h-8zM184 32h8v8h-8zM192 32h8v8h-8zM208 32h8v8h-8zM216 32h8v8h-8zM224 32h8v8h-8zM280 32h8v8h-8zM296 32h8v8h-8zM304 32h8v8h-8zM328 32h8v8h-8zM336 32h8v8h-8zM352 32h8v8h-8zM360 32h8v8h-8zM368 32h8v8h-8zM384 32h8v8h-8zM392 32h8v8h-8zM400 32h8v8h-8zM0 40h8v8h-8zM16 40h8v8h-8zM32 40h8v8h-8zM40 40h8v8h-8zM48 40h8v8h-8zM56 40h8v8h-8zM64 40h8v8h-8zM80 40h8v8h-8zM88 40h8v8h-8zM96 40h8v8h-8zM104 40h8v8h-8zM120 40h8v8h-8zM128 40h8v8h-8zM136 40h8v8h-8zM144 40h8v8h-8zM152 40h8v8h-8zM160 40h8v8h-8zM168 40h8v8h-8zM176 40h8v8h-8zM192 40h8v8h-8zM216 40h8v8h-8zM224 40h8v8h-8zM240 40h8v8h-8zM248 40h8v8h-8zM256 40h8v8h-8zM264 40h8v8h-8zM312 40h8v8h-8zM336 40h8v8h-8zM344 40h8v8h-8zM376 40h8v8h-8zM384 40h8v8h-8zM400 40h8v8h-8zM0 48h8v8h-8zM16 48h8v8h-8zM32 48h8v8h-8zM40 48h8v8h-8zM56 48h8v8h-8zM72 48h8v8h-8zM80 48h8v8h-8zM88 48h8v8h-8zM128 48h8v8h-8zM144 48h8v8h-8zM152 48h8v8h-8zM160 48h8v8h-8zM200 48h8v8h-8zM208 48h8v8h-8zM232 48h8v8h-8zM248 48h8v8h-8zM256 48h8v8h-8zM272 48h8v8h-8zM280 48h8v8h-8zM296 48h8v8h-8zM304 48h8v8h-8zM312 48h8v8h-8zM320 48h8v8h-8zM344 48h8v8h-8zM352 48h8v8h-8zM368 48h8v8h-8zM376 48h8v8h-8zM392 48h8v8h-8zM400 48h8v8h-8zM8 56h8v8h-8zM16 56h8v8h-8zM32 56h8v8h-8zM40 56h8v8h-8zM48 56h8v8h-8zM64 56h8v8h-8zM72 56h8v8h-8zM80 56h8v8h-8zM104 56h8v8h-8zM136 56h8v8h-8zM144 56h8v8h-8zM152 56h8v8h-8zM160 56h8v8h-8zM168 56h8v8h-8zM200 56h8v8h-8zM216 56h8v8h-8zM224 56h8v8h-8zM232 56h8v8h-8zM240 56h8v8h-8zM256 56h8v8h-8zM264 56h8v8h-8zM280 56h8v8h-8zM296 56h8v8h-8zM312 56h8v8h-8zM320 56h8v8h-8zM336 56h8v8h-8zM352 56h8v8h-8zM360 56h8v8h-8zM368 56h8v8h-8zM376 56h8v8h-8zM384 56h8v8h-8zM400 56h8v8h-8zM0 64h8v8h-8zM8 64h8v8h-8zM40 64h8v8h-8zM48 64h8v8h-8zM56 64h8v8h-8zM80 64h8v8h-8zM88 64h8v8h-8zM96 64h8v8h-8zM104 64h8v8h-8zM128 64h8v8h-8zM144 64h8v8h-8zM152 64h8v8h-8zM160 64h8v8h-8zM168 64h8v8h-8zM176 64h8v8h-8zM184 64h8v8h-8zM192 64h8v8h-8zM200 64h8v8h-8zM208 64h8v8h-8zM216 64h8v8h-8zM224 64h8v8h-8zM232 64h8v8h-8zM248 64h8v8h-8zM264 64h8v8h-8zM280 64h8v8h-8zM288 64h8v8h-8zM296 64h8v8h-8zM312 64h8v8h-8zM320 64h8v8h-8zM336 64h8v8h-8zM344 64h8v8h-8zM352 64h8v8h-8zM360 64h8v8h-8zM368 64h8v8h-8zM392 64h8v8h-8zM400 64h8v8h-8zM8 72h8v8h-8zM24 72h8v8h-8zM32 72h8v8h-8zM40 72h8v8h-8zM72 72h8v8h-8zM80 72h8v8h-8zM136 72h8v8h-8zM144 72h8v8h-8zM152 72h8v8h-8zM176 72h8v8h-8zM184 72h8v8h-8zM192 72h8v8h-8zM200 72h8v8h-8zM208 72h8v8h-8zM224 72h8v8h-8zM256 72h8v8h-8zM288 72h8v8h-8zM296 72h8v8h-8zM304 72h8v8h-8zM312 72h8v8h-8zM328 72h8v8h-8zM352 72h8v8h-8zM368 72h8v8h-8zM376 72h8v8h-8zM384 72h8v8h-8zM392 72h8v8h-8zM400 72h8v8h-8zM0 80h8v8h-8zM32 80h8v8h-8zM40 80h8v8h-8zM48 80h8v8h-8zM56 80h8v8h-8zM64 80h8v8h-8zM88 80h8v8h-8zM96 80h8v8h-8zM112 80h8v8h-8zM144 80h8v8h-8zM152 80h8v8h-8zM160 80h8v8h-8zM184 80h8v8h-8zM192 80h8v8h-8zM200 80h8v8h-8zM208 80h8v8h-8zM224 80h8v8h-8zM232 80h8v8h-8zM256 80h8v8h-8zM264 80h8v8h-8zM304 80h8v8h-8zM312 80h8v8h-8zM368 80h8v8h-8zM392 80h8v8h-8zM400 80h8v8h-8zM0 88h8v8h-8zM8 88h8v8h-8zM16 88h8v8h-8zM24 88h8v8h-8zM32 88h8v8h-8zM40 88h8v8h-8zM48 88h8v8h-8zM80 88h8v8h-8zM88 88h8v8h-8zM96 88h8v8h-8zM112 88h8v8h-8zM136 88h8v8h-8zM144 88h8v8h-8zM160 88h8v8h-8zM168 88h8v8h-8zM176 88h8v8h-8zM184 88h8v8h-8zM192 88h8v8h-8zM200 88h8v8h-8zM216 88h8v8h-8zM224 88h8v8h-8zM232 88h8v8h-8zM240 88h8v8h-8zM248 88h8v8h-8zM312 88h8v8h-8zM352 88h8v8h-8zM368 88h8v8h-8zM392 88h8v8h-8zM400 88h8v8h-8zM0 96h8v8h-8zM8 96h8v8h-8zM16 96h8v8h-8zM32 96h8v8h-8zM40 96h8v8h-8zM48 96h8v8h-8zM64 96h8v8h-8zM80 96h8v8h-8zM96 96h8v8h-8zM104 96h8v8h-8zM112 96h8v8h-8zM128 96h8v8h-8zM144 96h8v8h-8zM152 96h8v8h-8zM168 96h8v8h-8zM176 96h8v8h-8zM208 96h8v8h-8zM232 96h8v8h-8zM240 96h8v8h-8zM248 96h8v8h-8zM256 96h8v8h-8zM272 96h8v8h-8zM288 96h8v8h-8zM304 96h8v8h-8zM328 96h8v8h-8zM336 96h8v8h-8zM344 96h8v8h-8zM352 96h8v8h-8zM360 96h8v8h-8zM368 96h8v8h-8zM376 96h8v8h-8zM384 96h8v8h-8zM392 96h8v8h-8zM400 96h8v8h-8zM24 104h8v8h-8zM48 104h8v8h-8zM64 104h8v8h-8zM72 104h8v8h-8zM88 104h8v8h-8zM96 104h8v8h-8zM120 104h8v8h-8zM144 104h8v8h-8zM152 104h8v8h-8zM160 104h8v8h-8zM168 104h8v8h-8zM176 104h8v8h-8zM184 104h8v8h-8zM192 104h8v8h-8zM224 104h8v8h-8zM240 104h8v8h-8zM248 104h8v8h-8zM288 104h8v8h-8zM296 104h8v8h-8zM304 104h8v8h-8zM312 104h8v8h-8zM328 104h8v8h-8zM336 104h8v8h-8zM344 104h8v8h-8zM360 104h8v8h-8zM368 104h8v8h-8zM376 104h8v8h-8zM8 112h8v8h-8zM16 112h8v8h-8zM32 112h8v8h-8zM40 112h8v8h-8zM56 112h8v8h-8zM88 112h8v8h-8zM112 112h8v8h-8zM128 112h8v8h-8zM136 112h8v8h-8zM168 112h8v8h-8zM192 112h8v8h-8zM200 112h8v8h-8zM208 112h8v8h-8zM216 112h8v8h-8zM224 112h8v8h-8zM232 112h8v8h-8zM240 112h8v8h-8zM248 112h8v8h-8zM264 112h8v8h-8zM280 112h8v8h-8zM288 112h8v8h-8zM296 112h8v8h-8zM304 112h8v8h-8zM312 112h8v8h-8zM320 112h8v8h-8zM328 112h8v8h-8zM336 112h8v8h-8zM376 112h8v8h-8zM400 112h8v8h-8zM0 120h8v8h-8zM16 120h8v8h-8zM48 120h8v8h-8zM56 120h8v8h-8zM136 120h8v8h-8zM144 120h8v8h-8zM176 120h8v8h-8zM184 120h8v8h-8zM200 120h8v8h-8zM224 120h8v8h-8zM232 120h8v8h-8zM240 120h8v8h-8zM248 120h8v8h-8zM256 120h8v8h-8zM264 120h8v8h-8zM272 120h8v8h-8zM280 120h8v8h-8zM296 120h8v8h-8zM312 120h8v8h-8zM320 120h8v8h-8zM328 120h8v8h-8zM336 120h8v8h-8zM344 120h8v8h-8zM352 120h8v8h-8zM360 120h8v8h-8zM368 120h8v8h-8zM376 120h8v8h-8zM8 128h8v8h-8zM24 128h8v8h-8zM32 128h8v8h-8zM40 128h8v8h-8zM56 128h8v8h-8zM64 128h8v8h-8zM72 128h8v8h-8zM80 128h8v8h-8zM88 128h8v8h-8zM96 128h8v8h-8zM104 128h8v8h-8zM128 128h8v8h-8zM136 128h8v8h-8zM144 128h8v8h-8zM152 128h8v8h-8zM160 128h8v8h-8zM168 128h8v8h-8zM184 128h8v8h-8zM192 128h8v8h-8zM200 128h8v8h-8zM208 128h8v8h-8zM216 128h8v8h-8zM232 128h8v8h-8zM272 128h8v8h-8zM280 128h8v8h-8zM288 128h8v8h-8zM296 128h8v8h-8zM304 128h8v8h-8zM320 128h8v8h-8zM328 128h8v8h-8zM336 128h8v8h-8zM344 128h8v8h-8zM368 128h8v8h-8zM376 128h8v8h-8zM392 128h8v8h-8zM400 128h8v8h-8zM0 136h8v8h-8zM8 136h8v8h-8zM24 136h8v8h-8zM32 136h8v8h-8zM40 136h8v8h-8zM64 136h8v8h-8zM72 136h8v8h-8zM80 136h8v8h-8zM112 136h8v8h-8zM120 136h8v8h-8zM128 136h8v8h-8zM136 136h8v8h-8zM144 136h8v8h-8zM152 136h8v8h-8zM160 136h8v8h-8zM176 136h8v8h-8zM184 136h8v8h-8zM200 136h8v8h-8zM208 136h8v8h-8zM216 136h8v8h-8zM224 136h8v8h-8zM240 136h8v8h-8zM256 136h8v8h-8zM264 136h8v8h-8zM280 136h8v8h-8zM304 136h8v8h-8zM320 136h8v8h-8zM328 136h8v8h-8zM336 136h8v8h-8zM376 136h8v8h-8zM384 136h8v8h-8zM392 136h8v8h-8zM400 136h8v8h-8zM0 144h8v8h-8zM16 144h8v8h-8zM32 144h8v8h-8zM40 144h8v8h-8zM72 144h8v8h-8zM80 144h8v8h-8zM88 144h8v8h-8zM96 144h8v8h-8zM104 144h8v8h-8zM112 144h8v8h-8zM120 144h8v8h-8zM128 144h8v8h-8zM136 144h8v8h-8zM144 144h8v8h-8zM152 144h8v8h-8zM176 144h8v8h-8zM200 144h8v8h-8zM208 144h8v8h-8zM216 144h8v8h-8zM224 144h8v8h-8zM232 144h8v8h-8zM240 144h8v8h-8zM248 144h8v8h-8zM256 144h8v8h-8zM272 144h8v8h-8zM288 144h8v8h-8zM296 144h8v8h-8zM304 144h8v8h-8zM320 144h8v8h-8zM344 144h8v8h-8zM352 144h8v8h-8zM368 144h8v8h-8zM384 144h8v8h-8zM392 144h8v8h-8zM400 144h8v8h-8zM8 152h8v8h-8zM24 152h8v8h-8zM40 152h8v8h-8zM48 152h8v8h-8zM56 152h8v8h-8zM80 152h8v8h-8zM96 152h8v8h-8zM104 152h8v8h-8zM112 152h8v8h-8zM136 152h8v8h-8zM144 152h8v8h-8zM152 152h8v8h-8zM176 152h8v8h-8zM184 152h8v8h-8zM200 152h8v8h-8zM224 152h8v8h-8zM264 152h8v8h-8zM280 152h8v8h-8zM288 152h8v8h-8zM304 152h8v8h-8zM352 152h8v8h-8zM360 152h8v8h-8zM368 152h8v8h-8zM384 152h8v8h-8zM392 152h8v8h-8zM400 152h8v8h-8zM0 160h8v8h-8zM16 160h8v8h-8zM24 160h8v8h-8zM32 160h8v8h-8zM40 160h8v8h-8zM56 160h8v8h-8zM64 160h8v8h-8zM104 160h8v8h-8zM120 160h8v8h-8zM128 160h8v8h-8zM136 160h8v8h-8zM144 160h8v8h-8zM152 160h8v8h-8zM176 160h8v8h-8zM192 160h8v8h-8zM200 160h8v8h-8zM224 160h8v8h-8zM232 160h8v8h-8zM248 160h8v8h-8zM272 160h8v8h-8zM280 160h8v8h-8zM288 160h8v8h-8zM296 160h8v8h-8zM320 160h8v8h-8zM336 160h8v8h-8zM344 160h8v8h-8zM352 160h8v8h-8zM360 160h8v8h-8zM368 160h8v8h-8zM376 160h8v8h-8zM392 160h8v8h-8zM400 160h8v8h-8zM8 168h8v8h-8zM24 168h8v8h-8zM32 168h8v8h-8zM64 168h8v8h-8zM80 168h8v8h-8zM88 168h8v8h-8zM104 168h8v8h-8zM120 168h8v8h-8zM128 168h8v8h-8zM152 168h8v8h-8zM160 168h8v8h-8zM168 168h8v8h-8zM176 168h8v8h-8zM184 168h8v8h-8zM200 168h8v8h-8zM208 168h8v8h-8zM216 168h8v8h-8zM240 168h8v8h-8zM264 168h8v8h-8zM304 168h8v8h-8zM312 168h8v8h-8zM320 168h8v8h-8zM360 168h8v8h-8zM368 168h8v8h-8zM392 168h8v8h-8zM400 168h8v8h-8zM0 176h8v8h-8zM8 176h8v8h-8zM24 176h8v8h-8zM32 176h8v8h-8zM56 176h8v8h-8zM64 176h8v8h-8zM72 176h8v8h-8zM80 176h8v8h-8zM104 176h8v8h-8zM128 176h8v8h-8zM144 176h8v8h-8zM152 176h8v8h-8zM160 176h8v8h-8zM168 176h8v8h-8zM176 176h8v8h-8zM184 176h8v8h-8zM256 176h8v8h-8zM280 176h8v8h-8zM288 176h8v8h-8zM296 176h8v8h-8zM304 176h8v8h-8zM312 176h8v8h-8zM320 176h8v8h-8zM328 176h8v8h-8zM336 176h8v8h-8zM344 176h8v8h-8zM376 176h8v8h-8zM384 176h8v8h-8zM392 176h8v8h-8zM400 176h8v8h-8zM0 184h8v8h-8zM8 184h8v8h-8zM16 184h8v8h-8zM32 184h8v8h-8zM40 184h8v8h-8zM48 184h8v8h-8zM56 184h8v8h-8zM64 184h8v8h-8zM72 184h8v8h-8zM80 184h8v8h-8zM104 184h8v8h-8zM112 184h8v8h-8zM120 184h8v8h-8zM128 184h8v8h-8zM144 184h8v8h-8zM160 184h8v8h-8zM168 184h8v8h-8zM176 184h8v8h-8zM184 184h8v8h-8zM192 184h8v8h-8zM200 184h8v8h-8zM216 184h8v8h-8zM232 184h8v8h-8zM248 184h8v8h-8zM272 184h8v8h-8zM312 184h8v8h-8zM320 184h8v8h-8zM328 184h8v8h-8zM336 184h8v8h-8zM344 184h8v8h-8zM352 184h8v8h-8zM376 184h8v8h-8zM384 184h8v8h-8zM392 184h8v8h-8zM8 192h8v8h-8zM16 192h8v8h-8zM24 192h8v8h-8zM32 192h8v8h-8zM40 192h8v8h-8zM48 192h8v8h-8zM56 192h8v8h-8zM88 192h8v8h-8zM96 192h8v8h-8zM104 192h8v8h-8zM112 192h8v8h-8zM128 192h8v8h-8zM136 192h8v8h-8zM152 192h8v8h-8zM168 192h8v8h-8zM184 192h8v8h-8zM192 192h8v8h-8zM224 192h8v8h-8zM232 192h8v8h-8zM240 192h8v8h-8zM248 192h8v8h-8zM256 192h8v8h-8zM280 192h8v8h-8zM288 192h8v8h-8zM296 192h8v8h-8zM312 192h8v8h-8zM320 192h8v8h-8zM328 192h8v8h-8zM336 192h8v8h-8zM352 192h8v8h-8zM360 192h8v8h-8zM368 192h8v8h-8zM376 192h8v8h-8zM0 200h8v8h-8zM8 200h8v8h-8zM16 200h8v8h-8zM24 200h8v8h-8zM32 200h8v8h-8zM48 200h8v8h-8zM56 200h8v8h-8zM64 200h8v8h-8zM72 200h8v8h-8zM88 200h8v8h-8zM96 200h8v8h-8zM112 200h8v8h-8zM128 200h8v8h-8zM136 200h8v8h-8zM152 200h8v8h-8zM168 200h8v8h-8zM176 200h8v8h-8zM200 200h8v8h-8zM208 200h8v8h-8zM224 200h8v8h-8zM232 200h8v8h-8zM240 200h8v8h-8zM248 200h8v8h-8zM272 200h8v8h-8zM304 200h8v8h-8zM320 200h8v8h-8zM328 200h8v8h-8zM352 200h8v8h-8zM368 200h8v8h-8zM384 200h8v8h-8zM392 200h8v8h-8zM0 208h8v8h-8zM8 208h8v8h-8zM24 208h8v8h-8zM56 208h8v8h-8zM64 208h8v8h-8zM80 208h8v8h-8zM88 208h8v8h-8zM96 208h8v8h-8zM104 208h8v8h-8zM112 208h8v8h-8zM136 208h8v8h-8zM144 208h8v8h-8zM152 208h8v8h-8zM184 208h8v8h-8zM192 208h8v8h-8zM208 208h8v8h-8zM216 208h8v8h-8zM224 208h8v8h-8zM232 208h8v8h-8zM248 208h8v8h-8zM272 208h8v8h-8zM296 208h8v8h-8zM304 208h8v8h-8zM320 208h8v8h-8zM336 208h8v8h-8zM344 208h8v8h-8zM360 208h8v8h-8zM368 208h8v8h-8zM384 208h8v8h-8zM392 208h8v8h-8zM0 216h8v8h-8zM8 216h8v8h-8zM16 216h8v8h-8zM24 216h8v8h-8zM32 216h8v8h-8zM48 216h8v8h-8zM64 216h8v8h-8zM72 216h8v8h-8zM80 216h8v8h-8zM112 216h8v8h-8zM128 216h8v8h-8zM136 216h8v8h-8zM144 216h8v8h-8zM152 216h8v8h-8zM192 216h8v8h-8zM200 216h8v8h-8zM216 216h8v8h-8zM224 216h8v8h-8zM232 216h8v8h-8zM256 216h8v8h-8zM288 216h8v8h-8zM328 216h8v8h-8zM344 216h8v8h-8zM352 216h8v8h-8zM360 216h8v8h-8zM384 216h8v8h-8zM400 216h8v8h-8zM0 224h8v8h-8zM16 224h8v8h-8zM24 224h8v8h-8zM32 224h8v8h-8zM48 224h8v8h-8zM56 224h8v8h-8zM72 224h8v8h-8zM80 224h8v8h-8zM88 224h8v8h-8zM104 224h8v8h-8zM112 224h8v8h-8zM128 224h8v8h-8zM144 224h8v8h-8zM152 224h8v8h-8zM184 224h8v8h-8zM192 224h8v8h-8zM208 224h8v8h-8zM216 224h8v8h-8zM248 224h8v8h-8zM256 224h8v8h-8zM272 224h8v8h-8zM280 224h8v8h-8zM328 224h8v8h-8zM336 224h8v8h-8zM344 224h8v8h-8zM360 224h8v8h-8zM368 224h8v8h-8zM376 224h8v8h-8zM384 224h8v8h-8zM392 224h8v8h-8zM400 224h8v8h-8zM0 232h8v8h-8zM8 232h8v8h-8zM16 232h8v8h-8zM24 232h8v8h-8zM48 232h8v8h-8zM64 232h8v8h-8zM72 232h8v8h-8zM88 232h8v8h-8zM104 232h8v8h-8zM112 232h8v8h-8zM120 232h8v8h-8zM128 232h8v8h-8zM136 232h8v8h-8zM144 232h8v8h-8zM160 232h8v8h-8zM176 232h8v8h-8zM184 232h8v8h-8zM216 232h8v8h-8zM224 232h8v8h-8zM232 232h8v8h-8zM248 232h8v8h-8zM256 232h8v8h-8zM272 232h8v8h-8zM296 232h8v8h-8zM304 232h8v8h-8zM312 232h8v8h-8zM320 232h8v8h-8zM328 232h8v8h-8zM336 232h8v8h-8zM344 232h8v8h-8zM352 232h8v8h-8zM368 232h8v8h-8zM392 232h8v8h-8zM400 232h8v8h-8z"
+            ></path></pattern
+          >
+          <linearGradient id="wordmark-fade">
+            <stop offset="0" stop-color="white"></stop>
+            <stop offset=".85" stop-color="white"></stop>
+            <stop offset="1" stop-color="black"></stop>
+          </linearGradient>
+          <linearGradient id="pixel-fade">
+            <stop offset="0" stop-color="black"></stop>
+            <stop offset=".16" stop-color="white"></stop>
+          </linearGradient>
+          <mask id="wordmark-mask">
+            <path d="M0 0H1000V270H0Z" fill="url(#wordmark-fade)"></path>
+            <path
+              fill="black"
+              d="M784 21H796V33H784ZM816 56H840V68H816ZM766 100H790V112H766ZM858 131H870V143H858ZM804 167H828V179H804ZM844 202H868V214H844ZM890 32H914V56H890ZM908 107H932V119H908Z"
+            ></path>
+          </mask>
+          <mask id="pixel-mask">
+            <path d="M790 14H1200V244H790Z" fill="url(#pixel-fade)"></path>
+          </mask>
+        </defs>
+        <text
+          x="-7"
+          y="242"
+          fill="currentColor"
+          font-family="Geist, sans-serif"
+          font-size="328"
+          font-weight="850"
+          letter-spacing="-22"
+          textLength="988"
+          lengthAdjust="spacingAndGlyphs"
+          mask="url(#wordmark-mask)">CHAI.</text
+        >
+        <path
+          d="M790 14H1200V244H790Z"
+          fill="url(#wordmark-pixels)"
+          mask="url(#pixel-mask)"></path>
+      </svg>
     </div>
   </div>
 </footer>

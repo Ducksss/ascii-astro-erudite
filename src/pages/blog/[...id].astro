@@ -77,10 +77,8 @@ const tocSections = await getTOCSections(currentPostId)
       ) && <TOCHeader slot="table-of-contents" headings={headings} />
   }
 
-  <section
-    class="relative overflow-hidden border-b border-white/10 bg-black/30"
-  >
-    <div class="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+  <section class="editorial-intro relative overflow-hidden">
+    <div class="site-container py-12 lg:py-20">
       <Breadcrumbs
         variant="immersive"
         items={[
@@ -109,19 +107,16 @@ const tocSections = await getTOCSections(currentPostId)
       />
 
       <div
-        class="mt-8 grid gap-10 xl:grid-cols-[minmax(0,1.08fr)_minmax(280px,0.92fr)] xl:items-start"
+        class="mt-8 grid gap-12 xl:grid-cols-[minmax(0,1.5fr)_minmax(260px,0.65fr)] xl:items-end"
       >
         <div
           class="immersive-animate-in max-w-4xl"
           transition:name="page-intro"
         >
-          <p class="landing-section-label">
+          <p class="technical-label">
             {isCurrentSubpost ? 'Subpost' : 'Note'}
           </p>
-          <h1
-            class="mt-4 scroll-mt-31 text-[clamp(2.8rem,6vw,5.8rem)] leading-[0.92] font-semibold tracking-[-0.07em] text-white"
-            id="post-title"
-          >
+          <h1 class="section-title mt-5 scroll-mt-31" id="post-title">
             {post.data.title}
           </h1>
 
@@ -135,10 +130,13 @@ const tocSections = await getTOCSections(currentPostId)
                       alt={author.name}
                       width={20}
                       height={20}
-                      class="size-5 rounded-full"
+                      class="size-5"
                     />
                     {author.isRegistered ? (
-                      <Link href={`/authors/${author.id}`} class="text-white">
+                      <Link
+                        href={`/authors/${author.id}`}
+                        class="text-foreground"
+                      >
                         {author.name}
                       </Link>
                     ) : (
@@ -174,31 +172,23 @@ const tocSections = await getTOCSections(currentPostId)
           }
         </div>
 
-        <aside class="immersive-panel immersive-animate-in self-start">
+        <aside class="immersive-panel immersive-animate-in self-end">
           <p class="immersive-eyebrow">Reading details</p>
           <div class="immersive-rule-list mt-6">
             <div class="space-y-2">
-              <p
-                class="font-mono text-[0.66rem] tracking-[0.26em] text-white/34 uppercase"
-              >
-                Published
-              </p>
-              <p class="text-base text-white/68">
+              <p class="technical-label text-foreground/75">Published</p>
+              <p class="text-base text-foreground/70">
                 {formatDate(post.data.date)}
               </p>
             </div>
             <div class="space-y-2">
-              <p
-                class="font-mono text-[0.66rem] tracking-[0.26em] text-white/34 uppercase"
-              >
-                Reading time
-              </p>
-              <p class="text-base text-white/68">
+              <p class="technical-label text-foreground/75">Reading time</p>
+              <p class="text-base text-foreground/70">
                 {postReadingTime}
                 {
                   combinedReadingTime &&
                     combinedReadingTime !== postReadingTime && (
-                      <span class="text-white/42">
+                      <span class="text-foreground/70">
                         {' '}
                         ({combinedReadingTime} total)
                       </span>
@@ -209,10 +199,8 @@ const tocSections = await getTOCSections(currentPostId)
             {
               subpostCount > 0 && (
                 <div class="space-y-2">
-                  <p class="font-mono text-[0.66rem] tracking-[0.26em] text-white/34 uppercase">
-                    Structure
-                  </p>
-                  <p class="text-base text-white/68">
+                  <p class="technical-label text-foreground/75">Structure</p>
+                  <p class="text-base text-foreground/70">
                     {subpostCount} subpost{subpostCount === 1 ? '' : 's'}
                   </p>
                 </div>
@@ -224,7 +212,7 @@ const tocSections = await getTOCSections(currentPostId)
 
       {
         post.data.image && (
-          <div class="mt-10 overflow-hidden border border-white/12 bg-black/40">
+          <div class="mt-10 overflow-hidden border border-border bg-transparent">
             <Image
               src={post.data.image}
               alt={post.data.title}
@@ -239,10 +227,10 @@ const tocSections = await getTOCSections(currentPostId)
     </div>
   </section>
 
-  <section>
-    <div class="mx-auto max-w-[1400px] px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+  <section class="editorial-section">
+    <div class="site-container py-12 lg:py-20">
       <div
-        class="grid gap-8 xl:grid-cols-[minmax(220px,1fr)_minmax(0,820px)_minmax(220px,1fr)] xl:items-start"
+        class="grid gap-8 xl:grid-cols-[minmax(140px,0.7fr)_minmax(0,760px)_minmax(140px,0.7fr)] xl:items-start"
       >
         {
           tocSections.length > 0 && (
@@ -280,7 +268,7 @@ const tocSections = await getTOCSections(currentPostId)
   <Button
     variant="outline"
     size="icon"
-    className="group fixed right-8 bottom-8 z-50 hidden"
+    className="group fixed right-8 bottom-8 z-50 hidden rounded-none"
     id="scroll-to-top"
     title="Scroll to top"
     aria-label="Scroll to top"

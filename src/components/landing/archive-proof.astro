@@ -1,5 +1,4 @@
 ---
-import LandingAsciiField from '@/components/landing/ascii-field.astro'
 import Link from '@/components/link.astro'
 import { formatDate } from '@/lib/utils'
 import type { CollectionEntry } from 'astro:content'
@@ -9,230 +8,225 @@ interface Props {
   intro: string
   featuredPost: CollectionEntry<'blog'> | null
   supportingPosts: CollectionEntry<'blog'>[]
-  stats: {
-    postCount: number
-    tagCount: number
-    yearSpan: string
-  }
+  stats: { postCount: number; tagCount: number; yearSpan: string }
 }
-
 const { title, intro, featuredPost, supportingPosts, stats } = Astro.props
+const posts = featuredPost
+  ? [featuredPost, ...supportingPosts]
+  : supportingPosts
 ---
 
-<section class="relative border-b border-white/10 bg-[#040404]">
-  <LandingAsciiField variant="ambient" class="opacity-[0.14]" />
-  <div
-    class="mx-auto max-w-[1400px] px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24"
-  >
-    <div
-      class="flex flex-col gap-4 pb-6 sm:gap-5 sm:pb-8 lg:flex-row lg:items-end lg:justify-between"
-    >
-      <div class="max-w-2xl">
-        <p class="landing-section-label">Archive proof</p>
-        <h2 class="landing-section-title mt-4 max-w-2xl">{title}</h2>
-        <p class="mt-6 max-w-2xl text-base leading-7 text-white/58 sm:text-lg">
-          {intro}
-        </p>
-      </div>
-      <Link
-        href="/blog"
-        class="font-mono text-[0.72rem] tracking-[0.26em] text-white/52 uppercase transition-colors hover:text-white"
-      >
-        Open full archive
-      </Link>
+<section class="archive-section" aria-labelledby="archive-title">
+  <div class="site-container">
+    <div class="archive-heading">
+      <p class="technical-label">Field notes / the thinking behind the doing</p>
+      <h2 id="archive-title" class="section-title">{title}</h2>
+      <p>{intro}</p>
     </div>
-
-    <div
-      class="mt-8 grid gap-8 sm:mt-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(22rem,0.92fr)]"
-    >
+    <div class="technical-rule" aria-hidden="true"></div>
+    <div class="archive-grid">
       {
-        featuredPost ? (
-          <article class="landing-archive-feature">
-            <p class="landing-archive-feature__meta">
-              <span>{formatDate(featuredPost.data.date)}</span>
-              <span>
-                {featuredPost.data.tags?.slice(0, 2).join(' / ') ??
-                  'latest note'}
-              </span>
-            </p>
-            <h3 class="landing-archive-feature__title">
-              {featuredPost.data.title}
-            </h3>
-            <p class="landing-archive-feature__description">
-              {featuredPost.data.description}
-            </p>
-            <Link
-              href={`/blog/${featuredPost.id}`}
-              class="landing-archive-feature__link"
-            >
-              Enter the note
+        posts.map((post, index) => (
+          <article class="archive-note">
+            <Link href={`/blog/${post.id}`}>
+              <div class="archive-note__meta technical-label">
+                <>
+                  <span class="archive-note__tab">
+                    {String(index + 1).padStart(2, '0')} / Field note
+                  </span>
+                  <span aria-hidden="true">↗</span>
+                </>
+              </div>
+              <h3>{post.data.title}</h3>
+              <p>{post.data.description}</p>
+              <div class="archive-note__date technical-label">
+                <>
+                  <span>{formatDate(post.data.date)}</span>
+                  <span class="archive-note__avatar" aria-hidden="true">
+                    <img
+                      src="/static/logo.png"
+                      width="28"
+                      height="28"
+                      alt=""
+                      loading="lazy"
+                    />
+                  </span>
+                </>
+              </div>
             </Link>
           </article>
-        ) : (
-          <div class="landing-archive-feature text-white/52">
-            No published writing yet. The archive section is ready when the
-            first post lands.
-          </div>
-        )
+        ))
       }
-
-      <div class="hidden space-y-6 sm:block">
-        <div class="grid grid-cols-3 gap-px border border-white/10 bg-white/5">
-          <div class="landing-archive-stat">
-            <span class="landing-archive-stat__value">
-              {String(stats.postCount).padStart(2, '0')}
-            </span>
-            <span class="landing-archive-stat__label">Posts</span>
-          </div>
-          <div class="landing-archive-stat">
-            <span class="landing-archive-stat__value">
-              {String(stats.tagCount).padStart(2, '0')}
-            </span>
-            <span class="landing-archive-stat__label">Tags</span>
-          </div>
-          <div class="landing-archive-stat">
-            <span class="landing-archive-stat__value">{stats.yearSpan}</span>
-            <span class="landing-archive-stat__label">Timeline</span>
-          </div>
-        </div>
-
-        <div class="border border-white/10 bg-white/[0.02]">
-          {
-            supportingPosts.map((post) => (
-              <article class="landing-archive-row">
-                <Link href={`/blog/${post.id}`} class="block">
-                  <p class="landing-archive-row__meta">
-                    {formatDate(post.data.date)}
-                  </p>
-                  <h4 class="landing-archive-row__title">{post.data.title}</h4>
-                  <p class="landing-archive-row__description">
-                    {post.data.description}
-                  </p>
-                </Link>
-              </article>
-            ))
-          }
-        </div>
-      </div>
+    </div>
+    <div class="archive-directory">
+      <p class="technical-label">
+        {String(stats.postCount).padStart(2, '0')} notes <span>/</span>
+        {String(stats.tagCount).padStart(2, '0')} topics <span>/</span>
+        {stats.yearSpan}
+      </p>
+      <Link href="/blog" class="technical-button"
+        >Open the archive <span aria-hidden="true">↗</span></Link
+      >
     </div>
   </div>
+  <div class="cross-field archive-cross-field" aria-hidden="true"></div>
 </section>
 
 <style>
-  .landing-archive-feature {
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background:
-      linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.04),
-        rgba(255, 255, 255, 0.015)
-      ),
-      rgba(0, 0, 0, 0.56);
-    padding: 1.5rem;
+  .archive-section {
+    position: relative;
+    padding-block: 70px 170px;
+    background: var(--paper);
+    color: var(--ink);
+    overflow: hidden;
   }
-
-  .landing-archive-feature__meta,
-  .landing-archive-row__meta,
-  .landing-archive-stat__label {
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.42);
+  .archive-section > .site-container {
+    position: relative;
+    z-index: 1;
   }
-
-  .landing-archive-feature__meta {
+  .archive-heading {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .archive-heading .technical-label {
+    color: #686863;
+    font-size: 9px;
+  }
+  .archive-heading h2 {
+    margin-top: 22px;
+  }
+  .archive-heading > p:last-child {
+    color: #666661;
+    font-size: 15px;
+    margin-top: 20px;
+  }
+  .archive-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 50px;
+  }
+  .archive-note {
+    background: #eeeeea;
+    transition: background 0.2s;
+  }
+  .archive-note:hover {
+    background: #e7e7e0;
+  }
+  .archive-note > a {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.85rem;
-  }
-
-  .landing-archive-feature__title {
-    margin-top: 1.4rem;
-    max-width: 16ch;
-    font-size: clamp(2.2rem, 4vw, 4rem);
-    line-height: 0.94;
-    letter-spacing: -0.07em;
-    font-weight: 600;
-    color: white;
-  }
-
-  .landing-archive-feature__description {
-    margin-top: 1.25rem;
-    max-width: 36rem;
-    font-size: 1rem;
-    line-height: 1.8;
-    color: rgba(255, 255, 255, 0.6);
-  }
-
-  .landing-archive-feature__link {
-    margin-top: 2rem;
-    width: fit-content;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.24);
-    padding-bottom: 0.2rem;
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.26em;
-    text-transform: uppercase;
-    color: white;
-  }
-
-  .landing-archive-stat {
-    display: flex;
-    min-height: 8rem;
     flex-direction: column;
-    justify-content: flex-end;
-    gap: 0.55rem;
-    border-right: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 1rem;
+    height: 100%;
+    padding: 22px;
   }
-
-  .landing-archive-stat:last-child {
-    border-right: 0;
+  .archive-note__meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    color: #62625e;
   }
-
-  .landing-archive-stat__value {
-    font-size: clamp(1.3rem, 2vw, 1.8rem);
-    line-height: 1;
-    letter-spacing: -0.05em;
-    font-weight: 600;
-    color: white;
+  .archive-note__meta > span:last-child {
+    color: var(--blue);
   }
-
-  .landing-archive-row {
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 1rem 1.1rem;
-    transition: background-color 0.3s ease;
+  .archive-note__tab {
+    border-inline: 1px solid #999991;
+    padding-inline: 7px;
+    line-height: 20px;
   }
-
-  .landing-archive-row:first-child {
-    border-top: 0;
-  }
-
-  .landing-archive-row:hover {
-    background: rgba(255, 255, 255, 0.03);
-  }
-
-  .landing-archive-row__title {
-    margin-top: 0.75rem;
-    font-size: 1.3rem;
-    line-height: 1.15;
+  .archive-note h3 {
+    font-family: var(--font-display);
+    font-size: clamp(20px, 1.8vw, 26px);
+    font-weight: 350;
+    line-height: 1.12;
     letter-spacing: -0.04em;
-    font-weight: 500;
-    color: white;
+    margin-top: 32px;
   }
-
-  .landing-archive-row__description {
-    margin-top: 0.7rem;
-    font-size: 0.95rem;
-    line-height: 1.7;
-    color: rgba(255, 255, 255, 0.54);
+  .archive-note > a > p {
+    margin-top: 20px;
+    margin-bottom: 32px;
+    color: #60605a;
+    font-size: 14px;
+    line-height: 1.6;
   }
-
-  @media (max-width: 767px) {
-    .landing-archive-stat {
-      min-height: 6.5rem;
-      padding: 0.85rem;
+  .archive-note__date {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 44px;
+    padding-top: 14px;
+    margin-top: auto;
+    border-top: 1px dotted #b0b0a8;
+    color: #63635e;
+    font-size: 8px;
+  }
+  .archive-note__avatar {
+    width: 28px;
+    height: 28px;
+    background: var(--blue);
+  }
+  .archive-note__avatar img {
+    filter: grayscale(1) brightness(1.5);
+    object-fit: cover;
+    mix-blend-mode: screen;
+  }
+  .archive-directory {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 32px;
+  }
+  .archive-directory .technical-label {
+    color: #646460;
+    font-size: 9px;
+  }
+  .archive-directory .technical-label span {
+    padding-inline: 8px;
+    color: #a4a49d;
+  }
+  .archive-cross-field {
+    position: absolute;
+    inset: auto 0 0;
+    height: 135px;
+    opacity: 0.65;
+    mask-image:
+      radial-gradient(ellipse at 12% 100%, #000 25%, transparent 70%),
+      radial-gradient(ellipse at 52% 100%, #000 20%, transparent 65%),
+      radial-gradient(ellipse at 98% 100%, #000 15%, transparent 65%);
+  }
+  @media (max-width: 1023px) {
+    .archive-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 639px) {
+    .archive-section {
+      padding-block: 50px 120px;
+    }
+    .archive-heading {
+      margin-bottom: 36px;
+    }
+    .archive-grid {
+      grid-template-columns: 1fr;
+      margin-top: 36px;
+    }
+    .archive-note > a {
+      padding: 22px;
+    }
+    .archive-note h3 {
+      font-size: 25px;
+      margin-top: 22px;
+    }
+    .archive-note > a > p {
+      font-size: 14px;
+      margin-top: 16px;
+    }
+    .archive-directory {
+      flex-direction: column;
+      align-items: start;
+    }
+    .archive-cross-field {
+      height: 85px;
     }
   }
 </style>

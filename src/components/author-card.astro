@@ -29,7 +29,7 @@ const socialLinks: SocialLink[] = [
 
 {
   isImmersive ? (
-    <article class="border-t border-white/10 py-6 first:border-t-0 sm:py-8">
+    <article class="border-t border-border py-6 first:border-t-0 sm:py-8">
       <div class="grid gap-6 lg:grid-cols-[7rem_minmax(0,1fr)_auto] lg:items-start lg:gap-8">
         <Link
           href={`/authors/${author.id}`}
@@ -41,7 +41,7 @@ const socialLinks: SocialLink[] = [
             alt={`Avatar of ${name}`}
             fallback={name[0]}
             className={cn(
-              'size-24 rounded-2xl border border-white/10 object-cover *:data-[slot="avatar-fallback"]:rounded-2xl *:data-[slot="avatar-fallback"]:bg-white/[0.06] sm:size-28',
+              'size-24 rounded-none border border-border object-cover *:data-[slot="avatar-fallback"]:rounded-none *:data-[slot="avatar-fallback"]:bg-muted/30 sm:size-28',
               !isAuthorPage &&
                 'transition-transform duration-300 hover:-translate-y-1',
             )}
@@ -50,28 +50,30 @@ const socialLinks: SocialLink[] = [
 
         <div class="space-y-5">
           <div class="space-y-3">
-            <p class="font-mono text-[0.68rem] tracking-[0.28em] text-white/38 uppercase">
+            <p class="font-mono text-[0.68rem] tracking-[0.08em] text-foreground/60 uppercase">
               Author
             </p>
             <div class="flex flex-wrap items-center gap-3">
-              <h3 class="text-[1.7rem] leading-none font-medium tracking-[-0.05em] text-white sm:text-[2rem]">
+              <h3 class="text-[1.7rem] leading-none font-normal tracking-[-0.05em] text-foreground sm:text-[2rem]">
                 {isAuthorPage ? (
                   name
                 ) : (
                   <Link
                     href={`/authors/${author.id}`}
-                    class="text-white hover:text-white/78"
+                    class="text-foreground hover:text-primary"
                   >
                     {name}
                   </Link>
                 )}
               </h3>
               {pronouns && (
-                <span class="text-sm text-white/42">{pronouns}</span>
+                <span class="text-sm text-foreground/60">{pronouns}</span>
               )}
             </div>
             {bio && (
-              <p class="max-w-2xl text-base leading-7 text-white/58">{bio}</p>
+              <p class="max-w-2xl text-base leading-7 text-foreground/60">
+                {bio}
+              </p>
             )}
           </div>
 
@@ -108,7 +110,7 @@ const socialLinks: SocialLink[] = [
       </div>
     </article>
   ) : (
-    <div class="has-[a:hover]:bg-muted/50 overflow-hidden rounded-xl border p-4 transition-colors duration-300 ease-in-out">
+    <div class="overflow-hidden rounded-none border p-4 transition-colors duration-300 ease-in-out has-[a:hover]:bg-muted/50">
       <div class="flex flex-wrap gap-4">
         <Link
           href={`/authors/${author.id}`}
@@ -122,7 +124,7 @@ const socialLinks: SocialLink[] = [
             className={cn(
               'size-32 rounded-md *:data-[slot="avatar-fallback"]:rounded-md',
               !isAuthorPage &&
-                'hover:ring-primary transition-shadow duration-300 hover:cursor-pointer hover:ring-2',
+                'transition-shadow duration-300 hover:cursor-pointer hover:ring-2 hover:ring-primary',
             )}
           />
         </Link>
@@ -131,10 +133,10 @@ const socialLinks: SocialLink[] = [
             <div class="flex flex-wrap items-center gap-x-2">
               <h3 class="text-lg font-medium">{name}</h3>
               {pronouns && (
-                <span class="text-muted-foreground text-sm">({pronouns})</span>
+                <span class="text-sm text-muted-foreground">({pronouns})</span>
               )}
             </div>
-            <p class="text-muted-foreground text-sm">{bio}</p>
+            <p class="text-sm text-muted-foreground">{bio}</p>
           </div>
 
           <ul class="flex flex-wrap gap-2" role="list">
@@ -144,7 +146,7 @@ const socialLinks: SocialLink[] = [
                   href={href}
                   aria-label={label}
                   title={label}
-                  class="border-border bg-background hover:bg-muted hover:text-foreground inline-flex size-9 items-center justify-center rounded-md border transition-colors"
+                  class="inline-flex size-9 items-center justify-center rounded-md border border-border bg-background transition-colors hover:bg-muted hover:text-foreground"
                   external
                 >
                   <Icon

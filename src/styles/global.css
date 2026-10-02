@@ -43,15 +43,20 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --font-display: 'Geist Mono', ui-monospace, monospace;
+  --blue: #2528e8;
+  --paper: #f7f7f4;
+  --ink: #171717;
+  --navy: #060d1b;
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --primary: var(--blue);
   --primary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
+  --muted: #eeeee9;
+  --muted-foreground: #646460;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: #d1d1cb;
+  --ring: var(--blue);
 }
 
 [data-theme='dark'] {
@@ -72,7 +77,7 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    @apply border-border outline-ring/50 tracking-tight;
+    @apply border-border tracking-tight outline-ring/50;
   }
 
   a,

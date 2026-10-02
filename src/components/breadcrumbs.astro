@@ -28,8 +28,8 @@ const isImmersive = variant === 'immersive'
 <Breadcrumb className={cn(isImmersive && 'immersive-breadcrumb')}>
   <BreadcrumbList>
     <BreadcrumbItem>
-      <BreadcrumbLink href="/" className={cn(isImmersive && 'text-white/52')}>
-        <Icon name="lucide:home" class="size-4 shrink-0" />
+      <BreadcrumbLink href="/" aria-label="Home">
+        <Icon name="lucide:home" class="size-4 shrink-0" aria-hidden="true" />
       </BreadcrumbLink>
     </BreadcrumbItem>
     {
@@ -38,7 +38,7 @@ const isImmersive = variant === 'immersive'
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             {index === items.length - 1 ? (
-              <BreadcrumbPage className={cn(isImmersive && 'text-white')}>
+              <BreadcrumbPage>
                 <span class="flex items-center gap-x-2">
                   {item.icon && (
                     <Icon name={item.icon} class="size-4 shrink-0" />
@@ -47,10 +47,7 @@ const isImmersive = variant === 'immersive'
                 </span>
               </BreadcrumbPage>
             ) : (
-              <BreadcrumbLink
-                href={item.href}
-                className={cn(isImmersive && 'text-white/52 hover:text-white')}
-              >
+              <BreadcrumbLink href={item.href}>
                 <span class="flex items-center gap-x-2">
                   {item.icon && (
                     <Icon name={item.icon} class="size-4 shrink-0" />

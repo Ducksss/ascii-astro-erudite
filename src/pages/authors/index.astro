@@ -13,50 +13,42 @@ const posts = await getAllPosts()
   <PageHead
     slot="head"
     title="Authors"
-    description="Profiles attached to the writing archive and the wider site surface."
+    description="Meet the people behind the writing."
   />
 
   <ImmersivePageIntro
     items={[{ label: 'Authors', icon: 'lucide:users' }]}
     label="Authors"
-    title="The people attached to this archive now live inside the same immersive shell."
-    description="Profiles, bylines, and author routes now read like part of the editorial surface rather than a detached utility index."
+    title="People behind the notes."
+    description="Author profiles and their contributions to the archive."
   >
     <div slot="aside">
-      <p class="immersive-eyebrow">Directory status</p>
+      <p class="immersive-eyebrow">At a glance</p>
       <div
-        class="mt-6 grid grid-cols-2 gap-px border border-white/10 bg-white/[0.03]"
+        class="mt-6 grid grid-cols-2 gap-px border border-border bg-muted/30"
       >
         <div class="p-4">
           <p
-            class="text-2xl leading-none font-semibold tracking-[-0.06em] text-white"
+            class="text-2xl leading-none font-normal tracking-[-0.06em] text-foreground"
           >
             {String(authors.length).padStart(2, '0')}
           </p>
-          <p
-            class="mt-2 font-mono text-[0.66rem] tracking-[0.24em] text-white/38 uppercase"
-          >
-            Profiles
-          </p>
+          <p class="technical-label mt-2 text-foreground/65">Profiles</p>
         </div>
-        <div class="border-l border-white/10 p-4">
+        <div class="border-l border-border p-4">
           <p
-            class="text-2xl leading-none font-semibold tracking-[-0.06em] text-white"
+            class="text-2xl leading-none font-normal tracking-[-0.06em] text-foreground"
           >
             {String(posts.length).padStart(2, '0')}
           </p>
-          <p
-            class="mt-2 font-mono text-[0.66rem] tracking-[0.24em] text-white/38 uppercase"
-          >
-            Published notes
-          </p>
+          <p class="technical-label mt-2 text-foreground/65">Published notes</p>
         </div>
       </div>
     </div>
   </ImmersivePageIntro>
 
-  <section class="border-b border-white/10">
-    <div class="mx-auto max-w-[1400px] px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
+  <section class="editorial-section border-b border-border">
+    <div class="site-container py-16 lg:py-24">
       {
         authors.length > 0 ? (
           <div class="flex flex-col">

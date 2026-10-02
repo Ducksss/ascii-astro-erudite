@@ -44,28 +44,22 @@ const earliestPost = posts[posts.length - 1]
     ]}
     label="Tag"
     title={`#${tag}`}
-    description={`A filtered archive surface for posts tagged with ${tag}.`}
+    description={`Build logs and technical notes about ${tag}.`}
   >
     <div slot="aside">
       <p class="immersive-eyebrow">Tag details</p>
       <div class="immersive-rule-list mt-6">
         <div class="space-y-2">
-          <p
-            class="font-mono text-[0.66rem] tracking-[0.26em] text-white/34 uppercase"
-          >
-            Matching notes
-          </p>
-          <p class="text-base text-white/68">
+          <p class="technical-label text-foreground/65">Matching notes</p>
+          <p class="text-base text-foreground/68">
             {String(posts.length).padStart(2, '0')}
           </p>
         </div>
         {
           latestPost && (
             <div class="space-y-2">
-              <p class="font-mono text-[0.66rem] tracking-[0.26em] text-white/34 uppercase">
-                Latest entry
-              </p>
-              <p class="text-base text-white/68">
+              <p class="technical-label text-foreground/65">Latest entry</p>
+              <p class="text-base text-foreground/68">
                 {formatDate(latestPost.data.date)}
               </p>
             </div>
@@ -74,10 +68,8 @@ const earliestPost = posts[posts.length - 1]
         {
           earliestPost && (
             <div class="space-y-2">
-              <p class="font-mono text-[0.66rem] tracking-[0.26em] text-white/34 uppercase">
-                Archive span
-              </p>
-              <p class="text-base text-white/68">
+              <p class="technical-label text-foreground/65">Archive span</p>
+              <p class="text-base text-foreground/68">
                 {formatDate(earliestPost.data.date)} {'->'}{' '}
                 {formatDate(latestPost.data.date)}
               </p>
@@ -88,16 +80,15 @@ const earliestPost = posts[posts.length - 1]
     </div>
   </ImmersivePageIntro>
 
-  <section class="border-b border-white/10">
-    <div class="mx-auto max-w-[1400px] px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-      <div class="max-w-3xl border-b border-white/10 pb-8">
+  <section class="editorial-section border-b border-border">
+    <div class="site-container py-16 lg:py-24">
+      <div class="max-w-3xl border-b border-border pb-8">
         <p class="landing-section-label">Tagged notes</p>
         <h2 class="landing-section-title mt-4 max-w-3xl">
-          Archive entries carrying this tag.
+          More on this topic.
         </h2>
         <p class="immersive-copy mt-6 max-w-2xl text-base leading-7">
-          The list below uses the same immersive archive rows as the main blog
-          index, filtered down to one taxonomy thread.
+          Projects, lessons, and implementation notes collected under this tag.
         </p>
       </div>
 

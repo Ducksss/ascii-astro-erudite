@@ -3,8 +3,8 @@
 Portfolio and writing site for case studies, shipped work, and technical
 reflections, built with Astro 7, Tailwind CSS 4, and MDX.
 
-This repository powers a custom monochrome portfolio experience with an
-immersive landing page, a case-study-driven about page, and a writing archive
+This repository powers an editorial portfolio experience with an
+electric-blue landing page, a case-study-driven about page, and a writing archive
 for project notes, hackathon writeups, and implementation retrospectives. The
 current site is a substantial theme, content, and information-architecture
 rewrite of `astro-erudite`.
@@ -18,7 +18,7 @@ rewrite of `astro-erudite`.
 
 ## Highlights
 
-- Portfolio-first experience with an immersive monochrome landing page,
+- Portfolio-first experience with an electric-blue editorial landing page,
   case-study about page, writing archive, project listings, author pages, and
   tag pages
 - MDX-powered publishing workflow for blog posts, project entries, and author
@@ -27,8 +27,8 @@ rewrite of `astro-erudite`.
   Graph images, and favicon metadata
 - Rich technical writing support with KaTeX, Shiki, Expressive Code, and custom
   callout components
-- Light and dark theme support with reusable UI primitives and Astro islands
-  for selective interactivity
+- A consistent blue, paper, and navy design system with reusable UI primitives
+  and Astro islands for selective interactivity
 
 ## Tech Stack
 
@@ -101,7 +101,7 @@ otherwise remain in canonical links, the sitemap and RSS.
 | `npm run check` | Run Astro and TypeScript diagnostics |
 | `npm test` | Run the ASCII generator, date and sitemap regression tests |
 | `npm run test:build` | Check the generated routes, links, assets, RSS, and sitemap after a build |
-| `npm run test:browser` | Check desktop/mobile navigation, TOC, and the ASCII island in Chromium after a build |
+| `npm run test:browser` | Check responsive design, keyboard navigation, TOC, and the ASCII island in Chromium after a build |
 | `npm run verify` | Run tests, checks, production build, and production/browser regression tests |
 | `npm run preview` | Preview the production build locally |
 | `npm run astro -- <args>` | Run Astro CLI commands directly |
@@ -195,9 +195,21 @@ mail: 'chaipinzheng@gmail.com'
 
 ### Styling and assets
 
-- Global tokens and theme styles live in `src/styles/`
+- Global tokens and theme styles live in `src/styles/`. The design pairs a
+  full electric-blue hero with paper sections, dark navy proof, fine rules,
+  double-framed square cards, oversized light-weight mono display type,
+  custom line symbols, and dense ASCII sculptures with interference trails.
+  Cross patterns fade into clear space; the footer wordmark dissolves into
+  pixels. These decorations are static SVG and CSS, with no animation runtime.
+- Palette: `--blue: #2528e8`, paper `#f7f7f4`, ink `#171717`, and navy
+  `#060d1b`. Shared header, footer, archive pages, article pages, and tools use
+  the same visual system. Reading copy uses local Geist; display headings,
+  small labels, and data use local Geist Mono.
 - Favicons and static social assets live in `public/`
 - Social preview graphics are stored in `public/static/`
+- Run `npm run build && npm run test:browser` to check representative routes
+  at 1440, 768, 390, and 320px, section colours, overflow, body typography,
+  keyboard skip navigation, client navigation, and the ASCII tool exports.
 
 ## Deployment
 

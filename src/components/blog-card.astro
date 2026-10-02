@@ -29,17 +29,17 @@ const subpostCount = !isSubpost(entry.id) ? await getSubpostCount(entry.id) : 0
 
 {
   isImmersive ? (
-    <article class="border-t border-white/10 first:border-t-0">
+    <article class="border-t border-border first:border-t-0">
       <Link
         href={`/${entry.collection}/${entry.id}`}
         class="group block px-0 py-6 sm:py-8"
       >
         <div class="grid gap-4 lg:grid-cols-[12rem_minmax(0,1fr)_auto] lg:items-start lg:gap-8">
           <div class="space-y-3">
-            <p class="font-mono text-[0.68rem] tracking-[0.28em] text-white/42 uppercase">
+            <p class="font-mono text-[0.68rem] tracking-[0.08em] text-foreground/60 uppercase">
               {formattedDate}
             </p>
-            <div class="space-y-2 text-sm text-white/38">
+            <div class="space-y-2 text-sm text-foreground/60">
               <p>{readTime}</p>
               {subpostCount > 0 && (
                 <p class="flex items-center gap-1">
@@ -54,13 +54,13 @@ const subpostCount = !isSubpost(entry.id) ? await getSubpostCount(entry.id) : 0
             {authors.length > 0 && (
               <div class="flex flex-wrap gap-3">
                 {authors.map((author) => (
-                  <div class="inline-flex items-center gap-x-2 text-sm text-white/52">
+                  <div class="inline-flex items-center gap-x-2 text-sm text-foreground/60">
                     <AvatarComponent
                       client:load
                       src={author.avatar}
                       alt={author.name}
                       fallback={author.name[0]}
-                      className="size-5 rounded-full"
+                      className="size-5 rounded-none"
                     />
                     <span>{author.name}</span>
                   </div>
@@ -69,10 +69,10 @@ const subpostCount = !isSubpost(entry.id) ? await getSubpostCount(entry.id) : 0
             )}
 
             <div class="space-y-3">
-              <h3 class="text-[1.7rem] leading-tight font-medium tracking-[-0.05em] text-white sm:text-[2rem]">
+              <h3 class="text-[1.7rem] leading-tight font-normal tracking-[-0.05em] text-foreground sm:text-[2rem]">
                 {entry.data.title}
               </h3>
-              <p class="max-w-2xl text-base leading-7 text-white/58">
+              <p class="max-w-2xl text-base leading-7 text-foreground/60">
                 {entry.data.description}
               </p>
             </div>
@@ -96,7 +96,7 @@ const subpostCount = !isSubpost(entry.id) ? await getSubpostCount(entry.id) : 0
       </Link>
     </article>
   ) : (
-    <div class="hover:bg-muted/50 rounded-xl border p-4 transition-colors duration-300 ease-in-out">
+    <div class="rounded-none border p-4 transition-colors duration-300 ease-in-out hover:bg-muted/50">
       <Link
         href={`/${entry.collection}/${entry.id}`}
         class="flex flex-col gap-4 sm:flex-row"
@@ -115,11 +115,11 @@ const subpostCount = !isSubpost(entry.id) ? await getSubpostCount(entry.id) : 0
 
         <div class="grow">
           <h3 class="mb-1 text-lg font-medium">{entry.data.title}</h3>
-          <p class="text-muted-foreground mb-2 text-sm">
+          <p class="mb-2 text-sm text-muted-foreground">
             {entry.data.description}
           </p>
 
-          <div class="text-muted-foreground mb-2 flex flex-wrap items-center gap-x-2 text-xs">
+          <div class="mb-2 flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
             {authors.length > 0 && (
               <>
                 {authors.map((author) => (
@@ -129,7 +129,7 @@ const subpostCount = !isSubpost(entry.id) ? await getSubpostCount(entry.id) : 0
                       src={author.avatar}
                       alt={author.name}
                       fallback={author.name[0]}
-                      className="size-5 rounded-full"
+                      className="size-5 rounded-none"
                     />
                     <span>{author.name}</span>
                   </div>

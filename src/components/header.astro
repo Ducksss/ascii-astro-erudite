@@ -1,94 +1,38 @@
 ---
 import Link from '@/components/link.astro'
-import ThemeToggle from '@/components/theme-toggle.astro'
-import { LANDING, NAV_LINKS, PROFILE, SITE } from '@/consts'
+import { LANDING, NAV_LINKS, PROFILE } from '@/consts'
 
 interface Props {
   variant?: 'default' | 'landing' | 'immersive'
 }
 
-const { variant = 'default' } = Astro.props
-const isLanding = variant === 'landing'
-const isImmersive = variant === 'immersive'
-const isAtmospheric = isLanding || isImmersive
-const linkedInLink =
-  PROFILE.links.find((item) => item.label === 'LinkedIn')?.href ??
-  'https://www.linkedin.com/in/chai-pin-zheng/'
+const linkedInLink = PROFILE.links.find((item) => item.label === 'LinkedIn')!
+const path = Astro.url.pathname
 ---
 
-<div class="site-header-shell">
-  <div
-    class:list={[
-      'mx-auto flex items-center justify-between gap-4 px-4 py-3',
-      isAtmospheric ? 'max-w-[1400px] sm:px-6 lg:px-8' : 'max-w-3xl',
-    ]}
-  >
-    <Link
-      href="/"
-      transition:persist
-      transition:name="site-brand"
-      class:list={[
-        'flex shrink-0 items-center justify-center gap-3',
-        isAtmospheric ? 'text-white' : 'text-foreground',
-      ]}
-    >
-      {
-        isAtmospheric ? (
-          <>
-            <span class="inline-flex size-10 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] font-mono text-[0.64rem] tracking-[0.36em] text-white/88 uppercase">
-              {LANDING.monogram}
-            </span>
-            <span class="hidden h-full text-[0.7rem] leading-none font-medium tracking-[0.38em] text-white/58 uppercase min-[520px]:block">
-              {LANDING.name}
-            </span>
-          </>
-        ) : (
-          <>
-            <span class="border-border bg-muted text-foreground/86 inline-flex size-9 items-center justify-center rounded-full border font-mono text-[0.64rem] tracking-[0.28em] uppercase">
-              {LANDING.monogram}
-            </span>
-            <span class="hidden h-full text-lg leading-none font-medium min-[400px]:block">
-              {SITE.title}
-            </span>
-          </>
-        )
-      }
-    </Link>
-    <div class="flex items-center gap-4">
-      <nav
-        class:list={[
-          'flex items-center gap-2.5 sm:gap-6',
-          isAtmospheric
-            ? 'font-mono text-[0.62rem] tracking-[0.24em] text-white/60 uppercase min-[420px]:text-[0.68rem] min-[420px]:tracking-[0.28em]'
-            : 'text-sm',
-        ]}
-      >
-        {
-          NAV_LINKS.map((item) => (
-            <Link
-              href={item.href}
-              class:list={[
-                'inline-flex min-h-11 items-center rounded-full px-3 py-2 transition-colors',
-                isAtmospheric
-                  ? 'hover:bg-white/[0.03] hover:text-white'
-                  : 'text-foreground/60 hover:text-foreground hover:bg-muted/60 capitalize',
-              ]}
-            >
-              {item.label}
-            </Link>
-          ))
-        }
-      </nav>
-      {isAtmospheric && (
+<div class="site-header-shell site-container">
+  <Link href="/" class="site-brand" aria-label={`${LANDING.name} — home`}>
+    <span class="site-brand__symbol" aria-hidden="true">c<span>p</span>z</span>
+    <span class="site-brand__name">Chai Pin Zheng</span>
+  </Link>
+  <nav class="site-navigation" aria-label="Main navigation">
+    <Link href="/#work" class="site-navigation__work">Work <sup>01</sup></Link>
+    {
+      NAV_LINKS.map((item, index) => (
         <Link
-          href={linkedInLink}
-          external
-          class="hidden min-h-11 items-center rounded-full border border-white/12 px-4 py-2 font-mono text-[0.68rem] tracking-[0.24em] text-white/74 uppercase transition-colors hover:border-white/22 hover:bg-white/[0.04] hover:text-white min-[640px]:inline-flex"
+          href={item.href}
+          aria-current={path.startsWith(item.href) ? 'page' : undefined}
         >
-          LinkedIn
+          {item.label} <sup>{String(index + 2).padStart(2, '0')}</sup>
         </Link>
-      )}
-      {!isAtmospheric && <ThemeToggle transition:persist />}
-    </div>
-  </div>
+      ))
+    }
+  </nav>
+  <Link
+    href={linkedInLink.href}
+    external
+    class="technical-button technical-button--white site-header-contact"
+  >
+    Let's connect <span aria-hidden="true">↗</span>
+  </Link>
 </div>

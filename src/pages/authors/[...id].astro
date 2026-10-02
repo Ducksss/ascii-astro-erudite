@@ -77,13 +77,15 @@ const socialLinks = [
           src={author.data.avatar}
           alt={`Avatar of ${author.data.name}`}
           fallback={author.data.name[0]}
-          className='size-16 rounded-2xl border border-white/10 *:data-[slot="avatar-fallback"]:rounded-2xl *:data-[slot="avatar-fallback"]:bg-white/[0.06]'
+          className='size-16 rounded-none border border-border *:data-[slot="avatar-fallback"]:rounded-none *:data-[slot="avatar-fallback"]:bg-muted/30'
         />
         <div>
           <p class="immersive-eyebrow">Profile details</p>
           {
             author.data.pronouns && (
-              <p class="mt-2 text-sm text-white/52">{author.data.pronouns}</p>
+              <p class="mt-2 text-sm text-foreground/60">
+                {author.data.pronouns}
+              </p>
             )
           }
         </div>
@@ -91,29 +93,19 @@ const socialLinks = [
 
       <div class="immersive-rule-list mt-6">
         <div class="space-y-2">
-          <p
-            class="font-mono text-[0.66rem] tracking-[0.26em] text-white/34 uppercase"
-          >
-            Published notes
-          </p>
-          <p class="text-base text-white/68">
+          <p class="technical-label text-foreground/65">Published notes</p>
+          <p class="text-base text-foreground/68">
             {String(authorPosts.length).padStart(2, '0')}
           </p>
         </div>
         <div class="space-y-2">
-          <p
-            class="font-mono text-[0.66rem] tracking-[0.26em] text-white/34 uppercase"
-          >
-            Profile slug
-          </p>
-          <p class="text-base text-white/68">{author.id}</p>
+          <p class="technical-label text-foreground/65">Profile slug</p>
+          <p class="text-base text-foreground/68">{author.id}</p>
         </div>
         {
           socialLinks.length > 0 && (
             <div class="space-y-3">
-              <p class="font-mono text-[0.66rem] tracking-[0.26em] text-white/34 uppercase">
-                Channels
-              </p>
+              <p class="technical-label text-foreground/65">Channels</p>
               <div class="flex flex-wrap gap-2">
                 {socialLinks.map((item) => (
                   <Link href={item.href} external class="immersive-chip">
@@ -129,16 +121,13 @@ const socialLinks = [
     </div>
   </ImmersivePageIntro>
 
-  <section class="border-b border-white/10">
-    <div class="mx-auto max-w-[1400px] px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-      <div class="max-w-3xl border-b border-white/10 pb-8">
+  <section class="editorial-section border-b border-border">
+    <div class="site-container py-16 lg:py-24">
+      <div class="max-w-3xl border-b border-border pb-8">
         <p class="landing-section-label">Published notes</p>
-        <h2 class="landing-section-title mt-4 max-w-3xl">
-          Posts routed through this author profile.
-        </h2>
+        <h2 class="landing-section-title mt-4 max-w-3xl">From this author.</h2>
         <p class="immersive-copy mt-6 max-w-2xl text-base leading-7">
-          Every note below now inherits the same immersive archive treatment as
-          the main blog index.
+          Build logs, project writeups, and technical notes by this author.
         </p>
       </div>
 
