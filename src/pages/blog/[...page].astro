@@ -15,7 +15,7 @@ export async function getStaticPaths({
 }) {
   const allPosts = await getAllPosts()
   const archiveYearCount = new Set(
-    allPosts.map((post) => post.data.date.getFullYear()),
+    allPosts.map((post) => post.data.date.getUTCFullYear()),
   ).size
 
   return paginate(allPosts, {

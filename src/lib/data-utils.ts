@@ -153,7 +153,7 @@ export async function getArchiveStats(): Promise<{
 }> {
   const posts = await getAllPosts()
   const tagCounts = await getAllTags()
-  const years = posts.map((post) => post.data.date.getFullYear())
+  const years = posts.map((post) => post.data.date.getUTCFullYear())
 
   if (years.length === 0) {
     return {
@@ -204,7 +204,7 @@ export function groupPostsByYear(
 ): Record<string, CollectionEntry<'blog'>[]> {
   return posts.reduce(
     (acc: Record<string, CollectionEntry<'blog'>[]>, post) => {
-      const year = post.data.date.getFullYear().toString()
+      const year = post.data.date.getUTCFullYear().toString()
       ;(acc[year] ??= []).push(post)
       return acc
     },
