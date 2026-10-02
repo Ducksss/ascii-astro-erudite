@@ -1,98 +1,156 @@
 ---
+import AsciiObject from '@/components/ascii-object.astro'
+import BinaryField from '@/components/binary-field.astro'
 import Link from '@/components/link.astro'
 import PageHead from '@/components/page-head.astro'
 import Layout from '@/layouts/layout.astro'
+
+const destinations = [
+  { href: '/blog', label: 'Writing archive' },
+  { href: '/about', label: 'About' },
+  { href: '/tags', label: 'Topics' },
+  { href: '/authors', label: 'Authors' },
+]
 ---
 
-<Layout variant="immersive">
+<Layout>
   <PageHead
     slot="head"
     title="404"
     description="The requested page could not be found."
     noindex
   />
-  <section class="editorial-intro error-page">
-    <div class="site-container">
-      <p class="technical-label">404 / A little off course</p>
-      <h1>Lost in the<br />system?</h1>
-      <p class="error-page__copy">
-        This page couldn't be found.<br />There's still plenty to explore.
-      </p>
-      <Link href="/" class="technical-button technical-button--white"
-        >Return home <span aria-hidden="true">↗</span></Link
-      >
-      <div class="error-page__links">
-        <Link href="/blog" class="immersive-chip">Writing archive</Link>
-        <Link href="/about" class="immersive-chip">About</Link>
-        <Link href="/tags" class="immersive-chip">Topics</Link>
-        <Link href="/authors" class="immersive-chip">Authors</Link>
+  <section class="error surface-ink">
+    <span class="field error__field" aria-hidden="true"></span>
+    <BinaryField cols={64} rows={30} class="error__binary" />
+    <div class="site-container error__inner">
+      <div class="error__head">
+        <p class="t-label t-muted">Error 404 / signal lost</p>
+        <p class="t-label t-muted bracketed">No route</p>
       </div>
-      <img
-        src="/static/signal-knot.svg"
-        width="928"
-        height="804"
-        alt=""
-        aria-hidden="true"
-      />
+
+      <div class="t-poster error__digits" aria-hidden="true">
+        4<span class="error__coin"
+          ><AsciiObject
+            object="coin"
+            tone="ink"
+            cols={44}
+            rows={26}
+            zoom={0.98}
+            yaw={0.62}
+            gamma={0.72}
+            motion="spin"
+            class="ascii--bright"
+            size="0.0285em"
+          /></span
+        >4
+      </div>
+
+      <div class="error__grid">
+        <h1 class="t-title">Lost in the system?</h1>
+        <div class="error__copy">
+          <p class="t-body">
+            This page couldn't be found. There's still plenty to explore.
+          </p>
+          <Link href="/" class="btn btn--solid">
+            Return home <span aria-hidden="true">↗</span>
+          </Link>
+          <ul class="error__links" aria-label="Other places">
+            {
+              destinations.map((item) => (
+                <li>
+                  <Link href={item.href} class="tag">
+                    {item.label}
+                  </Link>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
     </div>
   </section>
 </Layout>
 
 <style>
-  .error-page {
+  .error {
     overflow: hidden;
-    padding-block: 100px 90px;
-    min-height: 700px;
-    position: relative;
   }
-  .error-page .site-container {
-    position: relative;
+
+  .error__field {
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    color: #4f4f4f;
+    -webkit-mask: url('/fields/cross-corner.svg') right top no-repeat;
+    mask: url('/fields/cross-corner.svg') right top no-repeat;
   }
-  .error-page h1 {
-    position: relative;
-    z-index: 1;
-    font-size: clamp(72px, 11vw, 160px);
-    line-height: 0.9;
-    font-weight: 350;
-    letter-spacing: -0.065em;
-    margin-block: 32px;
+
+  .error :global(.error__binary) {
+    --ascii-size: clamp(9px, 1.05vw, 15px);
+    position: absolute;
+    top: 14%;
+    left: 58%;
+    letter-spacing: 0.35em;
+    opacity: 0.5;
   }
-  .error-page__copy {
+
+  .error__inner {
     position: relative;
-    z-index: 1;
-    font-size: 18px;
-    line-height: 1.5;
-    color: #e0e0ff;
-    margin-bottom: 28px;
+    padding-block: clamp(48px, 6vw, 80px) var(--section-y);
   }
-  .error-page a {
-    position: relative;
-    z-index: 1;
+
+  .error__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
   }
-  .error-page__links {
-    margin-top: 28px;
+
+  .error__digits {
+    margin-top: clamp(32px, 4vw, 56px);
+    color: #fff;
+    font-size: clamp(9rem, 34vw, 31rem);
+    white-space: nowrap;
+  }
+
+  .error__coin {
+    display: inline-block;
+    vertical-align: -0.015em;
+    margin-inline: -0.02em;
+    line-height: 0;
+  }
+
+  .error__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.7fr);
+    align-items: end;
+    gap: clamp(32px, 5vw, 80px);
+    margin-top: clamp(40px, 5vw, 72px);
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+
+  .error__grid .t-title {
+    max-width: 12ch;
+  }
+
+  .error__copy {
+    display: grid;
+    justify-items: start;
+    gap: 24px;
+  }
+
+  .error__links {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
   }
-  .error-page img {
-    position: absolute;
-    right: -100px;
-    bottom: -180px;
-    width: 650px;
-    opacity: 0.55;
-    transform: rotate(-15deg);
-  }
+
   @media (max-width: 767px) {
-    .error-page {
-      padding-block: 65px;
-      min-height: 650px;
-    }
-    .error-page img {
-      right: -200px;
-      bottom: -210px;
-      width: 480px;
-      opacity: 0.2;
+    .error__grid {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 </style>

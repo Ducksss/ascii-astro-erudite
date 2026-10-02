@@ -221,9 +221,11 @@ test('editorial design stays readable, responsive and navigable across the site'
           assert.ok(
             colors.some(
               ([r, g, b, alpha = 1]) =>
-                r < 30 && g < 30 && b < 50 && b > r && alpha === 1,
+                Math.max(r, g, b) < 30 &&
+                Math.max(r, g, b) - Math.min(r, g, b) < 4 &&
+                alpha === 1,
             ),
-            `${context}: missing navy section`,
+            `${context}: missing ink section`,
           )
         }
       }

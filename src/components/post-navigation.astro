@@ -1,107 +1,132 @@
 ---
 import Link from '@/components/link.astro'
 import { cn } from '@/lib/utils'
-import { Icon } from 'astro-icon/components'
 
 const { newerPost, olderPost, parentPost } = Astro.props
 const isSubpost = !!parentPost
+const links = [
+  {
+    label: isSubpost ? 'Previous part' : 'Previous note',
+    post: olderPost,
+    empty: isSubpost ? 'No earlier part' : "You're at the oldest note",
+    arrow: '←',
+    align: 'start',
+  },
+  ...(isSubpost
+    ? [
+        {
+          label: 'Parent note',
+          post: parentPost,
+          empty: 'No parent note',
+          arrow: '↑',
+          align: 'center',
+        },
+      ]
+    : []),
+  {
+    label: isSubpost ? 'Next part' : 'Next note',
+    post: newerPost,
+    empty: isSubpost ? 'No later part' : "You're at the newest note",
+    arrow: '→',
+    align: 'end',
+  },
+]
 ---
 
 <nav
   aria-label="Post navigation"
   class={cn(
-    'col-start-2 grid grid-cols-1 gap-4',
+    'post-nav grid grid-cols-1 gap-x-4 gap-y-10',
     isSubpost ? 'sm:grid-cols-3' : 'sm:grid-cols-2',
   )}
 >
-  <Link
-    href={olderPost ? `/blog/${olderPost.id}#post-title` : '#'}
-    class={cn(
-      'post-navigation__link group flex items-center justify-start',
-      !olderPost && 'pointer-events-none opacity-50 cursor-not-allowed',
-    )}
-    aria-disabled={!olderPost}
-    tabindex={olderPost ? undefined : -1}
-  >
-    <Icon
-      name="lucide:arrow-left"
-      class="mr-2 size-4 transition-transform group-hover:-translate-x-1"
-    />
-    <div class="flex flex-col items-start overflow-hidden text-wrap">
-      <span class="text-left text-xs text-muted-foreground">
-        {isSubpost ? 'Previous Subpost' : 'Previous Post'}
-      </span>
-      <span class="w-full text-left text-sm text-balance text-ellipsis">
-        {
-          olderPost?.data.title ||
-            (isSubpost ? 'No older subpost' : "You're at the oldest post!")
-        }
-      </span>
-    </div>
-  </Link>
-
   {
-    isSubpost && (
-      <Link
-        href={parentPost ? `/blog/${parentPost.id}#post-title` : '#'}
-        class={cn(
-          'post-navigation__link group flex items-center justify-center',
-          !parentPost && 'pointer-events-none cursor-not-allowed opacity-50',
-        )}
-      >
-        <Icon
-          name="lucide:corner-left-up"
-          class="mr-2 size-4 transition-transform group-hover:-translate-y-1"
-        />
-        <div class="flex flex-col items-center overflow-hidden text-wrap">
-          <span class="text-center text-xs text-muted-foreground">
-            Parent Post
+    links.map(({ label, post, empty, arrow, align }) => (
+      <div class={`post-nav__item post-nav__item--${align}`}>
+        <span class="tab post-nav__tab">{label}</span>
+        <Link
+          href={post ? `/blog/${post.id}#post-title` : '#'}
+          class={cn(
+            'frame-double post-nav__link',
+            !post && 'post-nav__link--empty',
+          )}
+          aria-disabled={!post}
+          tabindex={post ? undefined : -1}
+        >
+          <span class="frame-double__panel post-nav__panel">
+            <span class="post-nav__arrow" aria-hidden="true">
+              {arrow}
+            </span>
+            <span class="post-nav__title">{post?.data.title ?? empty}</span>
           </span>
-          <span class="w-full text-center text-sm text-balance text-ellipsis">
-            {parentPost?.data.title || 'No parent post'}
-          </span>
-        </div>
-      </Link>
-    )
+        </Link>
+      </div>
+    ))
   }
-
-  <Link
-    href={newerPost ? `/blog/${newerPost.id}#post-title` : '#'}
-    class={cn(
-      'post-navigation__link group flex items-center justify-end',
-      !newerPost && 'pointer-events-none opacity-50 cursor-not-allowed',
-    )}
-    aria-disabled={!newerPost}
-    tabindex={newerPost ? undefined : -1}
-  >
-    <div class="flex flex-col items-end overflow-hidden text-wrap">
-      <span class="text-right text-xs text-muted-foreground">
-        {isSubpost ? 'Next Subpost' : 'Next Post'}
-      </span>
-      <span class="w-full text-right text-sm text-balance text-ellipsis">
-        {
-          newerPost?.data.title ||
-            (isSubpost ? 'No newer subpost' : "You're at the newest post!")
-        }
-      </span>
-    </div>
-    <Icon
-      name="lucide:arrow-right"
-      class="ml-2 size-4 transition-transform group-hover:translate-x-1"
-    />
-  </Link>
 </nav>
 
 <style>
-  .post-navigation__link {
-    min-height: 6rem;
-    gap: 0.5rem;
-    border: 1px solid var(--border);
-    padding: 1rem;
-    transition: background-color 0.2s ease;
+  .post-nav__item {
+    position: relative;
   }
 
-  .post-navigation__link:hover {
-    background: var(--muted);
+  .post-nav__tab {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+  }
+
+  .post-nav__item--end .post-nav__tab {
+    right: 0;
+    left: auto;
+  }
+
+  .post-nav__link {
+    --frame: var(--border);
+    height: 100%;
+    transition: border-color 0.2s;
+  }
+
+  .post-nav__link:hover {
+    --frame: var(--ink);
+  }
+
+  .post-nav__link--empty {
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .post-nav__panel {
+    display: flex;
+    min-height: 6.5rem;
+    height: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 16px 18px;
+    background: var(--paper-raised);
+  }
+
+  .post-nav__item--end .post-nav__panel {
+    align-items: end;
+    text-align: right;
+  }
+
+  .post-nav__item--center .post-nav__panel {
+    align-items: center;
+    text-align: center;
+  }
+
+  .post-nav__arrow {
+    font-family: var(--font-mono);
+    color: var(--blue);
+  }
+
+  .post-nav__title {
+    font-size: 1.0625rem;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
   }
 </style>

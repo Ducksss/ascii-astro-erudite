@@ -1,4 +1,5 @@
 ---
+import Breadcrumbs from '@/components/breadcrumbs.astro'
 import AsciiGenerator from '@/components/dev/ascii-generator'
 import PageHead from '@/components/page-head.astro'
 import Layout from '@/layouts/layout.astro'
@@ -10,22 +11,28 @@ const description =
   'Turn your images into monochrome ASCII art, then export a text file or PNG.'
 ---
 
-<Layout variant="immersive">
+<Layout>
   <PageHead
     slot="head"
     title="ASCII Art Playground"
     description={description}
   />
-  <section class="playground-section">
+  <section class="playground-section surface-paper">
     <div class="site-container">
-      <AsciiGenerator client:load />
+      <Breadcrumbs items={[{ label: 'ASCII playground' }]} />
+      <div class="playground-section__tool">
+        <AsciiGenerator client:load />
+      </div>
     </div>
   </section>
 </Layout>
 
 <style>
   .playground-section {
-    background: var(--paper);
-    padding-block: 56px 80px;
+    padding-block: clamp(28px, 3.4vw, 48px) var(--section-y);
+  }
+
+  .playground-section__tool {
+    margin-top: clamp(28px, 3.4vw, 48px);
   }
 </style>

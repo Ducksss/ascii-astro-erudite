@@ -1,6 +1,7 @@
 ---
-import FeaturedWork from '@/components/landing/featured-work.astro'
+import AsciiObject from '@/components/ascii-object.astro'
 import ArchiveProof from '@/components/landing/archive-proof.astro'
+import FeaturedWork from '@/components/landing/featured-work.astro'
 import Link from '@/components/link.astro'
 import PageHead from '@/components/page-head.astro'
 import TechnicalSymbol from '@/components/technical-symbol.astro'
@@ -16,236 +17,191 @@ const archivePosts = await getRecentPosts(4)
 const featuredProjects = await getFeaturedProjects(3)
 const archiveStats = await getArchiveStats()
 const [featuredPost, ...supportingPosts] = archivePosts
+const hackathons = PROFILE.hackathonStats[0]
 const disciplines = [
   {
-    number: '01',
-    title: 'Product adoption',
-    copy: 'Clearer first steps. Better onboarding. Products people can confidently use.',
+    label: 'Adoption',
+    title: 'Clearer first steps',
+    copy: 'Onboarding, guides and charts that help people find their own way in.',
     symbol: 'adoption' as const,
   },
   {
-    number: '02',
-    title: 'Platform delivery',
-    copy: 'Internal tools, tested releases, and handoffs that keep teams moving.',
+    label: 'Delivery',
+    title: 'Platforms that ship',
+    copy: 'Internal tools, tested releases and handoffs that keep teams moving.',
     symbol: 'delivery' as const,
   },
   {
-    number: '03',
-    title: 'Operational systems',
-    copy: 'Practical automation and training built for the people doing the work.',
+    label: 'Systems',
+    title: 'Operations that hold',
+    copy: 'Automation and training built for the people doing the work.',
     symbol: 'systems' as const,
   },
 ]
 ---
 
-<Layout variant="landing">
+<Layout>
   <PageHead slot="head" title={SITE.title} description={LANDING.description} />
 
-  <section class="portfolio-hero" aria-labelledby="hero-title">
+  <section class="hero surface-blue" aria-labelledby="hero-title">
     <div class="site-container">
-      <h1 id="hero-title" class="hero-title" transition:name="page-intro">
+      <h1 id="hero-title" class="hero__title t-display">
         <span>Complex systems,</span>
-        <span>made human.</span>
+        <span class="hero__title-step">made human.</span>
       </h1>
-      <div class="hero-landscape">
-        <div class="hero-art" aria-hidden="true">
-          <span class="hero-art__label technical-label"
-            >A little complexity. A clearer path.</span
+
+      <div class="hero__stage">
+        <div class="hero__art frame-brackets" aria-hidden="true">
+          <span class="tag tag--solid hero__tag hero__tag--a"
+            >Rubber duck debugging</span
           >
-          <img
-            src="/static/signal-knot.svg"
-            alt=""
-            width="928"
-            height="804"
-            fetchpriority="high"
+          <span class="tag hero__tag hero__tag--b"
+            >{hackathons.value} hackathons</span
+          >
+          <AsciiObject
+            object="duck"
+            tone="blue"
+            cols={132}
+            rows={68}
+            zoom={0.92}
+            offsetX={0.02}
+            trails={{ density: 0.4, length: 54, side: 'left' }}
+            motion="sway"
+            class="hero__duck"
           />
-          <div class="hero-art__coordinates technical-label">
-            <span>01 / systems thinking</span><span>02 / human outcomes</span>
-          </div>
-          <span class="hero-art__cross">+</span>
         </div>
-        <div class="hero-copy">
-          <p class="technical-label hero-copy__label">
-            <span class="status-dot"></span> Chai Pin Zheng / Software engineer
+
+        <div class="hero__signal" aria-hidden="true">
+          <span class="rule-dotted rule-dotted--start"></span>
+          <AsciiObject
+            object="coin"
+            tone="blue"
+            cols={30}
+            rows={17}
+            yaw={0.5}
+            size="4px"
+          />
+          <AsciiObject
+            object="coin"
+            tone="blue"
+            cols={30}
+            rows={17}
+            yaw={1.25}
+            size="4px"
+            class="hero__coin-far"
+          />
+        </div>
+
+        <div class="hero__copy">
+          <p class="t-label hero__kicker">
+            <span class="mark-cross" aria-hidden="true"></span>
+            Chai Pin Zheng / Software engineer
           </p>
-          <p class="hero-manifesto">
-            I make complex products<br class="hidden sm:block" /> easier to enter,
-            operate,<br class="hidden sm:block" /> and trust.
+          <p class="t-lede hero__lede">
+            I make complex products easier to enter, operate and trust.
           </p>
-          <div class="hero-actions">
-            <Link href="#work" class="technical-button technical-button--white"
-              >Explore the work <span aria-hidden="true">↓</span></Link
-            >
-            <Link href="/about" class="hero-about"
-              >Meet Chai <span aria-hidden="true">↗</span></Link
-            >
+          <div class="hero__actions">
+            <Link href="#work" class="btn btn--solid">
+              Explore the work <span aria-hidden="true">↓</span>
+            </Link>
+            <Link href="/about" class="btn">
+              Meet Chai <span aria-hidden="true">↗</span>
+            </Link>
           </div>
-          <div class="hero-register technical-label">
-            <p><span>Based in</span>Singapore<br />01° 17′ N / 103° 51′ E</p>
-            <p>
-              <span>Currently</span>NUS Computer Science<br />Building useful
-              things.
-            </p>
-          </div>
+        </div>
+
+        <div class="tree hero__tree hero__tree--now">
+          <p>Now / 2026</p>
+          <ul>
+            <li>NUS Computer Science</li>
+            <li>Building Payload Kits</li>
+            <li>Open to internships</li>
+          </ul>
+        </div>
+        <div class="tree hero__tree hero__tree--shipped">
+          <p>Shipped / 2022 – 2026</p>
+          <ul>
+            <li>MetaLearner onboarding</li>
+            <li>SAF cyber readiness</li>
+            <li>GovTech developer tooling</li>
+          </ul>
         </div>
       </div>
-    </div>
-    <div class="hero-bottom-line technical-label">
-      <span>Product / Platform / People</span><span>Scroll to explore ↓</span>
     </div>
   </section>
 
-  <FeaturedWork
-    title="Strong technology only matters when people can use it."
-    intro="That's where I come in."
-    projects={featuredProjects}
-  />
+  <FeaturedWork projects={featuredProjects} />
 
-  <section class="impact-section" aria-labelledby="impact-title">
+  <section class="proof surface-ink" aria-labelledby="proof-title">
+    <span class="field proof__field" aria-hidden="true"></span>
     <div class="site-container">
-      <div class="technical-rule" aria-hidden="true"></div>
-      <p class="technical-label impact-eyebrow">
-        Less friction. More forward motion.
-      </p>
-      <h2 id="impact-title">
-        <span class="impact-bracket" aria-hidden="true">[</span>
-        <span>Built for <em>real impact.</em></span>
-        <span class="impact-bracket" aria-hidden="true">]</span>
-      </h2>
-      <div class="impact-diagram" aria-hidden="true">
-        <svg viewBox="0 0 1100 360" fill="none">
-          <defs
-            ><linearGradient
-              id="flow-fill"
-              x1="0"
-              y1="90"
-              x2="0"
-              y2="340"
-              gradientUnits="userSpaceOnUse"
-              ><stop stop-color="#4548ef" stop-opacity=".9"></stop><stop
-                offset="1"
-                stop-color="#2528e8"
-                stop-opacity="0"></stop></linearGradient
-            ></defs
-          >
-          {
-            [80, 140, 200, 260, 320].map((y) => (
-              <path
-                d={`M40 ${y}H1060`}
-                stroke="#fff"
-                stroke-opacity=".13"
-                stroke-dasharray="2 6"
-              />
-            ))
-          }
-          <path
-            d="M40 320C270 314 400 292 565 245C740 195 925 144 1060 38V340H40V320Z"
-            fill="url(#flow-fill)"></path>
-          <path
-            d="M40 320C270 314 400 292 565 245C740 195 925 144 1060 38"
-            stroke="#8587ff"
-            stroke-width="1.5"></path>
-          <g stroke="#aaaaff" stroke-opacity=".65"
-            ><path
-              d="M280 303V226M570 244V161M872 142V64"
-              stroke-dasharray="2 5"></path></g
-          >
-          <g fill="#c3c4ff"
-            ><circle cx="280" cy="303" r="3"></circle><circle
-              cx="570"
-              cy="244"
-              r="4"></circle><circle cx="872" cy="142" r="3"></circle></g
-          >
-          <g font-family="monospace" font-size="11" fill="#dedeee"
-            ><text x="214" y="217">01 / ADOPTION</text><text x="508" y="151"
-              >02 / DELIVERY</text
-            ><text x="810" y="54">03 / READINESS</text></g
-          >
-          <circle cx="570" cy="244" r="10" fill="#eee" fill-opacity=".08"
-          ></circle><circle
-            cx="570"
-            cy="244"
-            r="6"
-            fill="#eee"
-            fill-opacity=".15"></circle>
-        </svg>
-        <p class="technical-label">
-          A working philosophy / from complexity to clarity
-        </p>
+      <div class="proof__head">
+        <p class="t-label t-muted">Impact / measured in the field</p>
+        <p class="t-label t-muted bracketed">2022 – 2026</p>
       </div>
-      <div class="impact-metrics">
+      <h2 id="proof-title" class="sr-only">
+        Less friction. More forward motion.
+      </h2>
+      <div class="t-poster proof__poster" aria-hidden="true">
+        <span>Less friction.</span>
+        <span
+          >M<span class="proof__coin"
+            ><AsciiObject
+              object="coin"
+              tone="ink"
+              cols={44}
+              rows={26}
+              zoom={0.98}
+              yaw={0.62}
+              gamma={0.72}
+              motion="spin"
+              class="ascii--bright"
+              size="0.0285em"
+            /></span
+          >re forward</span
+        >
+        <span>motion.</span>
+      </div>
+
+      <dl class="proof__metrics">
         {
           PROFILE.metrics.map((metric) => (
             <div>
-              <>
-                <p class="impact-metric__value">
-                  {metric.value.replace(' -> ', ' → ')}
-                </p>
-                <p class="technical-label">{metric.label}</p>
-              </>
+              <dt class="t-label t-muted">{metric.label}</dt>
+              <dd>{metric.value.replace(' -> ', ' → ')}</dd>
             </div>
           ))
         }
-      </div>
-      <div class="impact-caption">
-        <p>
-          Useful systems.<br />Measurable outcomes.<br />The work to back them
-          up.
-        </p>
-        <Link href="/about" class="technical-button"
-          >Explore the experience <span aria-hidden="true">↗</span></Link
-        >
-      </div>
-    </div>
-  </section>
+      </dl>
 
-  <section class="approach-section" aria-labelledby="approach-title">
-    <div class="site-container">
-      <div class="approach-heading">
-        <div>
-          <p class="technical-label">
-            How I work / 03 connected disciplines
-          </p><h2 id="approach-title" class="section-title">
-            From a complicated system<br />to a clearer experience.
-          </h2>
-        </div>
-        <p>
-          I work between technical capability and actual adoption. Understand
-          the people. Find the friction. Build the thing that helps.
-        </p>
-      </div>
-      <div class="discipline-grid">
+      <div class="proof__practice">
         {
           disciplines.map((discipline) => (
-            <article class="discipline-card">
-              <div class="discipline-card__meta technical-label">
-                <>
-                  <span>{discipline.number} / Practice</span>
-                  <span aria-hidden="true">+</span>
-                </>
+            <article>
+              <div class="proof__tile">
+                <TechnicalSymbol kind={discipline.symbol} />
               </div>
-              <div class="discipline-card__art" aria-hidden="true">
-                <>
-                  <div class="discipline-card__symbol">
-                    <TechnicalSymbol kind={discipline.symbol} />
-                  </div>
-                  <div class="cross-field" />
-                </>
-              </div>
-              <>
-                <h3>{discipline.title}</h3>
-                <p>{discipline.copy}</p>
-              </>
+              <p class="t-label">{discipline.label}</p>
+              <h3>{discipline.title}</h3>
+              <p class="t-body">{discipline.copy}</p>
             </article>
           ))
         }
+      </div>
+
+      <div class="proof__cta">
+        <p class="t-lede">
+          Useful systems. Measurable outcomes.<br />
+          <span class="t-dim">The work to back them up.</span>
+        </p>
+        <Link href="/about" class="btn">
+          Read the experience <span aria-hidden="true">↗</span>
+        </Link>
       </div>
     </div>
   </section>
 
   <ArchiveProof
-    title="Notes from the work."
-    intro="Build logs, decisions, and the details behind what shipped."
     featuredPost={featuredPost ?? null}
     supportingPosts={supportingPosts}
     stats={archiveStats}
@@ -253,505 +209,325 @@ const disciplines = [
 </Layout>
 
 <style>
-  .portfolio-hero {
-    position: relative;
+  /* Hero */
+  .hero {
     overflow: hidden;
-    background: var(--blue);
-    color: white;
   }
-  .hero-title {
-    padding-top: 34px;
-    font-family: var(--font-display);
-    font-size: clamp(52px, 9.2vw, 146px);
-    font-weight: 300;
-    letter-spacing: -0.065em;
-    line-height: 0.91;
+
+  .hero__title {
+    padding-top: clamp(20px, 3vw, 44px);
   }
-  .hero-title span {
+
+  .hero__title span {
     display: block;
     white-space: nowrap;
   }
-  .hero-title span:last-child {
+
+  .hero__title-step {
     text-align: right;
   }
-  .hero-landscape {
+
+  .hero__stage {
+    position: relative;
     display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    min-height: 460px;
-    position: relative;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-rows: auto auto auto 1fr;
+    column-gap: 20px;
+    min-height: clamp(420px, 38vw, 560px);
   }
-  .hero-art {
-    position: relative;
-    min-height: 460px;
-  }
-  .hero-art img {
+
+  .hero__art {
+    --bracket-color: rgb(255 255 255 / 0.62);
+    --bracket-top: 34%;
+    --bracket-bottom: 7%;
+    --bracket-left: calc(var(--gutter) - 12px);
+    --bracket-right: 8%;
     position: absolute;
-    width: 650px;
-    max-width: none;
-    left: -110px;
-    bottom: -95px;
-    opacity: 0.85;
+    bottom: 0;
+    left: calc(var(--gutter) * -1);
+    pointer-events: none;
   }
-  .hero-art__label {
+
+  .hero__art::after {
+    top: 50%;
+    bottom: 14%;
+  }
+
+  .hero__art :global(.hero__duck) {
+    --ascii-size: clamp(3.4px, 0.67vw, 9.6px);
+    position: relative;
+    display: block;
+    margin-bottom: -9%;
+  }
+
+  .hero__tag {
     position: absolute;
     z-index: 1;
-    left: 0;
-    top: 74px;
-    background: white;
-    color: var(--blue);
-    padding: 5px 7px;
-    font-size: 8px;
   }
-  .hero-art__coordinates {
-    position: absolute;
-    bottom: 36px;
-    left: 0;
-    right: 50px;
+
+  .hero__tag--a {
+    top: 27%;
+    left: calc(var(--gutter) + 3%);
+  }
+
+  .hero__tag--b {
+    top: 82%;
+    right: 12%;
+  }
+
+  .hero__signal {
+    grid-column: 6 / 13;
+    grid-row: 1;
     display: flex;
-    justify-content: space-between;
-    font-size: 8px;
-    color: #dadaff;
+    align-items: center;
+    gap: 10px;
+    margin-top: clamp(16px, 2.2vw, 32px);
   }
-  .hero-art__cross {
-    position: absolute;
-    right: 55px;
-    top: 180px;
-    font: 28px var(--font-mono);
-    color: #adadff;
+
+  .hero__signal .rule-dotted {
+    flex: 1;
   }
-  .hero-art::before {
-    content: '';
-    position: absolute;
-    width: 75%;
-    height: 45%;
-    left: -5%;
-    top: 39%;
-    border-block: 1px dotted #ffffff3b;
-  }
-  .hero-art::after {
-    content: '';
-    position: absolute;
-    left: -4%;
-    top: 31%;
-    width: 75%;
-    height: 55%;
-    background:
-      linear-gradient(#dadaff, #dadaff) left top / 35px 1px,
-      linear-gradient(#dadaff, #dadaff) left top / 1px 45px,
-      linear-gradient(#dadaff, #dadaff) right bottom / 35px 1px,
-      linear-gradient(#dadaff, #dadaff) right bottom / 1px 45px;
-    background-repeat: no-repeat;
+
+  .hero__signal :global(.hero__coin-far) {
+    margin-left: -18px;
     opacity: 0.55;
   }
-  .hero-copy {
-    padding: 125px 0 48px 32px;
+
+  .hero__copy {
+    grid-column: 8 / 13;
+    grid-row: 2;
+    margin-top: clamp(20px, 2.6vw, 40px);
+  }
+
+  .hero__kicker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--muted-foreground);
+  }
+
+  .hero__lede {
+    max-width: 21ch;
+    margin-top: 16px;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 28px;
+  }
+
+  .hero__tree {
+    grid-row: 3;
+    align-self: start;
+    margin-top: clamp(28px, 3vw, 44px);
+    padding-bottom: clamp(32px, 3.4vw, 52px);
+  }
+
+  .hero__tree--now {
+    grid-column: 10 / 13;
+  }
+
+  .hero__tree--shipped {
+    grid-column: 7 / 10;
+    margin-top: clamp(64px, 6.4vw, 92px);
+  }
+
+  /* Proof */
+  .proof {
+    overflow: hidden;
+    padding-block: var(--section-y);
+  }
+
+  .proof__field {
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 720px;
+    color: #575757;
+    -webkit-mask-image: url('/fields/cross-corner.svg');
+    mask-image: url('/fields/cross-corner.svg');
+    -webkit-mask-position: right top;
+    mask-position: right top;
+  }
+
+  .proof .site-container {
     position: relative;
   }
-  .hero-copy__label {
-    color: #dddfff;
+
+  .proof__head {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 9px;
-  }
-  .status-dot {
-    display: inline-block;
-    width: 5px;
-    height: 5px;
-    background: white;
-  }
-  .hero-manifesto {
-    margin-top: 22px;
-    font-family: var(--font-display);
-    font-size: clamp(23px, 2.25vw, 34px);
-    font-weight: 300;
-    line-height: 1.08;
-    letter-spacing: -0.045em;
-  }
-  .hero-actions {
-    margin-top: 28px;
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
+    justify-content: space-between;
     gap: 20px;
   }
-  .hero-about {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    gap: 14px;
-    font: 10px var(--font-mono);
-    text-transform: uppercase;
+
+  .proof__poster {
+    margin-top: clamp(40px, 5vw, 72px);
+    font-size: clamp(4.2rem, 12.6vw, 11.5rem);
+    color: #fff;
   }
-  .hero-register {
-    margin-top: 40px;
-    display: flex;
-    justify-content: space-between;
-    gap: 28px;
-    color: #dddfff;
-    font-size: 8px;
-  }
-  .hero-register span {
+
+  .proof__poster > span {
     display: block;
-    margin-bottom: 8px;
-    opacity: 0.75;
+    white-space: nowrap;
   }
-  .hero-bottom-line {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px clamp(24px, 4.5vw, 72px);
-    border-top: 1px dotted #ffffff50;
-    font-size: 8px;
+
+  .proof__coin {
+    display: inline-block;
+    vertical-align: -0.015em;
+    margin-inline: -0.035em 0.01em;
+    line-height: 0;
   }
-  .impact-section {
-    background: var(--navy);
-    color: #f7f7f4;
-    padding-block: 56px 70px;
-    position: relative;
-  }
-  .impact-section::before,
-  .impact-section::after {
-    content: '';
-    position: absolute;
-    width: 70px;
-    height: 28px;
-    background: var(--paper);
-    top: -1px;
-  }
-  .impact-section::before {
-    left: 0;
-    clip-path: polygon(0 0, 65% 0, 100% 100%, 0 100%);
-  }
-  .impact-section::after {
-    right: 0;
-    clip-path: polygon(35% 0, 100% 0, 100% 100%, 0 100%);
-  }
-  .impact-eyebrow {
-    text-align: center;
-    margin-top: 48px;
-    color: #bbbcc7;
-  }
-  .impact-section h2 {
-    font-family: var(--font-display);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 24px;
-    font-size: clamp(32px, 5.2vw, 72px);
-    font-weight: 350;
-    letter-spacing: -0.045em;
-    margin-top: 18px;
-    line-height: 1;
-  }
-  .impact-section h2 em {
-    color: #acafff;
-    font-style: normal;
-  }
-  .impact-bracket {
-    color: #8e94a1;
-    font-weight: 200;
-  }
-  .impact-diagram {
-    max-width: 1080px;
-    margin: 40px auto 0;
-  }
-  .impact-diagram svg {
-    width: 100%;
-    height: auto;
-  }
-  .impact-diagram p {
-    color: #a3a7b5;
-    text-align: right;
-    font-size: 8px;
-    margin-top: 4px;
-  }
-  .impact-metrics {
+
+  .proof__metrics {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 32px;
-    margin-top: 52px;
-    border-top: 1px dotted #ffffff38;
-  }
-  .impact-metrics > div {
-    padding-top: 28px;
-  }
-  .impact-metric__value {
-    font-size: clamp(32px, 3.7vw, 52px);
-    font-weight: 350;
-    letter-spacing: -0.065em;
-    line-height: 1.1;
-  }
-  .impact-metrics .technical-label {
-    font-size: 9px;
-    color: #bcbecb;
-    margin-top: 10px;
-  }
-  .impact-caption {
-    margin-top: 60px;
-    display: flex;
-    justify-content: space-between;
-    align-items: end;
     gap: 24px;
+    margin-top: clamp(64px, 8vw, 120px);
+    border-top: 1px solid var(--border);
   }
-  .impact-caption p {
-    color: #aeb3c2;
-    font-size: 16px;
-    line-height: 1.25;
-    letter-spacing: -0.02em;
+
+  .proof__metrics > div {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: start;
+    gap: 14px;
+    padding-top: 26px;
   }
-  .impact-caption a {
-    color: #c6cad6;
-    border-color: #454c5c;
+
+  .proof__metrics dd {
+    font-size: clamp(2.4rem, 4.6vw, 4.25rem);
+    font-weight: 300;
+    line-height: 0.95;
+    letter-spacing: -0.055em;
+    color: #fff;
   }
-  .approach-section {
-    background: var(--paper);
-    padding-block: 110px 60px;
-  }
-  .approach-heading {
-    display: grid;
-    grid-template-columns: 1.6fr 1fr;
-    gap: 56px;
-    align-items: end;
-  }
-  .approach-heading h2 {
-    margin-top: 24px;
-  }
-  .approach-heading > p {
-    max-width: 330px;
-    font-size: 15px;
-    line-height: 1.6;
-    color: #61615d;
-  }
-  .discipline-grid {
-    margin-top: 65px;
+
+  .proof__practice {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 5px;
+    gap: clamp(24px, 4vw, 64px);
+    margin-top: clamp(80px, 10vw, 150px);
   }
-  .discipline-card {
-    padding: 22px;
-    background: #eeeeea;
+
+  .proof__tile {
+    width: 132px;
+    margin-bottom: 18px;
+    color: #e8e8e8;
   }
-  .discipline-card:nth-child(2) {
-    background: var(--blue);
-    color: white;
+
+  .proof__practice .t-label {
+    color: var(--foreground);
   }
-  .discipline-card:nth-child(3) {
-    background: #e4e4df;
-  }
-  .discipline-card__meta {
-    display: flex;
-    justify-content: space-between;
-    font-size: 9px;
-  }
-  .discipline-card__art {
-    display: flex;
-    position: relative;
-    height: 240px;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-  }
-  .discipline-card__symbol {
-    position: relative;
-    z-index: 1;
-    width: 70%;
-    max-width: 220px;
-  }
-  .discipline-card__art .cross-field {
-    position: absolute;
-    inset: 0;
-    mask-image: radial-gradient(ellipse, #000, transparent 75%);
-    opacity: 0.5;
-  }
-  .discipline-card:nth-child(2) .cross-field {
-    filter: invert(1);
-  }
-  .discipline-card h3 {
-    font-family: var(--font-display);
-    font-size: 24px;
+
+  .proof__practice h3 {
+    margin-top: 18px;
+    font-size: clamp(1.4rem, 2vw, 1.75rem);
     font-weight: 350;
-    letter-spacing: -0.045em;
+    letter-spacing: -0.035em;
     line-height: 1.1;
   }
-  .discipline-card > p {
-    margin-top: 16px;
-    color: #5c5c59;
-    font-size: 14px;
-    line-height: 1.6;
+
+  .proof__practice .t-body {
+    max-width: 30ch;
+    margin-top: 10px;
   }
-  .discipline-card:nth-child(2) > p {
-    color: #e1e1ff;
+
+  .proof__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 28px;
+    margin-top: clamp(72px, 9vw, 128px);
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
   }
+
   @media (max-width: 1023px) {
-    .hero-title {
-      font-size: 9.2vw;
+    .hero__copy {
+      grid-column: 7 / 13;
     }
-    .hero-landscape {
-      min-height: 390px;
+
+    .hero__tree--now {
+      grid-column: 7 / 13;
+      grid-row: 3;
     }
-    .hero-art {
-      min-height: 390px;
+
+    .hero__tree--shipped {
+      grid-column: 7 / 13;
+      grid-row: 4;
+      margin-top: 4px;
     }
-    .hero-art img {
-      width: 500px;
-      left: -125px;
-      bottom: -50px;
-    }
-    .hero-copy {
-      padding-top: 96px;
-      padding-left: 0;
-    }
-    .hero-register {
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-    .hero-art__coordinates {
-      display: none;
-    }
-    .approach-heading {
-      gap: 30px;
-    }
-    .discipline-card {
-      padding: 18px;
-    }
-    .discipline-card__art {
-      height: 180px;
-    }
-  }
-  @media (max-width: 639px) {
-    .hero-title {
-      padding-top: 28px;
-      font-size: 9.3vw;
-      line-height: 0.98;
-    }
-    .hero-landscape {
-      grid-template-columns: 1fr;
-      min-height: 540px;
-    }
-    .hero-copy {
-      padding: 42px 0 36px;
-      margin-left: 18%;
-    }
-    .hero-manifesto {
-      font-size: 27px;
-    }
-    .hero-art {
-      position: absolute;
-      left: -160px;
-      width: 300px;
-      bottom: -45px;
-      min-height: 275px;
-      opacity: 0.55;
-    }
-    .hero-art img {
-      width: 400px;
-      left: 0;
-      bottom: -65px;
-    }
-    .hero-art__label,
-    .hero-art__cross {
-      display: none;
-    }
-    .hero-register {
-      margin-top: 42px;
-      display: grid;
+
+    .proof__metrics {
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-    .hero-copy__label {
-      max-width: 24ch;
-      font-size: 8px;
-    }
-    .hero-bottom-line {
-      padding-inline: 20px;
-      font-size: 7px;
-    }
-    .hero-actions {
-      gap: 12px;
-    }
-    .technical-button {
-      gap: 16px;
-    }
-    .impact-section {
-      padding-block: 48px;
-    }
-    .impact-eyebrow {
-      margin-top: 35px;
-      font-size: 9px;
-    }
-    .impact-section h2 {
-      font-size: 8.3vw;
-      gap: 12px;
-    }
-    .impact-diagram {
-      margin-top: 35px;
-    }
-    .impact-diagram svg {
-      min-height: 170px;
-    }
-    .impact-metrics {
-      grid-template-columns: 1fr 1fr;
-      gap: 30px 22px;
-      margin-top: 32px;
-    }
-    .impact-metrics > div {
-      padding-top: 0;
-    }
-    .impact-metrics > div:nth-child(-n + 2) {
-      padding-top: 25px;
-    }
-    .impact-metric__value {
-      font-size: 39px;
-    }
-    .impact-caption {
-      margin-top: 42px;
-      flex-direction: column;
-      align-items: start;
-    }
-    .approach-section {
-      padding-block: 70px 35px;
-    }
-    .approach-heading {
-      grid-template-columns: 1fr;
-      gap: 24px;
-    }
-    .approach-heading > p {
-      font-size: 14px;
-    }
-    .discipline-grid {
-      margin-top: 36px;
-      grid-template-columns: 1fr;
-      gap: 8px;
-    }
-    .discipline-card {
-      display: grid;
-      grid-template-columns: 90px 1fr;
-      gap: 12px 16px;
-      padding: 20px;
-    }
-    .discipline-card__meta {
-      grid-column: 1/-1;
-    }
-    .discipline-card__art {
-      grid-row: 2/4;
-      height: 125px;
-    }
-    .discipline-card__symbol {
-      width: 95%;
-    }
-    .discipline-card h3 {
-      align-self: end;
-      font-size: 23px;
-    }
-    .discipline-card > p {
-      margin-top: 0;
-      font-size: 13px;
+      row-gap: 8px;
     }
   }
-  @media (max-width: 359px) {
-    .hero-art {
-      opacity: 0.2;
+
+  @media (max-width: 767px) {
+    .hero__title {
+      font-size: 10vw;
+    }
+
+    .hero__art :global(.hero__duck) {
+      --ascii-size: calc(100vw / 82);
+    }
+
+    .hero__stage {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .hero__signal {
+      order: 1;
+      margin-top: 28px;
+    }
+
+    .hero__copy {
+      order: 2;
+      margin-top: 28px;
+    }
+
+    .hero__tree--now {
+      order: 3;
+      margin-top: 36px;
+      padding-bottom: 0;
+      padding-left: 34%;
+    }
+
+    .hero__tree--shipped {
+      order: 4;
+      margin-top: 24px;
+      padding-bottom: 0;
+      padding-left: 12%;
+    }
+
+    .hero__art {
+      position: relative;
+      order: 5;
+      margin-top: 8px;
+      margin-right: calc(var(--gutter) * -1);
+      --bracket-left: 3%;
+      --bracket-right: 3%;
+    }
+
+    .proof__practice {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .proof__tile {
+      width: 104px;
+    }
+  }
+
+  @media (max-width: 479px) {
+    .proof__poster {
+      font-size: clamp(2.8rem, 14.8vw, 4.6rem);
     }
   }
 </style>

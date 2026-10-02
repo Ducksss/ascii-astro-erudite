@@ -43,7 +43,7 @@ type DotMassOptions = {
 }
 
 const ART_FRAME_THEME = {
-  background: '#060d1b',
+  background: '#101010',
   surfaceHighlightTop: 'transparent',
   surfaceHighlightBottom: 'transparent',
   border: 'rgba(255,255,255,0.12)',
@@ -1040,7 +1040,7 @@ export default function AsciiGenerator() {
               <p className="font-mono text-[0.68rem] tracking-[0.04em] text-foreground/75 uppercase">
                 Input preview
               </p>
-              <div className="relative aspect-[4/5] overflow-hidden border border-foreground/10 bg-[#050505]">
+              <div className="relative aspect-[4/5] overflow-hidden border border-foreground/10 bg-[#101010]">
                 {imageUrl ? (
                   <img
                     src={imageUrl}
@@ -1060,12 +1060,12 @@ export default function AsciiGenerator() {
                 Export treatment
               </p>
               <p className="text-sm leading-7 text-foreground/75">
-                The PNG uses a dark navy frame, white characters, and a fine
+                The PNG uses an ink frame, white characters, and a fine
                 technical grid. Transparent frame padding only affects the
                 exported PNG. Text downloads keep just the artwork.
               </p>
               <div className="inline-flex items-center gap-2 border border-foreground/12 px-3 py-2 text-xs tracking-[0.2em] text-foreground/72 uppercase">
-                Navy / white export frame
+                Ink / white export frame
               </div>
             </div>
           </div>

@@ -3,10 +3,12 @@
 Portfolio and writing site for case studies, shipped work, and technical
 reflections, built with Astro 7, Tailwind CSS 4, and MDX.
 
-This repository powers an editorial portfolio experience with an
-electric-blue landing page, a case-study-driven about page, and a writing archive
-for project notes, hackathon writeups, and implementation retrospectives. The
-current site is a substantial theme, content, and information-architecture
+This repository powers an editorial portfolio with an ultramarine landing
+page, a case-study-driven about page, and a writing archive for project notes,
+hackathon writeups, and implementation retrospectives. Its visual language,
+Signal / Noise, frames ASCII-rendered 3D objects and dithered textures with
+hairline technical marks and light, oversized type; see [DESIGN.md](./DESIGN.md).
+The current site is a substantial theme, content, and information-architecture
 rewrite of `astro-erudite`.
 
 ![Homepage preview](./public/static/readme-home.png)
@@ -27,8 +29,9 @@ rewrite of `astro-erudite`.
   Graph images, and favicon metadata
 - Rich technical writing support with KaTeX, Shiki, Expressive Code, and custom
   callout components
-- A consistent blue, paper, and navy design system with reusable UI primitives
-  and Astro islands for selective interactivity
+- A three-surface design system (ink, ultramarine, paper) with ASCII objects
+  ray-marched from signed-distance models at build time, textures that fade by
+  dropping marks, and Astro islands for selective interactivity
 
 ## Tech Stack
 
@@ -76,12 +79,12 @@ rewrite of `astro-erudite`.
 The site resolves its canonical URL in `src/lib/site-config.ts` using the
 following order:
 
-| Variable | When to use it | Notes |
-| --- | --- | --- |
-| `PUBLIC_SITE_URL` | Recommended for local and production use | Primary source for canonical URLs, sitemap entries, and RSS metadata |
-| `SITE_URL` | Optional fallback | Useful if you prefer a non-public env name in deployment config |
-| `VERCEL_PROJECT_PRODUCTION_URL` | Automatic on Vercel | Keeps preview deployments pointed at the production domain for SEO-safe metadata |
-| `VERCEL_URL` | Automatic on Vercel | Last-resort fallback |
+| Variable                        | When to use it                           | Notes                                                                            |
+| ------------------------------- | ---------------------------------------- | -------------------------------------------------------------------------------- |
+| `PUBLIC_SITE_URL`               | Recommended for local and production use | Primary source for canonical URLs, sitemap entries, and RSS metadata             |
+| `SITE_URL`                      | Optional fallback                        | Useful if you prefer a non-public env name in deployment config                  |
+| `VERCEL_PROJECT_PRODUCTION_URL` | Automatic on Vercel                      | Keeps preview deployments pointed at the production domain for SEO-safe metadata |
+| `VERCEL_URL`                    | Automatic on Vercel                      | Last-resort fallback                                                             |
 
 For `npm run dev`, the site falls back to `http://localhost:1234`. Production
 builds intentionally fail fast if no site URL is configured.
@@ -93,19 +96,20 @@ otherwise remain in canonical links, the sitemap and RSS.
 
 ## Available Scripts
 
-| Command | Description |
-| --- | --- |
-| `npm run dev` | Start the local Astro development server on port `1234` |
-| `npm run start` | Alias for `npm run dev` |
-| `npm run build` | Run Astro checks and create a production build in `dist/` |
-| `npm run check` | Run Astro and TypeScript diagnostics |
-| `npm test` | Run the ASCII generator, date and sitemap regression tests |
-| `npm run test:build` | Check the generated routes, links, assets, RSS, and sitemap after a build |
-| `npm run test:browser` | Check responsive design, keyboard navigation, TOC, and the ASCII island in Chromium after a build |
-| `npm run verify` | Run tests, checks, production build, and production/browser regression tests |
-| `npm run preview` | Preview the production build locally |
-| `npm run astro -- <args>` | Run Astro CLI commands directly |
-| `npm run prettier` | Format `ts`, `tsx`, `css`, and `astro` files |
+| Command                               | Description                                                                                       |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `npm run dev`                         | Start the local Astro development server on port `1234`                                           |
+| `npm run start`                       | Alias for `npm run dev`                                                                           |
+| `npm run build`                       | Run Astro checks and create a production build in `dist/`                                         |
+| `npm run check`                       | Run Astro and TypeScript diagnostics                                                              |
+| `npm test`                            | Run the ASCII engine, ASCII generator, date and sitemap regression tests                          |
+| `npm run test:build`                  | Check the generated routes, links, assets, RSS, and sitemap after a build                         |
+| `npm run test:browser`                | Check responsive design, keyboard navigation, TOC, and the ASCII island in Chromium after a build |
+| `npm run verify`                      | Run tests, checks, production build, and production/browser regression tests                      |
+| `npm run preview`                     | Preview the production build locally                                                              |
+| `npm run astro -- <args>`             | Run Astro CLI commands directly                                                                   |
+| `npm run prettier`                    | Format `ts`, `tsx`, `css`, and `astro` files                                                      |
+| `npx tsx scripts/capture-previews.ts` | Regenerate the social card and README previews after `npm run build`                              |
 
 Before the first browser test or `npm run verify`, install Chromium once:
 
@@ -195,20 +199,28 @@ mail: 'chaipinzheng@gmail.com'
 
 ### Styling and assets
 
-- Global tokens and theme styles live in `src/styles/`. The design pairs a
-  full electric-blue hero with paper sections, dark navy proof, fine rules,
-  double-framed square cards, oversized light-weight mono display type,
-  custom line symbols, and dense ASCII sculptures with interference trails.
-  Cross patterns fade into clear space; the footer wordmark dissolves into
-  pixels. These decorations are static SVG and CSS, with no animation runtime.
-- Palette: `--blue: #2528e8`, paper `#f7f7f4`, ink `#171717`, and navy
-  `#060d1b`. Shared header, footer, archive pages, article pages, and tools use
-  the same visual system. Reading copy uses local Geist; display headings,
-  small labels, and data use local Geist Mono.
-- Favicons and static social assets live in `public/`
-- Social preview graphics are stored in `public/static/`
+- [DESIGN.md](./DESIGN.md) is the source of truth for the visual language:
+  tokens, type roles, marks, imagery and composition rules. Read it before
+  changing a page.
+- Tokens live in `src/styles/global.css`; shared primitives (surfaces, type
+  roles, marks, buttons, frames, tabs, tree lists, ASCII tones) live in
+  `src/styles/system.css`; long-form reading styles live in
+  `src/styles/typography.css`.
+- Palette: ink `#101010`, ultramarine `#202ce3` and paper `#f6f6f6`, with
+  greys derived from ink. Space Grotesk carries display and reading text, Mona
+  Sans (condensed and expanded) the poster line and footer wordmark, and Geist
+  Mono labels, data and code. All fonts are self-hosted.
+- `src/lib/ascii` ray-marches signed-distance models (`duck`, `coin`, `bars`,
+  `padlock`, `chain`, `cursor`) into dithered ASCII at build time.
+  `<AsciiObject>` renders one as static text; `motion="sway"` or
+  `motion="spin"` animates it in a Web Worker while it is on screen, and
+  reduced-motion visitors keep the static frame.
+- `src/lib/fields.ts` generates the cross grids, pixel blocks and wordmark
+  dissolve as SVG masks, served from `/fields/*.svg`.
+- Favicons and static social assets live in `public/`. Regenerate the social
+  card and README previews with `scripts/capture-previews.ts`.
 - Run `npm run build && npm run test:browser` to check representative routes
-  at 1440, 768, 390, and 320px, section colours, overflow, body typography,
+  at 1440, 768, 390 and 320px, section surfaces, overflow, body typography,
   keyboard skip navigation, client navigation, and the ASCII tool exports.
 
 ## Deployment

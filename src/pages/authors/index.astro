@@ -1,65 +1,50 @@
 ---
 import AuthorCard from '@/components/author-card.astro'
-import ImmersivePageIntro from '@/components/immersive-page-intro.astro'
 import PageHead from '@/components/page-head.astro'
+import PageIntro from '@/components/page-intro.astro'
 import Layout from '@/layouts/layout.astro'
 import { getAllAuthors, getAllPosts } from '@/lib/data-utils'
 
 const authors = await getAllAuthors()
 const posts = await getAllPosts()
+const pad = (value: number) => String(value).padStart(2, '0')
 ---
 
-<Layout variant="immersive">
+<Layout>
   <PageHead
     slot="head"
     title="Authors"
     description="Meet the people behind the writing."
   />
 
-  <ImmersivePageIntro
-    items={[{ label: 'Authors', icon: 'lucide:users' }]}
-    label="Authors"
+  <PageIntro
+    items={[{ label: 'Authors' }]}
+    label="Authors / profiles"
     title="People behind the notes."
-    description="Author profiles and their contributions to the archive."
+    description="Author profiles and their contributions to the archive of build logs and technical notes."
+    asideLabel="Archive"
   >
-    <div slot="aside">
-      <p class="immersive-eyebrow">At a glance</p>
-      <div
-        class="mt-6 grid grid-cols-2 gap-px border border-border bg-muted/30"
-      >
-        <div class="p-4">
-          <p
-            class="text-2xl leading-none font-normal tracking-[-0.06em] text-foreground"
-          >
-            {String(authors.length).padStart(2, '0')}
-          </p>
-          <p class="technical-label mt-2 text-foreground/65">Profiles</p>
-        </div>
-        <div class="border-l border-border p-4">
-          <p
-            class="text-2xl leading-none font-normal tracking-[-0.06em] text-foreground"
-          >
-            {String(posts.length).padStart(2, '0')}
-          </p>
-          <p class="technical-label mt-2 text-foreground/65">Published notes</p>
-        </div>
+    <div slot="aside" class="stat-row">
+      <div>
+        <p class="stat__value">{pad(authors.length)}</p>
+        <p class="t-label stat__label">Profiles</p>
+      </div>
+      <div>
+        <p class="stat__value">{pad(posts.length)}</p>
+        <p class="t-label stat__label">Published notes</p>
       </div>
     </div>
-  </ImmersivePageIntro>
+  </PageIntro>
 
-  <section class="editorial-section border-b border-border">
-    <div class="site-container py-16 lg:py-24">
+  <section class="list-section surface-paper">
+    <div class="site-container authors">
       {
         authors.length > 0 ? (
-          <div class="flex flex-col">
-            {authors.map((author) => (
-              <AuthorCard author={author} variant="immersive" />
-            ))}
-          </div>
+          authors.map((author) => <AuthorCard author={author} />)
         ) : (
-          <div class="immersive-panel p-6 sm:p-8">
-            <p class="landing-section-label">No authors yet</p>
-            <p class="immersive-copy mt-4 max-w-xl text-base leading-7">
+          <div class="empty-panel">
+            <p class="t-label">No authors yet</p>
+            <p class="t-body mt-4 max-w-xl">
               Author profiles will appear here once writing is connected to
               registered author entries.
             </p>
@@ -69,3 +54,11 @@ const posts = await getAllPosts()
     </div>
   </section>
 </Layout>
+
+<style>
+  .authors {
+    display: grid;
+    gap: 72px;
+    padding-top: 28px;
+  }
+</style>

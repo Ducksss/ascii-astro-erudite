@@ -1,6 +1,9 @@
 ---
+import '@fontsource-variable/space-grotesk'
+import '@fontsource-variable/mona-sans/wdth.css'
+import spaceGroteskLatin from '@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url'
 import '@/styles/global.css'
-import '@/styles/immersive.css'
+import '@/styles/system.css'
 import '@/styles/typography.css'
 
 import Footer from '@/components/footer.astro'
@@ -11,24 +14,40 @@ import { cn } from '@/lib/utils'
 
 interface Props {
   class?: string
-  variant?: 'default' | 'landing' | 'immersive'
 }
 
-const { class: className, variant = 'default' } = Astro.props
+const { class: className } = Astro.props
 ---
 
 <!doctype html>
 <html lang={SITE.locale} data-theme="light">
   <Head>
+    <link
+      rel="preload"
+      href={spaceGroteskLatin}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <slot name="head" />
   </Head>
-  <body
-    class={`site-shell site-shell--${variant} flex min-h-screen flex-col font-sans`}
-    data-route-shell={variant}
-  >
-    <a href="#main-content" class="skip-link"> Skip to main content </a>
-    <header class="site-header sticky top-0 z-50">
-      <Header variant={variant} />
+  <body class="site-shell flex min-h-screen flex-col">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <svg class="sr-only" aria-hidden="true" focusable="false">
+      <filter id="duotone-blue" color-interpolation-filters="sRGB">
+        <feColorMatrix
+          type="matrix"
+          values="0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 0 0 1 0"
+        ></feColorMatrix>
+        <feComponentTransfer>
+          <feFuncR type="table" tableValues="0.02 0.125 1"></feFuncR>
+          <feFuncG type="table" tableValues="0.03 0.172 1"></feFuncG>
+          <feFuncB type="table" tableValues="0.32 0.89 1"></feFuncB>
+        </feComponentTransfer>
+      </filter>
+    </svg>
+    <header class="site-header surface-blue sticky top-0 z-50">
+      <Header />
       <slot name="subposts-navigation" />
       <slot name="table-of-contents" />
     </header>

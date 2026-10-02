@@ -1,38 +1,148 @@
 ---
+import BrandMark from '@/components/brand-mark.astro'
 import Link from '@/components/link.astro'
-import { LANDING, NAV_LINKS, PROFILE } from '@/consts'
+import { FOOTER, LANDING, NAV_LINKS, PROFILE } from '@/consts'
 
-interface Props {
-  variant?: 'default' | 'landing' | 'immersive'
-}
-
-const linkedInLink = PROFILE.links.find((item) => item.label === 'LinkedIn')!
+const github = PROFILE.links.find((item) => item.label === 'GitHub')!
 const path = Astro.url.pathname
+const items = [{ href: '/#work', label: 'Work' }, ...NAV_LINKS]
 ---
 
-<div class="site-header-shell site-container">
-  <Link href="/" class="site-brand" aria-label={`${LANDING.name} — home`}>
-    <span class="site-brand__symbol" aria-hidden="true">c<span>p</span>z</span>
-    <span class="site-brand__name">Chai Pin Zheng</span>
+<div class="site-header__bar site-container">
+  <Link href="/" class="site-brand" aria-label={`${LANDING.name}, home`}>
+    <BrandMark class="site-brand__mark" />
+    <span class="site-brand__name">{LANDING.name}</span>
   </Link>
-  <nav class="site-navigation" aria-label="Main navigation">
-    <Link href="/#work" class="site-navigation__work">Work <sup>01</sup></Link>
+  <nav class="site-nav" aria-label="Main navigation">
     {
-      NAV_LINKS.map((item, index) => (
+      items.map((item) => (
         <Link
           href={item.href}
-          aria-current={path.startsWith(item.href) ? 'page' : undefined}
+          aria-current={
+            item.href !== '/#work' && path.startsWith(item.href)
+              ? 'page'
+              : undefined
+          }
         >
-          {item.label} <sup>{String(index + 2).padStart(2, '0')}</sup>
+          {item.label}
+          <span class="cross-box" aria-hidden="true">
+            <span class="mark-cross" />
+          </span>
         </Link>
       ))
     }
   </nav>
-  <Link
-    href={linkedInLink.href}
-    external
-    class="technical-button technical-button--white site-header-contact"
-  >
-    Let's connect <span aria-hidden="true">↗</span>
-  </Link>
+  <div class="site-header__actions">
+    <Link href={FOOTER.primaryContact.href} class="btn btn--solid">
+      Get in touch
+    </Link>
+    <Link href={github.href} external class="btn site-header__secondary">
+      GitHub <span aria-hidden="true">↗</span>
+    </Link>
+  </div>
 </div>
+
+<style>
+  .site-header__bar {
+    display: flex;
+    min-height: 72px;
+    align-items: center;
+    gap: 40px;
+  }
+
+  .site-brand {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .site-brand__mark {
+    width: 22px;
+    height: 22px;
+  }
+
+  .site-brand__name {
+    white-space: nowrap;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.045em;
+    text-transform: uppercase;
+  }
+
+  .site-nav {
+    display: flex;
+    gap: 34px;
+  }
+
+  .site-nav :global(a) {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 9px;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .site-nav :global(a[aria-current='page']) {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 6px;
+  }
+
+  .site-nav :global(a:hover .cross-box) {
+    background: transparent;
+    color: #fff;
+    outline: 1px solid #fff;
+    outline-offset: -1px;
+  }
+
+  .site-header__actions {
+    display: flex;
+    gap: 12px;
+    margin-left: auto;
+  }
+
+  .site-header__actions :global(.btn) {
+    min-height: 40px;
+  }
+
+  @media (max-width: 1023px) {
+    .site-header__bar {
+      gap: 28px;
+    }
+
+    .site-header__secondary {
+      display: none;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .site-header__bar {
+      min-height: 60px;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .site-brand__name,
+    .site-header__actions {
+      display: none;
+    }
+
+    .site-nav {
+      gap: 18px;
+    }
+  }
+
+  @media (max-width: 399px) {
+    .site-nav {
+      gap: 14px;
+    }
+
+    .site-nav .cross-box {
+      display: none;
+    }
+  }
+</style>

@@ -1,10 +1,9 @@
 ---
-import ImmersivePageIntro from '@/components/immersive-page-intro.astro'
 import Link from '@/components/link.astro'
 import PageHead from '@/components/page-head.astro'
+import PageIntro from '@/components/page-intro.astro'
 import Layout from '@/layouts/layout.astro'
 import { getAllPosts, getSortedTags } from '@/lib/data-utils'
-import { Icon } from 'astro-icon/components'
 
 const taggedPosts = await getAllPosts()
 const sortedTags = await getSortedTags()
@@ -12,92 +11,66 @@ const totalTaggedPosts = taggedPosts.filter(
   (post) => post.data.tags?.length,
 ).length
 const topTag = sortedTags[0]
+const pad = (value: number) => String(value).padStart(2, '0')
 ---
 
-<Layout variant="immersive">
+<Layout>
   <PageHead
     slot="head"
     title="Tags"
     description="Browse topics from my build logs, projects, and technical notes."
   />
 
-  <ImmersivePageIntro
-    items={[{ label: 'Tags', icon: 'lucide:tags' }]}
-    label="Tags"
+  <PageIntro
+    items={[{ label: 'Tags' }]}
+    label="Topics / index"
     title="Follow a thread."
-    description="Explore the ideas, tools, and technologies that connect the work."
+    description="Explore the ideas, tools and technologies that connect the work."
+    asideLabel="Index"
   >
     <div slot="aside">
-      <p class="immersive-eyebrow">At a glance</p>
-      <div
-        class="mt-6 grid grid-cols-3 gap-px border border-border bg-muted/30"
-      >
-        <div class="p-4">
-          <p
-            class="text-2xl leading-none font-normal tracking-[-0.06em] text-foreground"
-          >
-            {String(sortedTags.length).padStart(2, '0')}
-          </p>
-          <p class="technical-label mt-2 text-foreground/65">Active tags</p>
+      <div class="stat-row">
+        <div>
+          <p class="stat__value">{pad(sortedTags.length)}</p>
+          <p class="t-label stat__label">Topics</p>
         </div>
-        <div class="border-x border-border p-4">
-          <p
-            class="text-2xl leading-none font-normal tracking-[-0.06em] text-foreground"
-          >
-            {String(totalTaggedPosts).padStart(2, '0')}
-          </p>
-          <p class="technical-label mt-2 text-foreground/65">Tagged notes</p>
-        </div>
-        <div class="p-4">
-          <p
-            class="text-lg leading-tight font-normal tracking-[-0.04em] break-words text-foreground"
-          >
-            {topTag ? topTag.tag : '--'}
-          </p>
-          <p class="technical-label mt-2 text-foreground/65">Densest tag</p>
+        <div>
+          <p class="stat__value">{pad(totalTaggedPosts)}</p>
+          <p class="t-label stat__label">Tagged notes</p>
         </div>
       </div>
+      {
+        topTag && (
+          <p class="t-label tags-top">
+            Densest / <span>#{topTag.tag}</span>
+          </p>
+        )
+      }
     </div>
-  </ImmersivePageIntro>
+  </PageIntro>
 
-  <section class="editorial-section border-b border-border">
-    <div class="site-container py-16 lg:py-24">
+  <section class="list-section surface-paper">
+    <div class="site-container">
       {
         sortedTags.length > 0 ? (
-          <div class="flex flex-col">
+          <ul class="tag-index">
             {sortedTags.map(({ tag, count }) => (
-              <Link
-                href={`/tags/${tag}`}
-                class="group block border-t border-border py-6 first:border-t-0 sm:py-7"
-              >
-                <div class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-center sm:gap-6">
-                  <div class="min-w-0">
-                    <p class="technical-label text-foreground/65">
-                      Archive tag
-                    </p>
-                    <h2 class="mt-3 flex items-center gap-3 text-[1.65rem] leading-none font-normal tracking-[-0.05em] text-foreground sm:text-[1.9rem]">
-                      <Icon
-                        name="lucide:hash"
-                        class="size-4 shrink-0 text-foreground/60"
-                      />
-                      <span class="truncate">{tag}</span>
-                    </h2>
-                  </div>
-                  <p class="technical-label text-foreground/65">
-                    {String(count).padStart(2, '0')} posts
-                  </p>
-                  <div class="immersive-row-arrow group-hover:translate-x-2">
-                    open
-                  </div>
-                </div>
-              </Link>
+              <li>
+                <Link href={`/tags/${tag}`} class="tag-index__link">
+                  <span class="t-label t-muted">{pad(count)}</span>
+                  <span class="tag-index__name">#{tag}</span>
+                  <span class="tag-index__arrow" aria-hidden="true">
+                    ↗
+                  </span>
+                </Link>
+              </li>
             ))}
-          </div>
+          </ul>
         ) : (
-          <div class="immersive-panel p-6 sm:p-8">
-            <p class="landing-section-label">No tags yet</p>
-            <p class="immersive-copy mt-4 max-w-xl text-base leading-7">
-              Publish tagged notes and the taxonomy directory will populate here
+          <div class="empty-panel">
+            <p class="t-label">No tags yet</p>
+            <p class="t-body mt-4 max-w-xl">
+              Publish tagged notes and the topic index will populate here
               automatically.
             </p>
           </div>
@@ -106,3 +79,64 @@ const topTag = sortedTags[0]
     </div>
   </section>
 </Layout>
+
+<style>
+  .tags-top {
+    margin-top: 22px;
+    padding-top: 16px;
+    border-top: 1px dotted var(--rule);
+    color: var(--muted-foreground);
+  }
+
+  .tags-top span {
+    color: var(--foreground);
+  }
+
+  .tag-index {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: clamp(20px, 3vw, 40px);
+  }
+
+  .tag-index__link {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 12px;
+    padding-block: 18px;
+    border-top: 1px dotted var(--rule);
+  }
+
+  .tag-index__name {
+    overflow: hidden;
+    font-size: clamp(1.25rem, 1.8vw, 1.6rem);
+    font-weight: 350;
+    line-height: 1.15;
+    letter-spacing: -0.035em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: color 0.2s;
+  }
+
+  .tag-index__arrow {
+    font-family: var(--font-mono);
+    color: var(--muted-foreground);
+  }
+
+  .tag-index__link:hover .tag-index__name,
+  .tag-index__link:hover .tag-index__arrow {
+    color: var(--blue);
+  }
+
+  @media (max-width: 1023px) {
+    .tag-index {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 639px) {
+    .tag-index {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

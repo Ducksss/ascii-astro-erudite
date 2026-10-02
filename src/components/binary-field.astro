@@ -1,0 +1,39 @@
+---
+import { frameToHtml, hash } from '@/lib/ascii'
+import { cn } from '@/lib/utils'
+
+interface Props {
+  cols: number
+  rows: number
+  seed?: number
+  class?: string
+}
+
+// A field of 0s and 1s that brightens through a soft horizontal band and
+// thins out away from it, like a signal fading into noise.
+const { cols, rows, seed = 7, class: className } = Astro.props
+const glyphs: string[] = []
+const levels = new Uint8Array(cols * rows)
+for (let row = 0; row < rows; row++) {
+  let line = ''
+  for (let col = 0; col < cols; col++) {
+    const band = 1 - Math.abs(row / (rows - 1) - 0.45) * 2.1
+    const amount = band * 0.85 + (hash(col, row, seed) - 0.5) * 0.5
+    if (amount < 0.08 || (col + row) % 2) {
+      line += ' '
+      continue
+    }
+    line += hash(row, col, seed + 1) < 0.55 ? '0' : '1'
+    levels[row * cols + col] =
+      amount > 0.72 ? 4 : amount > 0.5 ? 3 : amount > 0.28 ? 2 : 1
+  }
+  glyphs.push(line)
+}
+const html = frameToHtml({ cols, rows, glyphs, levels, range: [0, 1] })
+---
+
+<pre
+  class={cn('ascii ascii--ink binary-field', className)}
+  aria-hidden="true"
+  set:html={html}
+/>

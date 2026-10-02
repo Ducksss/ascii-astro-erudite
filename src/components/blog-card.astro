@@ -1,168 +1,168 @@
 ---
-import AvatarComponent from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
+import Link from '@/components/link.astro'
 import {
   getCombinedReadingTime,
   getSubpostCount,
   isSubpost,
-  parseAuthors,
 } from '@/lib/data-utils'
 import { formatDate } from '@/lib/utils'
-import { Icon } from 'astro-icon/components'
 import { Image } from 'astro:assets'
 import type { CollectionEntry } from 'astro:content'
-import Link from './link.astro'
 
 interface Props {
   entry: CollectionEntry<'blog'>
-  variant?: 'default' | 'immersive'
 }
 
-const { entry, variant = 'default' } = Astro.props
-const isImmersive = variant === 'immersive'
-const formattedDate = formatDate(entry.data.date)
+const { entry } = Astro.props
 const readTime = await getCombinedReadingTime(entry.id)
-const authors = await parseAuthors(entry.data.authors ?? [])
 const subpostCount = !isSubpost(entry.id) ? await getSubpostCount(entry.id) : 0
 ---
 
-{
-  isImmersive ? (
-    <article class="border-t border-border first:border-t-0">
-      <Link
-        href={`/${entry.collection}/${entry.id}`}
-        class="group block px-0 py-6 sm:py-8"
-      >
-        <div class="grid gap-4 lg:grid-cols-[12rem_minmax(0,1fr)_auto] lg:items-start lg:gap-8">
-          <div class="space-y-3">
-            <p class="font-mono text-[0.68rem] tracking-[0.08em] text-foreground/60 uppercase">
-              {formattedDate}
-            </p>
-            <div class="space-y-2 text-sm text-foreground/60">
-              <p>{readTime}</p>
-              {subpostCount > 0 && (
-                <p class="flex items-center gap-1">
-                  <Icon name="lucide:file-text" class="size-3" />
-                  {subpostCount} subpost{subpostCount === 1 ? '' : 's'}
-                </p>
-              )}
-            </div>
-          </div>
-
-          <div class="space-y-4">
-            {authors.length > 0 && (
-              <div class="flex flex-wrap gap-3">
-                {authors.map((author) => (
-                  <div class="inline-flex items-center gap-x-2 text-sm text-foreground/60">
-                    <AvatarComponent
-                      client:load
-                      src={author.avatar}
-                      alt={author.name}
-                      fallback={author.name[0]}
-                      className="size-5 rounded-none"
-                    />
-                    <span>{author.name}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div class="space-y-3">
-              <h3 class="text-[1.7rem] leading-tight font-normal tracking-[-0.05em] text-foreground sm:text-[2rem]">
-                {entry.data.title}
-              </h3>
-              <p class="max-w-2xl text-base leading-7 text-foreground/60">
-                {entry.data.description}
-              </p>
-            </div>
-
-            {entry.data.tags && (
-              <div class="flex flex-wrap gap-2">
-                {entry.data.tags.map((tag) => (
-                  <span class="immersive-chip">
-                    <Icon name="lucide:hash" class="size-3" />
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div class="immersive-row-arrow group-hover:translate-x-2 lg:pt-1">
-            enter
-          </div>
-        </div>
-      </Link>
-    </article>
-  ) : (
-    <div class="rounded-none border p-4 transition-colors duration-300 ease-in-out hover:bg-muted/50">
-      <Link
-        href={`/${entry.collection}/${entry.id}`}
-        class="flex flex-col gap-4 sm:flex-row"
-      >
-        {entry.data.image && (
-          <div class="w-full sm:max-w-3xs sm:shrink-0">
+<article class="post-row">
+  <Link href={`/${entry.collection}/${entry.id}`} class="post-row__link">
+    <div class="post-row__meta">
+      <p class="t-label">{formatDate(entry.data.date)}</p>
+      <p class="t-label t-muted">
+        {readTime}
+        {subpostCount > 0 && <span> / {subpostCount} parts</span>}
+      </p>
+    </div>
+    <div class="post-row__main">
+      <h3 class="post-row__title">{entry.data.title}</h3>
+      <p class="post-row__description">{entry.data.description}</p>
+      {
+        entry.data.tags && (
+          <ul class="post-row__tags" aria-label="Tags">
+            {entry.data.tags.map((tag) => (
+              <li class="tag tag--quiet">#{tag}</li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+    <div class="post-row__aside" aria-hidden="true">
+      {
+        entry.data.image && (
+          <span class="post-row__thumb">
             <Image
               src={entry.data.image}
-              alt={entry.data.title}
-              width={1200}
-              height={630}
-              class="object-cover"
+              alt=""
+              width={264}
+              height={198}
+              fit="cover"
+              loading="lazy"
             />
-          </div>
-        )}
-
-        <div class="grow">
-          <h3 class="mb-1 text-lg font-medium">{entry.data.title}</h3>
-          <p class="mb-2 text-sm text-muted-foreground">
-            {entry.data.description}
-          </p>
-
-          <div class="mb-2 flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
-            {authors.length > 0 && (
-              <>
-                {authors.map((author) => (
-                  <div class="flex items-center gap-x-1.5">
-                    <AvatarComponent
-                      client:load
-                      src={author.avatar}
-                      alt={author.name}
-                      fallback={author.name[0]}
-                      className="size-5 rounded-none"
-                    />
-                    <span>{author.name}</span>
-                  </div>
-                ))}
-                <Separator orientation="vertical" className="h-4!" />
-              </>
-            )}
-            <span>{formattedDate}</span>
-            <Separator orientation="vertical" className="h-4!" />
-            <span>{readTime}</span>
-            {subpostCount > 0 && (
-              <>
-                <Separator orientation="vertical" className="h-4!" />
-                <span class="flex items-center gap-1">
-                  <Icon name="lucide:file-text" class="size-3" />
-                  {subpostCount} subpost{subpostCount === 1 ? '' : 's'}
-                </span>
-              </>
-            )}
-          </div>
-
-          {entry.data.tags && (
-            <div class="flex flex-wrap gap-2">
-              {entry.data.tags.map((tag) => (
-                <Badge variant="muted" className="flex items-center gap-x-1">
-                  <Icon name="lucide:hash" class="size-3" />
-                  {tag}
-                </Badge>
-              ))}
-            </div>
-          )}
-        </div>
-      </Link>
+          </span>
+        )
+      }
+      <span class="post-row__arrow">↗</span>
     </div>
-  )
-}
+  </Link>
+</article>
+
+<style>
+  .post-row {
+    border-top: 1px dotted var(--rule);
+  }
+
+  .post-row__link {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1fr) auto;
+    gap: 32px;
+    padding-block: 32px 36px;
+  }
+
+  .post-row__meta {
+    display: grid;
+    align-content: start;
+    gap: 6px;
+  }
+
+  .post-row__title {
+    max-width: 24ch;
+    font-size: clamp(1.6rem, 2.6vw, 2.35rem);
+    font-weight: 350;
+    line-height: 1.04;
+    letter-spacing: -0.04em;
+    transition: color 0.2s;
+  }
+
+  .post-row__link:hover .post-row__title {
+    color: var(--blue);
+  }
+
+  .post-row__description {
+    max-width: 44rem;
+    margin-top: 14px;
+    color: var(--muted-foreground);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .post-row__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 18px;
+  }
+
+  .post-row__aside {
+    display: flex;
+    align-items: start;
+    gap: 20px;
+  }
+
+  .post-row__thumb {
+    display: block;
+    width: 132px;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--blue);
+  }
+
+  .post-row__thumb :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: url('#duotone-blue') contrast(1.08);
+    transition: filter 0.3s;
+  }
+
+  .post-row__link:hover .post-row__thumb :global(img) {
+    filter: none;
+  }
+
+  .post-row__arrow {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+    transition:
+      transform 0.2s,
+      color 0.2s;
+  }
+
+  .post-row__link:hover .post-row__arrow {
+    color: var(--blue);
+    transform: translate(2px, -2px);
+  }
+
+  @media (max-width: 1023px) {
+    .post-row__link {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px 24px;
+    }
+
+    .post-row__meta {
+      grid-column: 1 / -1;
+      grid-auto-flow: column;
+      justify-content: start;
+      gap: 16px;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .post-row__thumb {
+      display: none;
+    }
+  }
+</style>

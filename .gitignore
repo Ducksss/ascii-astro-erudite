@@ -20,6 +20,7 @@ scripts/
 !scripts/
 scripts/*
 !scripts/capture-remotion-pages.ts
+!scripts/capture-previews.ts
 reports/
 output/*
 !tests/

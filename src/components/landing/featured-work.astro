@@ -1,291 +1,236 @@
 ---
+import AsciiObject from '@/components/ascii-object.astro'
 import Link from '@/components/link.astro'
+import type { AsciiObjectName } from '@/lib/ascii'
 import type { CollectionEntry } from 'astro:content'
 
 interface Props {
-  title: string
-  intro: string
   projects: CollectionEntry<'projects'>[]
 }
-const { title, intro, projects } = Astro.props
-const cardLabels = ['Adoption', 'Readiness', 'Delivery']
-const summaries = [
-  'Guided onboarding, clearer charts, and a user guide that helps people find their own way.',
-  'Automated training systems that improved efficiency by 70% across 40+ operators.',
-  'Developer tooling, automated release checks, and a portal reaching 6k weekly users.',
+
+const { projects } = Astro.props
+const cards: {
+  label: string
+  summary: string
+  surface: 'ink' | 'blue' | 'paper'
+  object: AsciiObjectName
+}[] = [
+  {
+    label: 'Adoption',
+    summary:
+      'Guided onboarding, clearer charts and a user guide that helps people find their own way.',
+    surface: 'ink',
+    object: 'bars',
+  },
+  {
+    label: 'Readiness',
+    summary:
+      'Automated training systems that lifted efficiency by 70% across 40+ operators.',
+    surface: 'blue',
+    object: 'padlock',
+  },
+  {
+    label: 'Delivery',
+    summary:
+      'Developer tooling, automated release checks and a portal reaching 6k weekly users.',
+    surface: 'paper',
+    object: 'chain',
+  },
 ]
+const shortName = (name: string) =>
+  name === 'Government Technology Agency' ? 'GovTech' : name
 ---
 
-<section id="work" class="proof-section" aria-labelledby="work-title">
+<section id="work" class="work surface-paper" aria-labelledby="work-title">
   <div class="site-container">
-    <p class="technical-label">Selected work / from product to practice</p>
-    <h2 id="work-title" class="section-title">
-      {title}<br /><span>{intro}</span>
+    <p class="t-label t-muted">Selected work / 2022 – 2026</p>
+    <h2 id="work-title" class="t-statement work__statement">
+      Strong technology only matters when people can use it.
+      <span class="t-dim">That's where I come in.</span>
     </h2>
-    <div class="proof-grid">
+
+    <div class="work__grid">
       {
-        projects.map((project, index) => (
-          <article class:list={['proof-card', `proof-card--${index + 1}`]}>
-            <span class="proof-card__tab technical-label">
-              {String(index + 1).padStart(2, '0')} / {cardLabels[index]}
-            </span>
-            <Link
-              href={project.data.link}
-              external={project.data.link.startsWith('http')}
-              class="proof-card__link"
-            >
-              <div class="proof-card__visual">
-                <img
-                  src={
-                    [
-                      '/static/signal-orbit.svg',
-                      '/static/signal-stack.svg',
-                      '/static/signal-knot.svg',
-                    ][index]
-                  }
-                  alt=""
-                  width="600"
-                  height="450"
-                  loading="lazy"
-                  class="proof-card__image"
-                />
-              </div>
-              <div class="proof-card__body">
-                <p class="technical-label">{project.data.role}</p>
-                <h3>
-                  {project.data.name === 'Government Technology Agency'
-                    ? 'GovTech'
-                    : project.data.name}
-                </h3>
-                <p class="proof-card__summary">
-                  {summaries[index] ?? project.data.description}
-                </p>
-                <span class="proof-card__action technical-label">
-                  Explore the work <span aria-hidden="true">↗</span>
-                </span>
-              </div>
-            </Link>
-          </article>
-        ))
+        projects.map((project, index) => {
+          const card = cards[index % cards.length]
+          return (
+            <article class:list={['work-card', `work-card--${card.surface}`]}>
+              <span class="tab work-card__tab">
+                {String(index + 1).padStart(2, '0')} / {card.label}
+              </span>
+              <Link
+                href={project.data.link}
+                external={project.data.link.startsWith('http')}
+                class="frame-double work-card__frame"
+              >
+                <div
+                  class={`frame-double__panel work-card__panel surface-${card.surface}`}
+                >
+                  <div class="work-card__art" aria-hidden="true">
+                    <AsciiObject
+                      object={card.object}
+                      tone={card.surface}
+                      cols={78}
+                      rows={46}
+                      zoom={card.object === 'chain' ? 1.02 : 0.98}
+                      invert={card.surface === 'paper'}
+                      class={
+                        card.surface === 'ink' ? 'ascii--bright' : undefined
+                      }
+                      trails={
+                        card.surface === 'blue'
+                          ? { density: 0.3, length: 22, side: 'left' }
+                          : false
+                      }
+                      size="clamp(3.6px, 0.5vw, 7.2px)"
+                    />
+                  </div>
+                  <div class="work-card__body">
+                    <p class="t-label t-muted">{project.data.role}</p>
+                    <h3>{shortName(project.data.name)}</h3>
+                    <p class="work-card__summary">
+                      {card.summary ?? project.data.description}
+                    </p>
+                    <span class="work-card__action t-label">
+                      Explore the work <span aria-hidden="true">↗</span>
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </article>
+          )
+        })
       }
     </div>
   </div>
-  <div class="cross-field proof-cross-field" aria-hidden="true"></div>
 </section>
 
 <style>
-  .proof-section {
-    position: relative;
-    background: var(--paper);
-    color: var(--ink);
-    padding-block: 96px 150px;
-    scroll-margin-top: 88px;
-    overflow: hidden;
+  .work {
+    padding-block: var(--section-y) calc(var(--section-y) * 1.1);
+    scroll-margin-top: 72px;
   }
-  .proof-section > .site-container {
-    position: relative;
-    z-index: 1;
+
+  .work__statement {
+    max-width: 21ch;
+    margin-top: 28px;
   }
-  .proof-section > .site-container > .technical-label {
-    color: #646460;
-  }
-  .proof-section h2 {
-    max-width: 950px;
-    margin-top: 24px;
-    font-size: clamp(32px, 4.6vw, 66px);
-    line-height: 1.03;
-  }
-  .proof-section h2 span {
-    color: #70706b;
-  }
-  .proof-grid {
+
+  .work__grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     align-items: start;
-    gap: clamp(30px, 5vw, 88px);
-    margin-top: 65px;
+    gap: clamp(24px, 4.5vw, 72px);
+    margin-top: clamp(72px, 8vw, 120px);
   }
-  .proof-card {
+
+  .work-card {
     position: relative;
-    border: 1px solid #a4a4a0;
-    padding: 8px;
-    background: var(--paper);
-    transition: transform 0.25s;
+    --frame: #9c9c9c;
+    transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
   }
-  .proof-card:hover {
+
+  .work-card:hover {
     transform: translateY(-6px);
   }
-  .proof-card--1 {
-    margin-top: 75px;
+
+  .work-card--ink {
+    margin-top: clamp(80px, 11vw, 168px);
   }
-  .proof-card--2 {
-    margin-top: 170px;
+
+  .work-card--blue {
+    margin-top: clamp(150px, 19vw, 290px);
   }
-  .proof-card__tab {
+
+  .work-card__tab {
     position: absolute;
     bottom: 100%;
-    left: -1px;
-    padding: 5px 7px;
-    background: var(--ink);
-    color: white;
-    font-size: 8px;
+    left: 0;
   }
-  .proof-card__link {
+
+  .work-card__frame {
+    display: block;
+    background: var(--paper);
+  }
+
+  .work-card__panel {
     display: flex;
     flex-direction: column;
-    height: 100%;
-    border: 1px solid #62625e;
-  }
-  .proof-card__visual {
-    position: relative;
-    aspect-ratio: 1.3;
     overflow: hidden;
-    background: #171717;
-    color: #d9d9d3;
   }
-  .proof-card__image {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    filter: grayscale(1);
-    opacity: 0.95;
+
+  .work-card--blue .work-card__panel {
+    flex-direction: column-reverse;
   }
-  .proof-card__body {
-    background: #171717;
-    color: white;
-    padding: 22px 16px 16px;
+
+  .work-card--paper .work-card__panel {
+    --background: var(--paper-raised);
   }
-  .proof-card__body > .technical-label {
-    color: #bdbdb7;
-    font-size: 8px;
-    line-height: 1.5;
+
+  .work-card__art {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1.12;
+    overflow: hidden;
   }
-  .proof-card h3 {
-    font-family: var(--font-display);
+
+  .work-card__body {
+    padding: 4px 20px 6px;
+  }
+
+  .work-card--blue .work-card__body {
+    padding-top: 22px;
+  }
+
+  .work-card h3 {
     margin-top: 12px;
-    font-size: clamp(21px, 2.2vw, 29px);
+    font-size: clamp(1.5rem, 2.3vw, 2rem);
     font-weight: 350;
     line-height: 1.02;
-    letter-spacing: -0.045em;
+    letter-spacing: -0.04em;
   }
-  .proof-card__summary {
-    margin-top: 15px;
-    color: #bdbdb7;
-    font-size: 14px;
-    line-height: 1.5;
+
+  .work-card__summary {
+    margin-top: 12px;
+    color: var(--muted-foreground);
+    font-size: 0.9375rem;
+    line-height: 1.55;
   }
-  .proof-card__action {
+
+  .work-card__action {
     display: flex;
-    justify-content: space-between;
+    min-height: 48px;
     align-items: center;
-    min-height: 44px;
-    margin-top: 20px;
-    border-top: 1px dotted #555;
-    font-size: 8px;
+    justify-content: space-between;
+    margin-top: 18px;
+    border-top: 1px dotted var(--rule);
   }
-  .proof-card--2 .proof-card__body,
-  .proof-card--2 .proof-card__visual {
-    background: var(--blue);
-    color: white;
-  }
-  .proof-card--2 .proof-card__image {
-    opacity: 0.95;
-    mix-blend-mode: screen;
-    object-fit: cover;
-    object-position: right bottom;
-  }
-  .proof-card--2 .proof-card__body {
-    order: -1;
-    padding-top: 26px;
-  }
-  .proof-card--2 .proof-card__visual {
-    aspect-ratio: 1.1;
-  }
-  .proof-card--2 .proof-card__link {
-    border-color: #a2a3ff;
-  }
-  .proof-card--2 .proof-card__body > .technical-label,
-  .proof-card--2 .proof-card__summary {
-    color: #e1e1ff;
-  }
-  .proof-card--2 .proof-card__action {
-    border-color: #ffffff60;
-  }
-  .proof-card--3 .proof-card__body,
-  .proof-card--3 .proof-card__visual {
-    background: #eeeee9;
-    color: var(--ink);
-  }
-  .proof-card--3 .proof-card__image {
-    opacity: 0.8;
-    filter: grayscale(1) invert(1);
-    mix-blend-mode: multiply;
-    object-fit: cover;
-    object-position: center;
-  }
-  .proof-card--3 .proof-card__body > .technical-label,
-  .proof-card--3 .proof-card__summary {
-    color: #646460;
-  }
-  .proof-card--3 .proof-card__action {
-    border-color: #bdbdb7;
-  }
-  .proof-cross-field {
-    position: absolute;
-    inset: auto 0 0;
-    height: 370px;
-    opacity: 0.45;
-    mask-image:
-      linear-gradient(transparent, #000),
-      radial-gradient(ellipse at 12% 100%, #000 20%, transparent 65%),
-      radial-gradient(ellipse at 83% 100%, #000 15%, transparent 70%);
-  }
+
   @media (max-width: 1023px) {
-    .proof-grid {
-      gap: 24px;
+    .work__grid {
+      gap: 20px;
     }
-    .proof-card--1 {
-      margin-top: 40px;
-    }
-    .proof-card--2 {
-      margin-top: 100px;
-    }
-    .proof-card__body {
-      padding: 18px 12px 12px;
+
+    .work-card__body {
+      padding-inline: 14px;
     }
   }
-  @media (max-width: 639px) {
-    .proof-section {
-      padding-block: 65px 80px;
-    }
-    .proof-section h2 {
-      font-size: 34px;
-    }
-    .proof-grid {
-      grid-template-columns: 1fr;
-      gap: 45px;
-      margin-top: 48px;
-      max-width: 360px;
+
+  @media (max-width: 767px) {
+    .work__grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 64px;
+      max-width: 440px;
       margin-inline: auto;
     }
-    .proof-card--1,
-    .proof-card--2 {
+
+    .work-card--ink,
+    .work-card--blue {
       margin-top: 0;
     }
-    .proof-card__visual {
-      aspect-ratio: 1.7;
-    }
-    .proof-card--2 .proof-card__visual {
+
+    .work-card__art {
       aspect-ratio: 1.5;
-    }
-    .proof-card__body {
-      padding: 20px;
-    }
-    .proof-card h3 {
-      font-size: 28px;
-    }
-    .proof-card__summary {
-      font-size: 14px;
     }
   }
 </style>

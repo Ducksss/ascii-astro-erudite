@@ -1,7 +1,7 @@
 ---
 import BlogCard from '@/components/blog-card.astro'
-import ImmersivePageIntro from '@/components/immersive-page-intro.astro'
 import PageHead from '@/components/page-head.astro'
+import PageIntro from '@/components/page-intro.astro'
 import Layout from '@/layouts/layout.astro'
 import { getAllTags, getPostsByTag } from '@/lib/data-utils'
 import { formatDate } from '@/lib/utils'
@@ -29,7 +29,7 @@ const latestPost = posts[0]
 const earliestPost = posts[posts.length - 1]
 ---
 
-<Layout variant="immersive">
+<Layout>
   <PageHead
     slot="head"
     title={`Posts tagged with "${tag}"`}
@@ -37,74 +37,56 @@ const earliestPost = posts[posts.length - 1]
     noindex
   />
 
-  <ImmersivePageIntro
-    items={[
-      { href: '/tags', label: 'Tags', icon: 'lucide:tags' },
-      { label: tag, icon: 'lucide:tag' },
-    ]}
-    label="Tag"
+  <PageIntro
+    items={[{ href: '/tags', label: 'Tags' }, { label: tag }]}
+    label="Topic"
     title={`#${tag}`}
     description={`Build logs and technical notes about ${tag}.`}
+    asideLabel="Topic"
   >
-    <div slot="aside">
-      <p class="immersive-eyebrow">Tag details</p>
-      <div class="immersive-rule-list mt-6">
-        <div class="space-y-2">
-          <p class="technical-label text-foreground/65">Matching notes</p>
-          <p class="text-base text-foreground/68">
-            {String(posts.length).padStart(2, '0')}
-          </p>
-        </div>
-        {
-          latestPost && (
-            <div class="space-y-2">
-              <p class="technical-label text-foreground/65">Latest entry</p>
-              <p class="text-base text-foreground/68">
-                {formatDate(latestPost.data.date)}
-              </p>
-            </div>
-          )
-        }
-        {
-          earliestPost && (
-            <div class="space-y-2">
-              <p class="technical-label text-foreground/65">Archive span</p>
-              <p class="text-base text-foreground/68">
-                {formatDate(earliestPost.data.date)} {'->'}{' '}
-                {formatDate(latestPost.data.date)}
-              </p>
-            </div>
-          )
-        }
+    <dl slot="aside" class="meta-list">
+      <div>
+        <dt class="t-label">Matching notes</dt>
+        <dd>{String(posts.length).padStart(2, '0')}</dd>
       </div>
-    </div>
-  </ImmersivePageIntro>
+      {
+        latestPost && (
+          <div>
+            <dt class="t-label">Latest entry</dt>
+            <dd>{formatDate(latestPost.data.date)}</dd>
+          </div>
+        )
+      }
+      {
+        earliestPost && posts.length > 1 && (
+          <div>
+            <dt class="t-label">First entry</dt>
+            <dd>{formatDate(earliestPost.data.date)}</dd>
+          </div>
+        )
+      }
+    </dl>
+  </PageIntro>
 
-  <section class="editorial-section border-b border-border">
-    <div class="site-container py-16 lg:py-24">
-      <div class="max-w-3xl border-b border-border pb-8">
-        <p class="landing-section-label">Tagged notes</p>
-        <h2 class="landing-section-title mt-4 max-w-3xl">
-          More on this topic.
-        </h2>
-        <p class="immersive-copy mt-6 max-w-2xl text-base leading-7">
-          Projects, lessons, and implementation notes collected under this tag.
-        </p>
+  <section class="list-section surface-paper">
+    <div class="site-container">
+      <div class="section-head">
+        <p class="t-label t-muted">Tagged notes</p>
+        <h2 class="t-title">More on this topic.</h2>
       </div>
-
       {
         posts.length > 0 ? (
-          <div class="mt-8 flex flex-col">
+          <div class="tag-posts">
             {posts.map((post) => (
-              <BlogCard entry={post} variant="immersive" />
+              <BlogCard entry={post} />
             ))}
           </div>
         ) : (
-          <div class="immersive-panel mt-8 p-6 sm:p-8">
-            <p class="landing-section-label">No notes yet</p>
-            <p class="immersive-copy mt-4 max-w-xl text-base leading-7">
-              This tag exists in the archive directory, but no published posts
-              currently resolve to it.
+          <div class="empty-panel tag-posts">
+            <p class="t-label">No notes yet</p>
+            <p class="t-body mt-4 max-w-xl">
+              This topic exists in the index, but no published notes currently
+              resolve to it.
             </p>
           </div>
         )
@@ -112,3 +94,9 @@ const earliestPost = posts[posts.length - 1]
     </div>
   </section>
 </Layout>
+
+<style>
+  .tag-posts {
+    margin-top: clamp(40px, 5vw, 64px);
+  }
+</style>
