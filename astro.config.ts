@@ -27,20 +27,15 @@ const siteEnv = loadEnv(
   '',
 )
 
+export const sitemapFilter = (page: string) =>
+  !/^\/(?:blog\/[^/]+\/[^/]+|authors\/[^/]+|tags\/[^/]+)/.test(
+    new URL(page).pathname,
+  )
+
 export default defineConfig({
   site: resolveSiteUrl(siteEnv),
   compressHTML: true,
-  integrations: [
-    mdx(),
-    react(),
-    sitemap({
-      filter: (page) =>
-        !/\/blog\/[^/]+\/[^/]+\/?$/.test(page) &&
-        !/\/authors\/[^/]+\/?$/.test(page) &&
-        !/\/tags\/[^/]+\/?$/.test(page),
-    }),
-    icon(),
-  ],
+  integrations: [mdx(), react(), sitemap({ filter: sitemapFilter }), icon()],
   vite: {
     plugins: [tailwindcss()],
   },
