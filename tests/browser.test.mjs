@@ -121,7 +121,7 @@ test('TOC survives navigation and the ASCII playground renders and exports', asy
       await output.textContent(),
     )
     const [png] = await Promise.all([
-      page.waitForEvent('download'),
+      page.waitForEvent('download', { timeout: 15000 }),
       page.getByRole('button', { name: 'Download PNG', exact: true }).click(),
     ])
     assert.match(png.suggestedFilename(), /\.png$/)

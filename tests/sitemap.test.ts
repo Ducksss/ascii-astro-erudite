@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
-import { sitemapFilter } from '../astro.config'
+import { sitemapFilter } from '../src/lib/site-config'
 
 test('sitemap excludes noindex detail pages at every nesting depth', () => {
   for (const path of [

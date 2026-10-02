@@ -19,18 +19,13 @@ import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers'
 import type { ExpressiveCodeTheme } from 'rehype-expressive-code'
 
 import tailwindcss from '@tailwindcss/vite'
-import { resolveSiteUrl } from './src/lib/site-config'
+import { resolveSiteUrl, sitemapFilter } from './src/lib/site-config'
 
 const siteEnv = loadEnv(
   process.env.NODE_ENV ?? 'development',
   process.cwd(),
   '',
 )
-
-export const sitemapFilter = (page: string) =>
-  !/^\/(?:blog\/[^/]+\/[^/]+|authors\/[^/]+|tags\/[^/]+)/.test(
-    new URL(page).pathname,
-  )
 
 export default defineConfig({
   site: resolveSiteUrl(siteEnv),

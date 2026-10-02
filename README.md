@@ -86,6 +86,11 @@ following order:
 For `npm run dev`, the site falls back to `http://localhost:1234`. Production
 builds intentionally fail fast if no site URL is configured.
 
+This fork uses `https://www.chai-pin-zheng.xyz` as its canonical URL. Set
+`PUBLIC_SITE_URL` to that address in Vercel's Production and Preview
+environments, then redeploy after changing it. An older Vercel domain can
+otherwise remain in canonical links, the sitemap and RSS.
+
 ## Available Scripts
 
 | Command | Description |
@@ -94,7 +99,7 @@ builds intentionally fail fast if no site URL is configured.
 | `npm run start` | Alias for `npm run dev` |
 | `npm run build` | Run Astro checks and create a production build in `dist/` |
 | `npm run check` | Run Astro and TypeScript diagnostics |
-| `npm test` | Run the ASCII generator and date regression tests |
+| `npm test` | Run the ASCII generator, date and sitemap regression tests |
 | `npm run test:build` | Check the generated routes, links, assets, RSS, and sitemap after a build |
 | `npm run test:browser` | Check desktop/mobile navigation, TOC, and the ASCII island in Chromium after a build |
 | `npm run verify` | Run tests, checks, production build, and production/browser regression tests |
