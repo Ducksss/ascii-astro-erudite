@@ -6,6 +6,7 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { preview } from 'astro'
 import { chromium } from 'playwright'
+import { LANDING } from '../src/consts'
 import { renderCached } from '../src/lib/ascii'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
@@ -42,14 +43,14 @@ const card = `<!doctype html>
   .tree p { color: #fff; } .tree li { list-style: none; display: flex; gap: 8px; } .tree li::before { content: ''; width: 11px; height: 7px; margin-top: 3px; border-left: 1px solid; border-bottom: 1px solid; }
   .tag { position: absolute; left: 70px; top: 352px; background: #fff; color: #101010; padding: 6px 8px 5px; font: 11px/1 'Geist Mono'; letter-spacing: .05em; text-transform: uppercase; }
 </style>
-<div class="label"><span>Chai Pin Zheng / Software engineer</span><span>chai-pin-zheng.xyz</span></div>
+<div class="label"><span>Chai Pin Zheng / Product engineer</span><span>chai-pin-zheng.xyz</span></div>
 <div class="rule"></div>
 <h1><span>Complex systems,</span><span>made human.</span></h1>
 <pre aria-hidden="true">${duck}</pre>
 <span class="frame"></span><span class="frame frame--right"></span>
 <span class="tag">Rubber duck debugging</span>
-<p class="lede">I make complex products easier to enter, operate and trust.</p>
-<div class="tree"><p>Singapore / NUS Computer Science</p><ul><li>Product onboarding</li><li>Platform delivery</li><li>Operational systems</li></ul></div>`
+<p class="lede">${LANDING.manifesto}</p>
+<div class="tree"><p>Singapore / NUS Computer Science</p><ul><li>Product Engineer at Reactor School</li><li>Payload Components maintainer</li><li>Community and client projects</li></ul></div>`
 
 const browser = await chromium.launch()
 try {

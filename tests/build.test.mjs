@@ -45,6 +45,61 @@ const xmlValues = (xml, name) =>
     ([, value]) => decode(value),
   )
 
+test('portfolio publishes the current career and source-qualified record', () => {
+  const text = (file) =>
+    decode(read(file).replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ')
+  const home = text('index.html')
+  const about = text('about/index.html')
+  const author = text('authors/chai-pin-zheng/index.html')
+  const payload = text('blog/why-i-built-payload-kits/index.html')
+
+  assert.match(home, /Product Engineer at Reactor School/)
+  assert.match(home, /Payload Components/)
+  assert.match(home, /17 Devpost projects/)
+  assert.match(
+    home,
+    /Built ReactorOS participant imports, a tenant-safe data layer and a pathfinder ranking up to five warm-introduction routes/,
+  )
+  assert.match(
+    home,
+    /Shipped contextual onboarding, a four-category User Guide and nine interactive chart demos/,
+  )
+  for (const id of [
+    'reactor-school',
+    'metalearner',
+    'taskade',
+    'saf',
+    'govtech',
+    'associates-consulting',
+  ])
+    assert.match(read('about/index.html'), new RegExp(`id="${id}"`))
+  assert.match(about, /May 2026 - Present.*Reactor School.*Product Engineer/)
+  assert.match(about, /May 2025 - Aug 2025.*Taskade.*Software Engineer Intern/)
+  assert.match(
+    about,
+    /Apr 2022 - Jul 2023.*GovTech Singapore.*Software Engineer Intern/,
+  )
+  assert.match(about, /4\.50\/5\.00/)
+  assert.match(about, /2028 \(expected\)/)
+  assert.match(about, /The LaunchPad Challenge/)
+  assert.match(about, /The Collective/)
+  assert.match(about, /Resumify.*Co-founder \/ Fullstack Lead Engineer/)
+  assert.match(about, /14 September 2026/)
+  assert.match(about, /registrations/)
+  assert.doesNotMatch(
+    about,
+    /25%|15%|20 minutes per merge|Eliminated onboarding drop-offs/,
+  )
+  assert.match(author, /Product Engineer at Reactor School/)
+  assert.match(payload, /npx payload-components add hero-basic/)
+  assert.match(payload, /MIT/)
+  for (const page of [home, about, author, payload])
+    assert.doesNotMatch(
+      page,
+      /Payload Kits|npx payload-kit(?:\s|$)|4\.60\/5\.00/,
+    )
+})
+
 test('production build preserves routes, content, local links and SEO metadata', () => {
   const files = new Set(
     readdirSync(dist, { recursive: true }).filter((file) =>

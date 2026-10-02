@@ -1,6 +1,6 @@
 ---
 name: 'MetaLearner'
-description: 'Improved an AI-native supply chain forecasting and planning product built on ERP data with guided onboarding, a 4-category User Guide, a multilingual chart gallery, and reusable handoff artifacts.'
+description: 'Shipped contextual onboarding, a four-category User Guide and nine interactive chart demos across six categories and three locales.'
 tags:
   [
     'Product onboarding',

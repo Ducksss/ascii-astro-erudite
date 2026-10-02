@@ -1,122 +1,84 @@
 ---
-title: 'Why I Built Payload Kits'
-description: 'Repeated Payload client builds made me want a faster way to install production-ready blocks without redoing the same schema and wiring work every time.'
+title: 'Why I Built Payload Components'
+description: 'Repeated client website work led me to build an MIT registry and CLI that install typed Payload blocks with their configuration, renderer and generated artefacts wired together.'
 date: 2026-04-16
 tags: ['payloadcms', 'nextjs', 'freelancing', 'product-engineering']
 authors: ['chai-pin-zheng']
 draft: false
 ---
 
-I kept running into the same problem while doing freelance work for [Genium](https://genium.sg/) and [Octilyon](https://octilyon.com/): the sites were different, but the block patterns were not. Heroes, pricing sections, FAQs, testimonials, forms, content slices, blog surfaces. The annoying part was not coming up with those blocks. The annoying part was how much Payload setup sat between "this is a common section" and "this repo can actually use it safely."
+> Updated 3 October 2026: the project is now called Payload Components. I have updated this article to reflect the shipped registry and CLI.
 
-That gap kept bothering me because it made repeat work feel more bespoke than it really was. I did not mind building custom things when the product actually needed custom things. I minded rebuilding the same Payload glue over and over again just to get familiar website blocks into a working state. That frustration is basically where [Payload Kits](https://payload-components.xyz/) came from.
+The idea grew out of repeated client website work. I contributed to design direction and development on collaborative projects for [Genium](https://genium.sg/) and [Octilyon](https://octilyon.com/), working alongside other designers and developers. Across projects, familiar section patterns kept returning: heroes, feature grids, FAQs and testimonials.
 
-<div class="overflow-hidden rounded-lg border [&_img,p]:m-0 my-6">
-![Payload Kits landing hero and product proof](assets/hero-proof.png)
-</div>
+With Payload, building the section was only part of the job. I still had to connect its fields, frontend renderer and generated types to the host project. Recreating that setup took time away from the client's actual problem. [Payload Components](https://www.payload-components.xyz/) is my attempt to make that repeated work reusable.
 
 ## The repeated pain was not the blocks themselves
 
-What kept slowing me down was not visual design. It was the integration tax around every block.
+A block in a Payload v3 and Next.js project needs several pieces to agree:
 
-In a real Payload v3 + Next.js repo, a reusable section is never just a JSX file sitting in `components/`. It usually drags a whole trail of setup behind it:
+- a typed block config defining its editor fields
+- a frontend component rendering that content
+- registration in the Pages collection's layout field
+- a matching entry in `RenderBlocks`
+- regenerated Payload types and the admin import map
 
-- the block schema and field config
-- the frontend render component
-- the imports that wire the block into the right place
-- generated types that need to stay in sync
-- import-map updates so Payload admin stays happy
-- dependencies and repo-specific setup that only become obvious once you are halfway through the install
+Copying the component files leaves the rest of that work to the developer. When teams repeat the same setup across projects, a missed registration or stale generated file can leave a block unavailable in the editor or absent from the page.
 
-Any one of these steps is reasonable on its own. The problem is repetition. By the third or fourth client build, it starts feeling a bit stupid that I can know exactly what shape I want and still have to manually reconstruct the same infrastructure around it.
+I wanted the source and the installation instructions to travel together.
 
-That was especially obvious on blog and marketing-style builds. I was not trying to invent a new CMS pattern every week. I was trying to ship polished sites quickly without treating every hero block like a fresh research problem.
+## Why I built Payload Components
 
-## Why I built Payload Kits
+Payload Components is an MIT, community-first registry and CLI for typed Payload CMS blocks. I maintain the project, including releases, issue triage and reviews. The source, installer and documentation are open, and contributions help decide what the catalog needs next.
 
-Payload Kits is my attempt to make that repeat work less annoying.
+Each block ships with an install contract describing its files, dependencies, Payload wiring and generation tasks. The CLI applies that contract in a supported project and leaves the result as a reviewable git diff. Developers keep the installed source in their own repository and can adapt it to their site.
 
-I do not want this to be a generic component gallery where people copy screenshots and then figure out the hard part themselves. I want it to be a Payload-native kit platform. The difference matters. The useful part is not "here is a nice testimonial section." The useful part is "here is a testimonial section that installs into a real Payload repo with the schema, render component, type generation, and project wiring handled in a predictable way."
+## What it does
 
-That is why the current site at [payload-components.xyz](https://payload-components.xyz/) is framed around **Payload Kits** instead of around a generic "component marketplace" idea. The product promise I care about is very simple: install production-ready Payload block kits with one command.
+From the root of a supported Payload v3 and Next.js project, I can check the setup, preview an install and add a block:
 
-The site is still early, but the direction is not vague. I want a tool that feels like it actually understands the environment it is entering instead of dumping files into your repo and calling it a day.
+```sh
+npx payload-components doctor
+npx payload-components add hero-basic --dry-run
+npx payload-components add hero-basic
+```
 
-## What it aims to do
+The install copies the source, installs missing dependencies, registers the block in Pages, maps its renderer in `RenderBlocks`, and runs `generate:types` and `generate:importmap`. It records the result in `.payload-components/state.json` so a repeated install can check what is already present without duplicating the wiring.
 
-The core workflow I want to build around is pretty straightforward:
+A bare `create-payload-app` project can establish the starter files with `npx payload-components init --scaffold`. That is an explicit setup step. Follow its registration guidance and run `doctor` before adding blocks.
 
-- `npx payload-kit init`
-- `npx payload-kit add <kit-name>`
-- `npx payload-kit doctor`
+The project also supports checking and maintaining recorded installs:
 
-`npx payload-kit init` should detect the project shape, confirm that the repo is actually a supported Payload setup, and prepare the local config needed for kit installs.
+```sh
+npx payload-components list
+npx payload-components diff
+npx payload-components update
+```
 
-`npx payload-kit add <kit-name>` should do the real work: pull the selected kit, install dependencies, add the files that belong in the repo, wire the block into Payload, and run the follow-up tasks like type generation and import-map updates.
-
-`npx payload-kit doctor` exists because I do not trust happy-path demos as a product strategy. If this is meant for real agency or freelancer repos, the tool needs to validate compatibility, catch drift, and help people understand why something broke after an upgrade or a partial manual edit.
-
-The main goal is to ship complete kits, not loose fragments. A good kit should come with the block config, the frontend renderer, the metadata needed to install it properly, and the repo updates required to make it feel native instead of stapled on.
-
-<div class="overflow-hidden rounded-lg border [&_img,p]:m-0 my-6">
-![Payload Kits how-it-works section](assets/how-it-works.png)
-</div>
+`diff` reports source and wiring drift. `update` checks the recorded source before replacing files and refuses to overwrite local edits without an explicit override. Installation and maintenance are part of the same workflow.
 
 ## Who it is really for
 
-I am building this for agencies and freelancers first because that is the workflow pressure that made the idea real for me.
+Agencies and freelancers were the starting point because client websites made the repetition visible to me. The same problem applies to any team building content-managed sites with supported Payload project shapes.
 
-If you are shipping a lot of client websites, the same families of sections keep coming back. Not in exactly the same visual style, obviously, but in the same structural shape:
+The catalog includes families of website sections, with structural variants chosen by name. A team can pick the block it needs, inspect its fields and source, then install it into a project it already owns. The [component catalog](https://www.payload-components.xyz/components) is the current inventory.
 
-- hero sections
-- feature grids
-- pricing blocks
-- FAQ blocks
-- testimonial sections
-- newsletter or contact forms
-- about or team sections
-- stats and content rows
+## Payload-native integration
 
-That is a very different problem from building a one-off custom product UI. In agency work, speed matters, but so does reliability. You do not just need something that looks good in isolation. You need something that can drop into a real client repo without making the project more fragile.
+Shipping this taught me that developer experience is a systems problem. The component, installation, types, examples, error messages and documentation all need to agree.
 
-That is also why I do not think the right comparison is a normal UI component library. The moment content editors, Payload layouts, admin tooling, generated types, and repo conventions enter the picture, the install problem changes shape.
+The installer has to work with code I do not control. That means checking the host project before changing it, preserving local work, and testing the integration path. A block that looks right in a preview still needs to compile and render after installation in a real Payload project.
 
-## The real moat is Payload-native integration
-
-I do not think the moat here is visual novelty. A prettier hero block is nice, but it is not the hard part.
-
-The hard part is integration quality:
-
-- installs that understand Payload layouts
-- generated types that still line up afterwards
-- import-map awareness
-- preview-friendly defaults
-- upgrade paths that do not quietly trash existing repo work
-- checks that make the tool feel safer to use on client codebases
-
-That is why the current direction leans so hard into ideas like conflict-aware upgrades and doctor checks. If a repo already has its own blocks, I do not want the tool to bulldoze through that reality. I want it to help with a clean merge story.
-
-To me, that is the actual product thesis: the useful thing is not "component distribution" in the abstract. The useful thing is reliable, Payload-aware installation into codebases that already have history, conventions, and sharp edges.
-
-<div class="overflow-hidden rounded-lg border [&_img,p]:m-0 my-6">
-![Payload Kits payload-native integration section](assets/payload-native-moat.png)
-</div>
+Those checks are where I spend much of the maintenance effort. They make the source easier to reuse without asking every developer to rediscover the same setup.
 
 ## What I do not want this to become
 
-I want v1 to stay narrow on purpose.
+I want to keep the scope clear: useful, documented blocks for Payload v3 and Next.js, with an installer that respects the host repository.
 
-I do not want this to become:
-
-- a broad user-generated marketplace
-- a support-everything tool for every frontend stack
-- a compatibility promise across every Payload version
-- a visual novelty contest where the integration story becomes secondary
-
-The version I care about first is much more opinionated than that. I want it focused on Payload v3, Next.js App Router repos, and the repeat-use website blocks that agencies and freelancers actually keep rebuilding. If that narrower version is not solid, then a bigger version is just a larger mess.
-
-Honestly, this is the product I kept wishing existed while I was doing this work for clients. I wanted something that respected how repetitive the problem really was without pretending the integration details did not matter. Payload Kits is my attempt to build that missing layer, and [payload-components.xyz](https://payload-components.xyz/) is the first public home for it.
+The project is community-first. Its MIT source is available to use and contribute to, and the catalog grows through real installs, bug reports and pull requests. That is the kind of project I wanted when I kept rebuilding the same integration work for clients.
 
 ## Links
 
-- [Payload Kits](https://payload-components.xyz/)
+- [Payload Components](https://www.payload-components.xyz/)
+- [Installation guide](https://www.payload-components.xyz/docs/installation)
+- [Source and contributions](https://github.com/Ducksss/payload-components)

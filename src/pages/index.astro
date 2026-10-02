@@ -17,7 +17,7 @@ const archivePosts = await getRecentPosts(4)
 const featuredProjects = await getFeaturedProjects(3)
 const archiveStats = await getArchiveStats()
 const [featuredPost, ...supportingPosts] = archivePosts
-const hackathons = PROFILE.hackathonStats[0]
+const projects = PROFILE.hackathonStats[1]
 const disciplines = [
   {
     label: 'Adoption',
@@ -56,7 +56,7 @@ const disciplines = [
             >Rubber duck debugging</span
           >
           <span class="tag hero__tag hero__tag--b"
-            >{hackathons.value} hackathons</span
+            >{projects.value} Devpost projects</span
           >
           <AsciiObject
             object="duck"
@@ -98,7 +98,7 @@ const disciplines = [
             Chai Pin Zheng / Software engineer
           </p>
           <p class="t-lede hero__lede">
-            I make complex products easier to enter, operate and trust.
+            {LANDING.manifesto}
           </p>
           <div class="hero__actions">
             <Link href="#work" class="btn btn--solid">
@@ -113,17 +113,17 @@ const disciplines = [
         <div class="tree hero__tree hero__tree--now">
           <p>Now / 2026</p>
           <ul>
-            <li>NUS Computer Science</li>
-            <li>Building Payload Kits</li>
-            <li>Open to internships</li>
+            <li>Product Engineer at Reactor School</li>
+            <li>Penultimate-year NUS Computer Science</li>
+            <li>Maintaining Payload Components</li>
           </ul>
         </div>
         <div class="tree hero__tree hero__tree--shipped">
           <p>Shipped / 2022 – 2026</p>
           <ul>
-            <li>MetaLearner onboarding</li>
-            <li>SAF cyber readiness</li>
-            <li>GovTech developer tooling</li>
+            <li>MetaLearner onboarding and charts</li>
+            <li>Taskade automation connectors</li>
+            <li>GovTech tooling and SAF cyber training</li>
           </ul>
         </div>
       </div>
@@ -136,7 +136,7 @@ const disciplines = [
     <span class="field proof__field" aria-hidden="true"></span>
     <div class="site-container">
       <div class="proof__head">
-        <p class="t-label t-muted">Impact / measured in the field</p>
+        <p class="t-label t-muted">Impact / reported outcomes</p>
         <p class="t-label t-muted bracketed">2022 – 2026</p>
       </div>
       <h2 id="proof-title" class="sr-only">

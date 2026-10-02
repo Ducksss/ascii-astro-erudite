@@ -1,6 +1,6 @@
 ---
-name: 'Government Technology Agency'
-description: 'Delivered internal TypeScript tooling, SEO improvements, and automated testing that made government product workflows faster and more reliable.'
+name: 'GovTech Singapore'
+description: 'Built developer tooling, Docsify plugins and automated release checks, contributing to portal growth from 2,500 to 7,400 weekly users.'
 tags:
   [
     'TypeScript',
@@ -13,10 +13,10 @@ tags:
 image: './assets/govtech-card.svg'
 link: '/about#govtech'
 startDate: '2022-04-01'
-endDate: '2023-06-01'
+endDate: '2023-07-01'
 featured: true
-role: 'Full Stack Engineer Intern'
+role: 'Software Engineer Intern'
 status: 'Case study'
-outcome: 'Doubled weekly portal traffic from 2.5k to 6k, cut deployment time by 20 minutes per merge, and improved release confidence through automated regression testing.'
+outcome: 'Contributed to weekly portal traffic growth from 2,500 to 7,400 over six months, shipped a Docsify plugin reaching over 2,000 weekly npm downloads and added regression checks to Amplify and GitLab CI/CD.'
 accent: '#c7b1ff'
 ---

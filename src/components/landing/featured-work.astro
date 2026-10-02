@@ -9,41 +9,38 @@ interface Props {
 }
 
 const { projects } = Astro.props
-const cards: {
-  label: string
-  summary: string
-  surface: 'ink' | 'blue' | 'paper'
-  object: AsciiObjectName
-}[] = [
+const cards: Record<
+  string,
   {
-    label: 'Adoption',
-    summary:
-      'Guided onboarding, clearer charts and a user guide that helps people find their own way.',
-    surface: 'ink',
-    object: 'bars',
-  },
-  {
-    label: 'Readiness',
-    summary:
-      'Automated training systems that lifted efficiency by 70% across 40+ operators.',
-    surface: 'blue',
-    object: 'padlock',
-  },
-  {
-    label: 'Delivery',
-    summary:
-      'Developer tooling, automated release checks and a portal reaching 6k weekly users.',
-    surface: 'paper',
+    label: string
+    object: AsciiObjectName
+  }
+> = {
+  'reactor-school': {
+    label: 'Product engineering',
     object: 'chain',
   },
-]
-const shortName = (name: string) =>
-  name === 'Government Technology Agency' ? 'GovTech' : name
+  'project-a': {
+    label: 'Adoption',
+    object: 'bars',
+  },
+  'project-b': {
+    label: 'Readiness',
+    object: 'padlock',
+  },
+  'project-c': {
+    label: 'Delivery',
+    object: 'chain',
+  },
+}
+const surfaces = ['ink', 'blue', 'paper'] as const
 ---
 
 <section id="work" class="work surface-paper" aria-labelledby="work-title">
   <div class="site-container">
-    <p class="t-label t-muted">Selected work / 2022 – 2026</p>
+    <p class="t-label t-muted">
+      Selected work / product engineering and operations
+    </p>
     <h2 id="work-title" class="t-statement work__statement">
       Strong technology only matters when people can use it.
       <span class="t-dim">That's where I come in.</span>
@@ -52,9 +49,13 @@ const shortName = (name: string) =>
     <div class="work__grid">
       {
         projects.map((project, index) => {
-          const card = cards[index % cards.length]
+          const card = cards[project.id] ?? {
+            label: 'Engineering',
+            object: 'cursor' as const,
+          }
+          const surface = surfaces[index % surfaces.length]
           return (
-            <article class:list={['work-card', `work-card--${card.surface}`]}>
+            <article class:list={['work-card', `work-card--${surface}`]}>
               <span class="tab work-card__tab">
                 {String(index + 1).padStart(2, '0')} / {card.label}
               </span>
@@ -64,21 +65,19 @@ const shortName = (name: string) =>
                 class="frame-double work-card__frame"
               >
                 <div
-                  class={`frame-double__panel work-card__panel surface-${card.surface}`}
+                  class={`frame-double__panel work-card__panel surface-${surface}`}
                 >
                   <div class="work-card__art" aria-hidden="true">
                     <AsciiObject
                       object={card.object}
-                      tone={card.surface}
+                      tone={surface}
                       cols={78}
                       rows={46}
                       zoom={card.object === 'chain' ? 1.02 : 0.98}
-                      invert={card.surface === 'paper'}
-                      class={
-                        card.surface === 'ink' ? 'ascii--bright' : undefined
-                      }
+                      invert={surface === 'paper'}
+                      class={surface === 'ink' ? 'ascii--bright' : undefined}
                       trails={
-                        card.surface === 'blue'
+                        surface === 'blue'
                           ? { density: 0.3, length: 22, side: 'left' }
                           : false
                       }
@@ -87,10 +86,8 @@ const shortName = (name: string) =>
                   </div>
                   <div class="work-card__body">
                     <p class="t-label t-muted">{project.data.role}</p>
-                    <h3>{shortName(project.data.name)}</h3>
-                    <p class="work-card__summary">
-                      {card.summary ?? project.data.description}
-                    </p>
+                    <h3>{project.data.name}</h3>
+                    <p class="work-card__summary">{project.data.description}</p>
                     <span class="work-card__action t-label">
                       Explore the work <span aria-hidden="true">↗</span>
                     </span>

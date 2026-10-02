@@ -160,6 +160,24 @@ Content schemas are defined in `src/content.config.ts`.
 - Author profiles live in `src/content/authors/`
 - Project entries live in `src/content/projects/`
 
+Profile content was reconciled with Chai's second brain on 3 October 2026.
+Career and education use the current personal profile and saved product-design
+CV. ReactorOS, Resumify, LaunchPad and The Collective use their project notes,
+and client work preserves the collaborators credited in the LinkedIn archive.
+Historical impact figures are source-reported, rather than fresh measurements.
+The Devpost figures are a dated 14 September snapshot of joined events,
+distinct projects and project-to-event submission links. Joined events include
+registrations, and repeated submissions can reuse a project.
+
+When refreshing the profile, update `src/consts.ts`, the author bio, project
+entries and homepage current-work copy together, then run `npm run verify`.
+Featured cards read each project's description and choose their illustration
+by project ID, so changing the selection cannot attach another role's claims.
+Use year-only dates when employment month boundaries conflict, keep expected
+graduation marked as an estimate, and omit disputed award rankings. Retain
+publication dates and URLs when correcting older articles, and add a dated
+update note. Private evidence links and personal identifiers stay in the vault.
+
 Example blog post frontmatter:
 
 ```mdx
