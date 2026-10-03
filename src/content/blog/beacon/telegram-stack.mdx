@@ -1,141 +1,61 @@
 ---
-title: "Wiring Up Beacon's Telegram Stack Fast"
-description: 'The one-hour Beacon stack: Next.js dashboard, Telegram bot delivery, webhook handling, poll collation, and Supabase-backed state.'
+title: 'Connecting Telegram polls back to one question'
+description: 'How Beacon maps one broadcast to several Telegram polls, replaces changed answers and combines votes without confusing them with unique people.'
 date: 2026-03-29
+updated: 2026-10-03
 tags: ['hackathons', 'telegram', 'nextjs', 'supabase']
 authors: ['chai-pin-zheng']
 order: 2
 draft: false
 ---
 
-## The stack had to hold the story together
+Sending the same poll to three Telegram chats creates three polls, each with its own ID. A committee wants one answer to its question, but the bot receives votes attached to those separate IDs. Beacon needs to preserve that relationship before it can produce a useful total.
 
-Beacon came together in about an hour, so I was not trying to design the perfect architecture. I was trying to build a stack with good enough edges that the dashboard, Telegram delivery, and poll summaries would all feel real.
+This chapter follows the [repository version](https://github.com/Ducksss/beacon/tree/cfaabc3612e15506dfa7f89d6ab99efe12b5d91f), which includes changes after the hackathon. The app uses Next.js route handlers to call the Telegram Bot API and a Supabase database to retain the message and poll mappings.
 
-### What I needed from the stack
+## The IDs that join the system together
 
-That meant I cared about a few things more than everything else:
+For an announcement, Beacon creates a broadcast row, sends a message to each target chat and stores the returned message ID alongside that chat's ID. Corrections can then address the right copy.
 
-- the dashboard had to feel responsive and coherent
-- Telegram delivery had to sound real, not hand-wavy
-- poll data had to flow back into something centralized
-- the stack had to be simple enough that I could reason about it quickly
+A poll adds a master question, its ordered options and a mapping for every Telegram poll created by the send:
 
-That pushed Beacon toward a very practical setup: **Next.js + React** for the app surface, **Telegram Bot API** for delivery, and **Supabase** for storage and backend state. Boring in the right places, which I mean as a compliment.
-
-## Start With The System Shape
-
-At a high level, Beacon worked like this:
-
-```text
-Committee operator
-  -> Beacon dashboard
-  -> Next.js API route
-  -> Telegram Bot API
-  -> Target house chats
-
-Telegram updates / poll activity
-  -> webhook handler
-  -> Supabase records
-  -> dashboard analytics + history
+```text wrap=false
+broadcasts
+  |
+  +--> polls: one master question
+         |
+         +--> poll_options: option 0, option 1, ...
+         |
+         +--> telegram_polls
+                poll A --> master question + chat A
+                poll B --> master question + chat B
+                poll C --> master question + chat C
+                   |
+                   +--> votes: Telegram poll + user + option index
 ```
 
-### Control plane, execution layer, memory
+The [schema](https://github.com/Ducksss/beacon/blob/cfaabc3612e15506dfa7f89d6ab99efe12b5d91f/web/supabase/schema.sql) stores option indexes because Telegram answers identify selected options by their position. Keeping the same order in every chat lets the dashboard combine option 0 with option 0, rather than trying to match answers by their wording.
 
-I liked this shape because it kept the whole system easy to explain. The dashboard was the control plane. Telegram was the execution layer. Supabase was the memory. If I cannot explain the system cleanly, I start distrusting it a little.
+## A changed answer replaces the old one
 
-## The Interface Could Not Feel Fake
+Beacon sends single-choice, non-anonymous polls. Telegram provides individual [poll-answer updates](https://core.telegram.org/bots/api#update) for non-anonymous polls sent by the bot, and an update represents a user's changed selection rather than an instruction to increment a permanent counter.
 
-### Why the dashboard mattered
+The [update handler](https://github.com/Ducksss/beacon/blob/cfaabc3612e15506dfa7f89d6ab99efe12b5d91f/web/src/lib/telegram-updates.ts) deletes the existing vote for that Telegram poll and user, then inserts the newly selected option. If the answer contains no selected option, it leaves the old vote deleted. A database uniqueness constraint on `(telegram_poll_id, user_id)` also prevents multiple rows for the same person in the same poll copy.
 
-A lot of messaging tools die at the moment they start feeling like a raw admin panel. I did not want Beacon to feel like that. The second the interface feels fake, the whole product starts collapsing in my head.
+For example, changing from option 0 to option 1 should leave one row for option 1, while withdrawing the answer should leave none. Counting incoming events would get both cases wrong because an event is not necessarily an additional voter.
 
-The dashboard had to sell the idea that committee communication could be calm, organized, and centralized even if the delivery still happened across decentralized chats. So I treated the interface as part of the architecture, not just decoration. I care a lot about that because UI is very often the part that tells you whether the backend idea is actually believable.
+## Combined votes are not unique people
 
-The dashboard gave Beacon a place to show:
+The dashboard looks up all Telegram poll IDs belonging to a master question, then counts the stored answers by option index. This produces a combined tally across the chat copies.
 
-- connected houses
-- recent broadcasts
-- activity and poll summaries
-- categories that made outreach history understandable
+The uniqueness constraint applies to each Telegram poll, though, rather than to the master question. Someone in two house chats can answer both copies and contribute two votes to the combined result. The tally is therefore a count of recorded answers, not necessarily a count of distinct people answering that question.
 
-Without that surface, the product would have collapsed back into "just a bot."
+Non-anonymous polls also mean the database holds Telegram user IDs. That is a real trade-off in this implementation, even when the dashboard presents only aggregate results.
 
-<div class="grid grid-cols-1 gap-4 [&_img,p]:m-0">
-  <div class="overflow-hidden rounded-lg border">
-    ![Beacon dashboard](assets/dashboard.png)
-  </div>
-  <div class="overflow-hidden rounded-lg border">
-    ![Beacon categories](assets/categories.png)
-  </div>
-</div>
+## Receiving answers has its own failure cases
 
-## Telegram Forced Certain Decisions
+The repository has two paths for incoming updates. A configured webhook forwards them to a route handler. Without a webhook, a dashboard request can fetch pending updates through `getUpdates`. Telegram treats [webhooks and polling](https://core.telegram.org/bots/api#getting-updates) as alternative ways to receive updates, so the fallback first checks whether a webhook is set.
 
-### What the platform constrained
+Neither path makes the prototype a reliable vote ledger by itself. The vote handler performs deletion and insertion as separate database operations and does not check their returned errors. If replacement fails after deletion, the old answer is gone without a new one being stored.
 
-One of the most useful things about building on top of Telegram is also one of the most annoying: it gives you a real distribution surface, but it absolutely does not let you ignore its rules. Which is good, honestly. It forces the product to stop lying.
-
-That shaped several decisions:
-
-- announcements and polls needed different handling
-- sent content had to be logged so the dashboard could stay grounded in reality
-- edits had to respect what Telegram actually allows after a message is live
-- poll activity had to be mapped back from multiple chat instances into one Beacon-level view
-
-This is the part I find interesting in products like Beacon. The product is only credible if the admin surface and the external platform stay in sync. Otherwise the UI is lying. And if the UI is lying, then the whole thing starts feeling like cosplay software.
-
-## Poll Collation Was The Core Trick
-
-### One broadcast, many distributed poll instances
-
-The most product-defining backend problem was poll collation. This was the part that made Beacon feel like an actual system to me rather than a one-way sending tool.
-
-A single Beacon poll broadcast could create multiple Telegram poll instances, one per house chat. If I wanted the dashboard to feel useful, I could not leave those as isolated chat artifacts. I needed a way to treat them as one campaign with many distributed copies.
-
-So the right mental model was:
-
-- one **master broadcast**
-- many **chat-level deliveries**
-- many **poll instances**
-- one **centralized summary**
-
-That is where Supabase helped a lot. It gave Beacon a place to log the outgoing broadcast, store chat mappings, and relate poll responses back to a common source of truth. That is the kind of boring infrastructure work that makes a demo feel much less fake. I actually like this kind of boring when it is attached to a clean product idea.
-
-## Why Supabase Worked
-
-Supabase was the right choice for the speed of this build because it let me move without inventing too much infrastructure from scratch. I did not want to waste precious time pretending I was above using tools that make this easier.
-
-I needed:
-
-- a database I could shape quickly
-- an easy way to persist broadcasts, chats, and committee state
-- a backend-friendly place for the dashboard and webhook flow to meet
-
-That is exactly the kind of job Supabase is good at in a hackathon setting. It let the architecture stay lightweight while still giving Beacon enough structure to support real workflow logic.
-
-## What I Wired First
-
-The main technical decisions were all in service of the same goal: make the system believable as quickly as possible. I was not trying to win points for complexity. I was trying to make the whole thing hold together without wobbling.
-
-I wired up:
-
-- dashboard routes because the product needed an operator surface
-- Telegram send flows because the idea falls apart if delivery is vague
-- webhook handling because the product needed a return path, not just outbound messaging
-- poll collation because centralized visibility is the whole point
-- category and history support because they made the interface feel like an actual working system
-
-I was definitely feeling the rush while doing it, but that helped me keep the implementation honest. I only had time for the parts that strengthened the loop. Weirdly enough, that made me trust the final shape more, not less.
-
-## What I'd Add Next
-
-If I were extending Beacon beyond hackathon speed, the next steps are pretty clear:
-
-- stronger role-based access control
-- scheduling for planned campaigns
-- richer analytics across houses
-- smoother onboarding for bot setup and chat registration
-- more robust media and asset workflows
-
-But for the one-hour version of Beacon, the architecture did what it needed to do. It held the product story together, and that was the real job.
+The [webhook route](https://github.com/Ducksss/beacon/blob/cfaabc3612e15506dfa7f89d6ab99efe12b5d91f/web/src/app/api/webhook/telegram/route.ts) also returns HTTP 200 when its error handler runs. Telegram [retries unsuccessful webhook requests](https://core.telegram.org/bots/api#setwebhook), so acknowledging an error removes that opportunity to receive the update again. A dashboard can combine only the answers that made it into the database, and these failure cases can leave a tally incomplete even when the chart loads normally.

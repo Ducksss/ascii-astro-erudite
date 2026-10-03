@@ -1,238 +1,239 @@
 ---
-import LandingAsciiField from '@/components/landing/ascii-field.astro'
+import BrandMark from '@/components/brand-mark.astro'
 import Link from '@/components/link.astro'
+import { getCombinedReadingTime } from '@/lib/data-utils'
 import { formatDate } from '@/lib/utils'
+import { Image } from 'astro:assets'
 import type { CollectionEntry } from 'astro:content'
 
 interface Props {
-  title: string
-  intro: string
   featuredPost: CollectionEntry<'blog'> | null
   supportingPosts: CollectionEntry<'blog'>[]
-  stats: {
-    postCount: number
-    tagCount: number
-    yearSpan: string
-  }
+  stats: { postCount: number; tagCount: number; yearSpan: string }
 }
 
-const { title, intro, featuredPost, supportingPosts, stats } = Astro.props
+const { featuredPost, supportingPosts, stats } = Astro.props
+const posts = featuredPost
+  ? [featuredPost, ...supportingPosts]
+  : supportingPosts
+const readingTimes = await Promise.all(
+  posts.map((post) => getCombinedReadingTime(post.id)),
+)
 ---
 
-<section class="relative border-b border-white/10 bg-[#040404]">
-  <LandingAsciiField variant="ambient" class="opacity-[0.14]" />
-  <div
-    class="mx-auto max-w-[1400px] px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24"
-  >
-    <div
-      class="flex flex-col gap-4 pb-6 sm:gap-5 sm:pb-8 lg:flex-row lg:items-end lg:justify-between"
-    >
-      <div class="max-w-2xl">
-        <p class="landing-section-label">Archive proof</p>
-        <h2 class="landing-section-title mt-4 max-w-2xl">{title}</h2>
-        <p class="mt-6 max-w-2xl text-base leading-7 text-white/58 sm:text-lg">
-          {intro}
-        </p>
-      </div>
-      <Link
-        href="/blog"
-        class="font-mono text-[0.72rem] tracking-[0.26em] text-white/52 uppercase transition-colors hover:text-white"
-      >
-        Open full archive
-      </Link>
+<section class="notes surface-paper" aria-labelledby="notes-title">
+  <span class="field notes__pixels" aria-hidden="true"></span>
+  <div class="site-container">
+    <div class="notes__head">
+      <p class="t-label t-muted">Field notes / the thinking behind the doing</p>
+      <h2 id="notes-title" class="t-title notes__title">
+        Notes from the work<span class="t-dim">…</span>
+      </h2>
+      <span class="rule-dotted" aria-hidden="true"></span>
     </div>
 
-    <div
-      class="mt-8 grid gap-8 sm:mt-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(22rem,0.92fr)]"
-    >
+    <div class="notes__grid">
       {
-        featuredPost ? (
-          <article class="landing-archive-feature">
-            <p class="landing-archive-feature__meta">
-              <span>{formatDate(featuredPost.data.date)}</span>
-              <span>
-                {featuredPost.data.tags?.slice(0, 2).join(' / ') ??
-                  'latest note'}
-              </span>
-            </p>
-            <h3 class="landing-archive-feature__title">
-              {featuredPost.data.title}
-            </h3>
-            <p class="landing-archive-feature__description">
-              {featuredPost.data.description}
-            </p>
-            <Link
-              href={`/blog/${featuredPost.id}`}
-              class="landing-archive-feature__link"
-            >
-              Enter the note
+        posts.map((post, index) => (
+          <article class="note-card">
+            <Link href={`/blog/${post.id}`} class="note-card__link">
+              <p class="bracketed t-label note-card__kicker">
+                Note {String(index + 1).padStart(2, '0')}
+              </p>
+              <h3>{post.data.title}</h3>
+              <p class="note-card__quote">{post.data.description}</p>
+              <span
+                class="rule-dotted rule-dotted--start note-card__rule"
+                aria-hidden="true"
+              />
+              <div class="note-card__meta">
+                <div>
+                  <p class="t-label t-muted">{formatDate(post.data.date)}</p>
+                  <p>{readingTimes[index]}</p>
+                </div>
+                <span class="note-card__thumb" aria-hidden="true">
+                  {post.data.image ? (
+                    <Image
+                      src={post.data.image}
+                      alt=""
+                      width={112}
+                      height={112}
+                      fit="cover"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <BrandMark />
+                  )}
+                </span>
+              </div>
             </Link>
           </article>
-        ) : (
-          <div class="landing-archive-feature text-white/52">
-            No published writing yet. The archive section is ready when the
-            first post lands.
-          </div>
-        )
+        ))
       }
+    </div>
 
-      <div class="hidden space-y-6 sm:block">
-        <div class="grid grid-cols-3 gap-px border border-white/10 bg-white/5">
-          <div class="landing-archive-stat">
-            <span class="landing-archive-stat__value">
-              {String(stats.postCount).padStart(2, '0')}
-            </span>
-            <span class="landing-archive-stat__label">Posts</span>
-          </div>
-          <div class="landing-archive-stat">
-            <span class="landing-archive-stat__value">
-              {String(stats.tagCount).padStart(2, '0')}
-            </span>
-            <span class="landing-archive-stat__label">Tags</span>
-          </div>
-          <div class="landing-archive-stat">
-            <span class="landing-archive-stat__value">{stats.yearSpan}</span>
-            <span class="landing-archive-stat__label">Timeline</span>
-          </div>
-        </div>
-
-        <div class="border border-white/10 bg-white/[0.02]">
-          {
-            supportingPosts.map((post) => (
-              <article class="landing-archive-row">
-                <Link href={`/blog/${post.id}`} class="block">
-                  <p class="landing-archive-row__meta">
-                    {formatDate(post.data.date)}
-                  </p>
-                  <h4 class="landing-archive-row__title">{post.data.title}</h4>
-                  <p class="landing-archive-row__description">
-                    {post.data.description}
-                  </p>
-                </Link>
-              </article>
-            ))
-          }
-        </div>
-      </div>
+    <div class="notes__directory">
+      <p class="t-label t-muted">
+        {String(stats.postCount).padStart(2, '0')} notes /
+        {String(stats.tagCount).padStart(2, '0')} topics / {stats.yearSpan}
+      </p>
+      <Link href="/blog" class="btn btn--solid">
+        Open the archive <span aria-hidden="true">↗</span>
+      </Link>
     </div>
   </div>
+  <span class="field notes__skyline" aria-hidden="true"></span>
 </section>
 
 <style>
-  .landing-archive-feature {
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background:
-      linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.04),
-        rgba(255, 255, 255, 0.015)
-      ),
-      rgba(0, 0, 0, 0.56);
-    padding: 1.5rem;
+  .notes {
+    overflow: hidden;
+    padding-block: var(--section-y) calc(var(--section-y) + 120px);
   }
 
-  .landing-archive-feature__meta,
-  .landing-archive-row__meta,
-  .landing-archive-stat__label {
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.42);
+  .notes > .site-container {
+    position: relative;
+    z-index: 1;
   }
 
-  .landing-archive-feature__meta {
+  .notes__title {
+    margin-top: 24px;
+  }
+
+  .notes__head .rule-dotted {
+    margin-top: clamp(28px, 3.5vw, 48px);
+  }
+
+  .notes__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: clamp(40px, 5vw, 64px);
+  }
+
+  .note-card {
+    background: var(--paper-raised);
+    outline: 1px solid #e3e3e3;
+    outline-offset: -1px;
+    transition: outline-color 0.2s;
+  }
+
+  .note-card:hover {
+    outline-color: var(--ink);
+  }
+
+  .note-card__link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 22px 22px 18px;
+  }
+
+  .note-card__kicker {
+    color: var(--muted-foreground);
+  }
+
+  .note-card h3 {
+    margin-top: 28px;
+    font-size: clamp(1.3rem, 1.75vw, 1.6rem);
+    font-weight: 400;
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  .note-card__quote {
+    margin-top: 16px;
+    margin-bottom: 30px;
+    color: #3f3f3f;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+
+  .note-card__rule {
+    margin-top: auto;
+    margin-left: 6px;
+  }
+
+  .note-card__meta {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 18px;
+    font-size: 0.875rem;
+  }
+
+  .note-card__meta p + p {
+    margin-top: 4px;
+  }
+
+  .note-card__thumb {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    overflow: hidden;
+    background: var(--blue);
+    color: #fff;
+  }
+
+  .note-card__thumb :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: url('#duotone-blue') contrast(1.1);
+  }
+
+  .note-card__thumb :global(svg) {
+    width: 24px;
+    height: 24px;
+  }
+
+  .notes__directory {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.85rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 36px;
   }
 
-  .landing-archive-feature__title {
-    margin-top: 1.4rem;
-    max-width: 16ch;
-    font-size: clamp(2.2rem, 4vw, 4rem);
-    line-height: 0.94;
-    letter-spacing: -0.07em;
-    font-weight: 600;
-    color: white;
+  .notes__pixels {
+    top: 34%;
+    right: 0;
+    width: 392px;
+    height: 504px;
+    color: var(--blue);
+    -webkit-mask: url('/fields/pixels.svg') right center / contain no-repeat;
+    mask: url('/fields/pixels.svg') right center / contain no-repeat;
   }
 
-  .landing-archive-feature__description {
-    margin-top: 1.25rem;
-    max-width: 36rem;
-    font-size: 1rem;
-    line-height: 1.8;
-    color: rgba(255, 255, 255, 0.6);
+  .notes__skyline {
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 240px;
+    color: #b4b4b4;
+    -webkit-mask: url('/fields/cross-skyline.svg') left bottom repeat-x;
+    mask: url('/fields/cross-skyline.svg') left bottom repeat-x;
   }
 
-  .landing-archive-feature__link {
-    margin-top: 2rem;
-    width: fit-content;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.24);
-    padding-bottom: 0.2rem;
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.26em;
-    text-transform: uppercase;
-    color: white;
+  @media (max-width: 1023px) {
+    .notes__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 
-  .landing-archive-stat {
-    display: flex;
-    min-height: 8rem;
-    flex-direction: column;
-    justify-content: flex-end;
-    gap: 0.55rem;
-    border-right: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 1rem;
-  }
+  @media (max-width: 639px) {
+    .notes__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
 
-  .landing-archive-stat:last-child {
-    border-right: 0;
-  }
-
-  .landing-archive-stat__value {
-    font-size: clamp(1.3rem, 2vw, 1.8rem);
-    line-height: 1;
-    letter-spacing: -0.05em;
-    font-weight: 600;
-    color: white;
-  }
-
-  .landing-archive-row {
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 1rem 1.1rem;
-    transition: background-color 0.3s ease;
-  }
-
-  .landing-archive-row:first-child {
-    border-top: 0;
-  }
-
-  .landing-archive-row:hover {
-    background: rgba(255, 255, 255, 0.03);
-  }
-
-  .landing-archive-row__title {
-    margin-top: 0.75rem;
-    font-size: 1.3rem;
-    line-height: 1.15;
-    letter-spacing: -0.04em;
-    font-weight: 500;
-    color: white;
-  }
-
-  .landing-archive-row__description {
-    margin-top: 0.7rem;
-    font-size: 0.95rem;
-    line-height: 1.7;
-    color: rgba(255, 255, 255, 0.54);
-  }
-
-  @media (max-width: 767px) {
-    .landing-archive-stat {
-      min-height: 6.5rem;
-      padding: 0.85rem;
+    .notes__pixels {
+      width: 200px;
+      height: 260px;
     }
   }
 </style>

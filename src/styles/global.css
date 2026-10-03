@@ -4,10 +4,10 @@
 
 @theme inline {
   --font-sans:
-    Geist, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
-    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    'Space Grotesk Variable', 'Space Grotesk', ui-sans-serif, system-ui,
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
   --font-mono:
-    Geist Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     'Liberation Mono', 'Courier New', monospace;
 
   --color-background: var(--background);
@@ -27,14 +27,6 @@
 }
 
 @font-face {
-  font-family: 'Geist';
-  src: url('/fonts/GeistVF.woff2') format('woff2-variations');
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
   font-family: 'Geist Mono';
   src: url('/fonts/GeistMonoVF.woff2') format('woff2-variations');
   font-weight: 100 900;
@@ -42,28 +34,32 @@
   font-display: swap;
 }
 
+/* Three flat surfaces. See DESIGN.md before adding a colour. */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-}
+  --ink: #101010;
+  --ink-raised: #1b1b1b;
+  --blue: #202ce3;
+  --blue-pressed: #1922c2;
+  --paper: #f6f6f6;
+  --paper-raised: #fcfcfc;
+  --grey-1: #dcdcdc;
+  --grey-2: #a3a3a3;
+  --grey-3: #6e6e6e;
+  --grey-4: #3a3a3a;
 
-[data-theme='dark'] {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --ring: oklch(0.556 0 0);
+  --font-display: var(--font-sans);
+  --font-poster: 'Mona Sans Variable', 'Mona Sans', 'Arial Narrow', sans-serif;
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --primary: var(--blue);
+  --primary-foreground: #fff;
+  --muted: #ececec;
+  --muted-foreground: #5f5f5f;
+  --destructive: #c4321f;
+  --border: #d4d4d4;
+  --rule: #b9b9b9;
+  --ring: var(--blue);
 }
 
 @layer base {
@@ -72,7 +68,28 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    @apply border-border outline-ring/50 tracking-tight;
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    background: var(--ink);
+    color-scheme: light;
+    scroll-padding-top: 96px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-feature-settings: 'kern';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background: var(--blue);
+    color: #fff;
   }
 
   a,
@@ -80,10 +97,10 @@
   [role='button'],
   [tabindex]:not([tabindex='-1']) {
     touch-action: manipulation;
-    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.14);
+    -webkit-tap-highlight-color: rgb(32 44 227 / 0.18);
   }
 
-  a:focus-visible {
+  :focus-visible {
     outline: 2px solid var(--primary);
     outline-offset: 3px;
   }
@@ -99,22 +116,18 @@
   left: 1rem;
   z-index: 80;
   transform: translateY(-180%);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: rgba(5, 5, 5, 0.92);
-  padding: 0.75rem 0.95rem;
-  color: white;
+  background: #fff;
+  padding: 0.8rem 1rem;
+  color: var(--ink);
   font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.24em;
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  transition:
-    transform 0.24s ease,
-    border-color 0.24s ease;
+  transition: transform 0.2s ease;
 }
 
 .skip-link:focus-visible {
   transform: translateY(0);
-  border-color: rgba(255, 255, 255, 0.34);
-  outline: 2px solid rgba(255, 255, 255, 0.72);
-  outline-offset: 3px;
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
 }

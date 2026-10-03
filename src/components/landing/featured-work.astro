@@ -1,441 +1,233 @@
 ---
-import LandingAsciiField from '@/components/landing/ascii-field.astro'
+import AsciiObject from '@/components/ascii-object.astro'
 import Link from '@/components/link.astro'
-import { Image } from 'astro:assets'
+import type { AsciiObjectName } from '@/lib/ascii'
 import type { CollectionEntry } from 'astro:content'
 
 interface Props {
-  title: string
-  intro: string
   projects: CollectionEntry<'projects'>[]
 }
 
-const { title, intro, projects } = Astro.props
-const [leadProject, ...secondaryProjects] = projects
+const { projects } = Astro.props
+const cards: Record<
+  string,
+  {
+    label: string
+    object: AsciiObjectName
+  }
+> = {
+  'reactor-school': {
+    label: 'Product engineering',
+    object: 'chain',
+  },
+  'project-a': {
+    label: 'Adoption',
+    object: 'bars',
+  },
+  'project-b': {
+    label: 'Readiness',
+    object: 'padlock',
+  },
+  'project-c': {
+    label: 'Delivery',
+    object: 'chain',
+  },
+}
+const surfaces = ['ink', 'blue', 'paper'] as const
 ---
 
-<section class="relative overflow-hidden border-b border-white/10 bg-[#050505]">
-  <LandingAsciiField variant="ambient" class="opacity-[0.2] mix-blend-screen" />
-  <div
-    class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_46%)]"
-  >
-  </div>
-  <div
-    class="mx-auto max-w-[1400px] px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24"
-  >
-    <div class="max-w-3xl">
-      <p class="landing-section-label">Featured work</p>
-      <h2 class="landing-section-title mt-4 max-w-2xl">{title}</h2>
-      <p class="mt-6 max-w-2xl text-base leading-7 text-white/58 sm:text-lg">
-        {intro}
-      </p>
-    </div>
+<section id="work" class="work surface-paper" aria-labelledby="work-title">
+  <div class="site-container">
+    <p class="t-label t-muted">
+      Selected work / product engineering and operations
+    </p>
+    <h2 id="work-title" class="t-statement work__statement">
+      Strong technology only matters when people can use it.
+      <span class="t-dim">That's where I come in.</span>
+    </h2>
 
-    <div class="mt-10 grid gap-4 lg:grid-cols-12">
+    <div class="work__grid">
       {
-        leadProject && (
-          <article
-            data-work-card
-            class="landing-work-card landing-work-card--lead lg:col-span-7"
-            style={`--landing-accent:${leadProject.data.accent ?? '#d8d8d8'}`}
-          >
-            <div class="landing-work-card__haze" />
-            <div class="landing-work-card__grain" />
-            <div class="landing-work-card__copy">
-              <div class="landing-work-card__meta">
-                <span>{leadProject.data.role ?? 'Role in progress'}</span>
-                <span>{leadProject.data.status ?? 'Placeholder track'}</span>
-              </div>
-              <h3 class="landing-work-card__title">{leadProject.data.name}</h3>
-              <p class="landing-work-card__description">
-                {leadProject.data.description}
-              </p>
-              <p class="landing-work-card__proof-label">Anchored outcome</p>
-              <p class="landing-work-card__outcome">
-                {leadProject.data.outcome ??
-                  'Structured as a richer case-study surface with room for process, outcomes, and references.'}
-              </p>
-              <div class="landing-work-card__tags">
-                {leadProject.data.tags.map((tag, index) => (
-                  <span
-                    class:list={[
-                      'landing-work-card__tag',
-                      index >= 3 && 'hidden sm:inline-flex',
-                    ]}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
+        projects.map((project, index) => {
+          const card = cards[project.id] ?? {
+            label: 'Engineering',
+            object: 'cursor' as const,
+          }
+          const surface = surfaces[index % surfaces.length]
+          return (
+            <article class:list={['work-card', `work-card--${surface}`]}>
+              <span class="tab work-card__tab">
+                {String(index + 1).padStart(2, '0')} / {card.label}
+              </span>
               <Link
-                href={leadProject.data.link}
-                class="landing-work-card__link"
-                external={leadProject.data.link.startsWith('http')}
+                href={project.data.link}
+                external={project.data.link.startsWith('http')}
+                class="frame-double work-card__frame"
               >
-                Open case study
-              </Link>
-            </div>
-            <div class="landing-work-card__image-shell">
-              <Image
-                src={leadProject.data.image}
-                alt={leadProject.data.name}
-                width={1200}
-                height={630}
-                class="landing-work-card__image"
-              />
-            </div>
-          </article>
-        )
-      }
-
-      <div class="grid gap-4 lg:col-span-5">
-        {
-          secondaryProjects.map((project) => (
-            <article
-              data-work-card
-              class="landing-work-card landing-work-card--compact"
-              style={`--landing-accent:${project.data.accent ?? '#d8d8d8'}`}
-            >
-              <div class="landing-work-card__haze" />
-              <div class="landing-work-card__grain" />
-              <div class="landing-work-card__copy">
-                <div class="landing-work-card__meta">
-                  <span>{project.data.role ?? 'Role in progress'}</span>
-                  <span>{project.data.status ?? 'Placeholder track'}</span>
-                </div>
-                <h3 class="landing-work-card__title">{project.data.name}</h3>
-                <p class="landing-work-card__description">
-                  {project.data.description}
-                </p>
-                <p class="landing-work-card__proof-label">Anchored outcome</p>
-                <p class="landing-work-card__outcome">
-                  {project.data.outcome ??
-                    'Prepared as a future case study with stronger metadata and annotated visual direction.'}
-                </p>
-                <div class="landing-work-card__tags">
-                  {project.data.tags.map((tag, index) => (
-                    <span
-                      class:list={[
-                        'landing-work-card__tag',
-                        index >= 2 && 'hidden sm:inline-flex',
-                      ]}
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <Link
-                  href={project.data.link}
-                  class="landing-work-card__link"
-                  external={project.data.link.startsWith('http')}
+                <div
+                  class={`frame-double__panel work-card__panel surface-${surface}`}
                 >
-                  Open case study
-                </Link>
-              </div>
-              <div class="landing-work-card__image-shell landing-work-card__image-shell--compact">
-                <Image
-                  src={project.data.image}
-                  alt={project.data.name}
-                  width={1200}
-                  height={630}
-                  class="landing-work-card__image"
-                />
-              </div>
+                  <div class="work-card__art" aria-hidden="true">
+                    <AsciiObject
+                      object={card.object}
+                      tone={surface}
+                      cols={78}
+                      rows={46}
+                      zoom={card.object === 'chain' ? 1.02 : 0.98}
+                      invert={surface === 'paper'}
+                      class={surface === 'ink' ? 'ascii--bright' : undefined}
+                      trails={
+                        surface === 'blue'
+                          ? { density: 0.3, length: 22, side: 'left' }
+                          : false
+                      }
+                      size="clamp(3.6px, 0.5vw, 7.2px)"
+                    />
+                  </div>
+                  <div class="work-card__body">
+                    <p class="t-label t-muted">{project.data.role}</p>
+                    <h3>{project.data.name}</h3>
+                    <p class="work-card__summary">{project.data.description}</p>
+                    <span class="work-card__action t-label">
+                      Explore the work <span aria-hidden="true">↗</span>
+                    </span>
+                  </div>
+                </div>
+              </Link>
             </article>
-          ))
-        }
-      </div>
+          )
+        })
+      }
     </div>
   </div>
 </section>
 
-<script is:inline data-astro-rerun>
-  ;(() => {
-    const script = document.currentScript
-    const root = script?.previousElementSibling
-    if (!(root instanceof HTMLElement)) return
-
-    const reducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches
-    if (reducedMotion) return
-
-    const cards = [...root.querySelectorAll('[data-work-card]')]
-
-    const onMove = (card, event) => {
-      const rect = card.getBoundingClientRect()
-      const x = (event.clientX - rect.left) / rect.width
-      const y = (event.clientY - rect.top) / rect.height
-      card.style.setProperty('--work-x', `${x}`)
-      card.style.setProperty('--work-y', `${y}`)
-    }
-
-    const onLeave = (card) => {
-      card.style.setProperty('--work-x', '0.5')
-      card.style.setProperty('--work-y', '0.5')
-    }
-
-    const cleanups = []
-
-    cards.forEach((card) => {
-      card.style.setProperty('--work-x', '0.5')
-      card.style.setProperty('--work-y', '0.5')
-
-      const handleMove = (event) => onMove(card, event)
-      const handleLeave = () => onLeave(card)
-
-      card.addEventListener('pointermove', handleMove)
-      card.addEventListener('pointerleave', handleLeave)
-      cleanups.push(() => {
-        card.removeEventListener('pointermove', handleMove)
-        card.removeEventListener('pointerleave', handleLeave)
-      })
-    })
-
-    const cleanup = () => cleanups.forEach((teardown) => teardown())
-    document.addEventListener('astro:before-swap', cleanup, { once: true })
-    window.addEventListener('pagehide', cleanup, { once: true })
-  })()
-</script>
-
 <style>
-  .landing-work-card {
-    --work-x: 0.5;
-    --work-y: 0.5;
+  .work {
+    padding-block: var(--section-y) calc(var(--section-y) * 1.1);
+    scroll-margin-top: 72px;
+  }
+
+  .work__statement {
+    max-width: 21ch;
+    margin-top: 28px;
+  }
+
+  .work__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+    gap: clamp(24px, 4.5vw, 72px);
+    margin-top: clamp(72px, 8vw, 120px);
+  }
+
+  .work-card {
     position: relative;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background:
-      linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.04),
-        rgba(255, 255, 255, 0.015)
-      ),
-      rgba(0, 0, 0, 0.58);
-    transition:
-      border-color 0.35s ease,
-      transform 0.35s ease,
-      background-color 0.35s ease;
-    min-height: 27rem;
-    transform: perspective(900px) rotateX(calc((var(--work-y) - 0.5) * -4deg))
-      rotateY(calc((var(--work-x) - 0.5) * 6deg)) translateZ(0);
-    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.32);
+    --frame: #9c9c9c;
+    transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
   }
 
-  .landing-work-card:hover {
-    border-color: rgba(255, 255, 255, 0.24);
+  .work-card:hover {
+    transform: translateY(-6px);
   }
 
-  .landing-work-card__haze {
+  .work-card--ink {
+    margin-top: clamp(80px, 11vw, 168px);
+  }
+
+  .work-card--blue {
+    margin-top: clamp(150px, 19vw, 290px);
+  }
+
+  .work-card__tab {
     position: absolute;
-    inset: auto auto -10% -10%;
-    width: 18rem;
-    height: 18rem;
-    background: radial-gradient(circle, var(--landing-accent), transparent 72%);
-    filter: blur(18px);
-    opacity: 0.18;
-    pointer-events: none;
+    bottom: 100%;
+    left: 0;
   }
 
-  .landing-work-card__grain {
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(
-        to bottom,
-        transparent 0,
-        transparent 13px,
-        rgba(255, 255, 255, 0.03) 14px
-      ),
-      radial-gradient(circle, rgba(255, 255, 255, 0.12) 1px, transparent 1.5px);
-    background-size:
-      100% 14px,
-      12px 12px;
-    mask-image: linear-gradient(180deg, black, transparent);
-    opacity: 0.16;
-    pointer-events: none;
+  .work-card__frame {
+    display: block;
+    background: var(--paper);
   }
 
-  .landing-work-card__copy {
-    position: relative;
-    z-index: 2;
+  .work-card__panel {
     display: flex;
-    height: 100%;
     flex-direction: column;
+    overflow: hidden;
+  }
+
+  .work-card--blue .work-card__panel {
+    flex-direction: column-reverse;
+  }
+
+  .work-card--paper .work-card__panel {
+    --background: var(--paper-raised);
+  }
+
+  .work-card__art {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1.12;
+    overflow: hidden;
+  }
+
+  .work-card__body {
+    padding: 4px 20px 6px;
+  }
+
+  .work-card--blue .work-card__body {
+    padding-top: 22px;
+  }
+
+  .work-card h3 {
+    margin-top: 12px;
+    font-size: clamp(1.5rem, 2.3vw, 2rem);
+    font-weight: 350;
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+  }
+
+  .work-card__summary {
+    margin-top: 12px;
+    color: var(--muted-foreground);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+
+  .work-card__action {
+    display: flex;
+    min-height: 48px;
+    align-items: center;
     justify-content: space-between;
-    gap: 1.2rem;
-    padding: 1.4rem;
-  }
-
-  .landing-work-card--lead .landing-work-card__copy {
-    padding: 1.6rem;
-  }
-
-  .landing-work-card__meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.85rem;
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.46);
-  }
-
-  .landing-work-card__title {
-    max-width: 18ch;
-    font-size: clamp(1.9rem, 4vw, 3.4rem);
-    line-height: 0.92;
-    letter-spacing: -0.07em;
-    font-weight: 600;
-    color: white;
-    text-wrap: balance;
-  }
-
-  .landing-work-card--compact .landing-work-card__title {
-    font-size: clamp(1.8rem, 2vw, 2.5rem);
-  }
-
-  .landing-work-card__description {
-    max-width: 36rem;
-    font-size: 1rem;
-    line-height: 1.8;
-    color: rgba(255, 255, 255, 0.62);
-  }
-
-  .landing-work-card__proof-label {
-    font-family: var(--font-mono);
-    font-size: 0.66rem;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.32);
-  }
-
-  .landing-work-card__outcome {
-    max-width: 32rem;
-    font-size: 0.95rem;
-    line-height: 1.7;
-    color: rgba(255, 255, 255, 0.56);
-  }
-
-  .landing-work-card__tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-  }
-
-  .landing-work-card__tag {
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    padding: 0.45rem 0.6rem;
-    font-family: var(--font-mono);
-    font-size: 0.66rem;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.48);
-  }
-
-  .landing-work-card__link {
-    width: fit-content;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.28);
-    padding-bottom: 0.18rem;
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: white;
-  }
-
-  .landing-work-card__image-shell {
-    position: absolute;
-    right: -6%;
-    bottom: -5%;
-    width: min(54%, 30rem);
-    transform: translate3d(
-      calc((var(--work-x) - 0.5) * 18px),
-      calc((var(--work-y) - 0.5) * 14px),
-      0
-    );
-    transition: transform 0.35s ease;
-    opacity: 0.26;
-    z-index: 1;
-    pointer-events: none;
-  }
-
-  .landing-work-card__image-shell--compact {
-    width: min(44%, 14rem);
-    right: -4%;
-    bottom: -4%;
-    opacity: 0.18;
-  }
-
-  .landing-work-card__image {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    filter: saturate(0.45) contrast(1.08);
-    mix-blend-mode: screen;
+    margin-top: 18px;
+    border-top: 1px dotted var(--rule);
   }
 
   @media (max-width: 1023px) {
-    .landing-work-card {
-      transform: none;
-      min-height: 21.5rem;
+    .work__grid {
+      gap: 20px;
     }
 
-    .landing-work-card__image-shell {
-      width: min(56%, 18rem);
-    }
-  }
-
-  @media (max-width: 639px) {
-    .landing-work-card {
-      min-height: 19.5rem;
-    }
-
-    .landing-work-card__copy {
-      gap: 0.95rem;
-      padding: 1.15rem;
-      justify-content: flex-start;
-    }
-
-    .landing-work-card--lead .landing-work-card__copy {
-      padding: 1.15rem;
-    }
-
-    .landing-work-card__title {
-      max-width: 13ch;
-      font-size: clamp(1.55rem, 9vw, 2.2rem);
-    }
-
-    .landing-work-card__description,
-    .landing-work-card__outcome {
-      display: -webkit-box;
-      overflow: hidden;
-      -webkit-box-orient: vertical;
-    }
-
-    .landing-work-card__description {
-      -webkit-line-clamp: 3;
-    }
-
-    .landing-work-card__outcome {
-      -webkit-line-clamp: 2;
-    }
-
-    .landing-work-card__tags {
-      gap: 0.5rem;
+    .work-card__body {
+      padding-inline: 14px;
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .landing-work-card {
-      transform: none;
-      transition: border-color 0.35s ease;
+  @media (max-width: 767px) {
+    .work__grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 64px;
+      max-width: 440px;
+      margin-inline: auto;
     }
 
-    .landing-work-card__image-shell {
-      transform: none;
-      transition: none;
+    .work-card--ink,
+    .work-card--blue {
+      margin-top: 0;
+    }
+
+    .work-card__art {
+      aspect-ratio: 1.5;
     }
   }
 </style>

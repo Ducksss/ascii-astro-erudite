@@ -1,63 +1,46 @@
 ---
-title: 'Using Figma to explore a clearer MetaLearner frontend'
-description: 'How current-state review, responsive explorations, and a developing design system gave MetaLearner a stronger frontend direction.'
+title: 'MetaLearner in Figma: desktop, chat and dashboard tradeoffs'
+description: 'A Figma exploration of how chat, KPIs, alerts and graphs share a screen, and why team review moved the focus towards desktop.'
 date: 2026-04-03
-tags: ['projects', 'product-engineering', 'fastapi', 'redis', 'data-visualization']
+updated: 2026-10-03
+tags:
+  ['projects', 'product-engineering', 'fastapi', 'redis', 'data-visualization']
 authors: ['chai-pin-zheng']
 order: 3
 ---
 
-The MetaLearner redesign work started with a current-state review, responsive layout explorations, and a Figma file that made the next round of frontend decisions less arbitrary.
+The MetaLearner Figma work explored how chat, KPIs, graphs and alerts could fit together in the frontend. It included a review of the existing interface, responsive layouts, industry references and a developing design system.
 
-Not all useful product work lands first as code. Sometimes the highest-leverage move is to make the current state visible, show where the interface is breaking down, and give the team a better decision environment for the next round of frontend work.
+These were design explorations alongside the frontend work I implemented. The [Figma file](https://www.figma.com/design/uoDY5aY1Nk7Qflo3dSn0qn/MetaLearner_Frontend?node-id=2191-3428) is the reference for the proposed direction.
 
-## This was not just a mockup file
+## Moving from mobile exploration to the desktop workflow
 
-The [Figma file](https://www.figma.com/design/uoDY5aY1Nk7Qflo3dSn0qn/MetaLearner_Frontend?node-id=2191-3428&t=fLh1oOA7GISETV3f-1) covered more than a handful of prettier screens. It included:
+I initially explored mobile layouts. Team review then clarified that desktop was the primary operating surface, so the direction moved towards desktop layouts and a more central chat workflow. The [handoff](https://metalearner-internship-logs.vercel.app/) records that change.
 
-- a **current-state overview** of the frontend
-- **redesign explorations**
-- **mobile-responsive layout directions**
-- **industry inspiration** references
-- a developing **design system** for components, typography, colours, primitives, and icons
-- forward-looking directions for **charts and data visualization**
+This changes the design problem. On a small screen, the interface has to decide what to show first and what to move elsewhere. On a desktop, there is room to show a conversation beside data, but the extra space still has to be divided between competing tasks.
 
-That already made it more useful than a static mockup deck, but the handoff site makes the direction even clearer. The redesign track also included:
+Making chat prominent is one such choice. It gives the user a direct place to ask for a comparison or narrow a question, while keeping data beside the conversation gives them something to refer to. At the same time, a persistent chat panel takes width away from charts and tables. More space for one does not automatically make the whole screen easier to use.
 
-- a **ShadCN-based** design direction
-- mobile exploration to diagnose where the current experience broke down
-- desktop layouts focused on **chat, KPIs, graphs, and clearer information hierarchy**
-- **KPI cards, alert states, overlays, and category-based filtering**
-- more intentional spacing, typography, and component consistency
+That is why the move towards desktop was more than enlarging a mobile layout. It put the relationship between conversation and data at the centre of the exploration.
 
-That combination is why I think this work mattered. It was not trying to win an aesthetic contest. It was trying to make the next round of implementation decisions less arbitrary.
+## Decisions within the dashboard
 
-## Why this mattered alongside shipped frontend work
+The layouts explored KPI cards, alert states, overlays and category-based filtering. Each carries a different design question:
 
-The frontend improvements I implemented during the internship were useful on their own, but the Figma work gave them more shape. It created a clearer frame for questions like:
+| Element          | Question to resolve                                                       |
+| ---------------- | ------------------------------------------------------------------------- |
+| KPI cards        | Which numbers need to be visible before the user asks for detail?         |
+| Alerts           | What needs attention, and how does that differ from ordinary status?      |
+| Overlays         | Which details can appear temporarily without taking over the main view?   |
+| Category filters | Which grouping helps the user narrow the information on screen?           |
+| Chat             | What data should remain visible while the user asks a follow-up question? |
 
-- what should become a repeatable **component** rather than a one-off patch
-- what **typography** and **colour** choices actually support clarity
-- how should **mobile responsiveness** work as a system instead of page by page
-- what should charting and data visualization feel like if MetaLearner keeps growing
+Those questions help make a review concrete. “Improve the hierarchy” becomes a decision about whether an alert, a KPI or the conversation should draw attention first. “Make it responsive” becomes a decision about which of those elements can move or collapse when there is less room.
 
-I care about that layer because ad hoc UI work can solve immediate pain while still leaving the product visually inconsistent. A developing design-system direction makes later frontend work feel cumulative instead of fragmented.
+## A shared vocabulary for the interface
 
-## The feedback loop made the work stronger
+The file explored a ShadCN-based direction and collected components, typography, colours, primitives and icons. Shared choices give screens a common vocabulary, but a component library cannot decide what information deserves prominence.
 
-One of the most useful details from the handoff deck is how the design direction changed over time:
+An alert colour, for example, has to mean something consistent across the interface. If it is also used casually for decoration, it becomes harder to distinguish a warning from an ordinary card. Typography has a similar job: a reader should be able to tell a section heading, a metric and its supporting label apart without learning a new treatment on each screen.
 
-- mobile-first exploration shifted toward **desktop-first clarity**
-- business-side validation changed how the product value was framed
-- the narrative moved from "**better UI**" toward "**help users know what to do**"
-- the emphasis on a **chat-led workflow** became stronger over time
-
-I especially like that progression because it shows the design work getting more grounded, not less ambitious.
-
-The part I liked most was that the redesign work did not pretend the product was starting from zero. It acknowledged the current state, studied it, and then explored better directions from there. That is a healthier way to think about redesigns in real products. Most teams are not waiting for a dramatic reboot. They need a usable bridge between the interface they have now and the one they could realistically grow into.
-
-## What this track taught me
-
-This track sharpened something I already believed: design exploration is most useful when it improves implementation judgment.
-
-The best output from a redesign exercise is not just nicer screens. It is a clearer decision-making environment for future code, components, responsive behavior, and product tradeoffs. That is what I wanted this Figma work to provide.
+The design work gave the team a place to discuss those decisions before translating them into components. The desktop shift is the clearest example of review changing the direction, because it changed what the layouts were organised around.

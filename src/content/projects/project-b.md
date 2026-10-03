@@ -11,11 +11,9 @@ tags:
   ]
 image: './assets/saf-card.svg'
 link: '/about#saf'
-startDate: '2023-07-01'
-endDate: '2025-07-01'
 featured: true
-role: 'Tactical Cyber Defence Company Platoon Commander'
+role: 'Cyber Defence Company Platoon Commander'
 status: 'Case study'
-outcome: 'Improved training efficiency by 70%, lifted readiness across 40+ operators, and reached 1,000+ players through a public cybersecurity awareness game.'
+outcome: 'Developed automated fault injection and scenario-based training, with a reported 70% efficiency improvement and over 1,000 players in the public OSINT game.'
 accent: '#ffd39a'
 ---

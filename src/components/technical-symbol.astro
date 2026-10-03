@@ -1,0 +1,28 @@
+---
+interface Props {
+  kind: 'adoption' | 'delivery' | 'systems'
+}
+const { kind } = Astro.props
+---
+
+<svg viewBox="0 0 120 100" fill="none" aria-hidden="true">
+  <g stroke="currentColor" stroke-width=".8">
+    <path d="M3 3H117V97H3Z"></path>
+    {
+      kind === 'delivery' ? (
+        <path d="M22 3V97M41 3V97M60 3V97M79 3V97M98 3V97M3 22H117M3 41H117M3 60H117M3 79H117" />
+      ) : kind === 'adoption' ? (
+        <>
+          <path d="M3 3C28 18 28 82 3 97M117 3C92 18 92 82 117 97" />
+          <path d="M60 31V41M60 59V69M41 50H51M69 50H79" stroke-width="3" />
+          <path d="M57 47H63V53H57Z" fill="currentColor" stroke="none" />
+        </>
+      ) : (
+        <path
+          d="M17 3V47H25M37 3V97M45 3V97M63 97V36H72M87 97V64H96V3M108 3V44H100"
+          stroke-width="2"
+        />
+      )
+    }
+  </g>
+</svg>

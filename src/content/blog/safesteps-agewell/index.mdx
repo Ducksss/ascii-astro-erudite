@@ -1,103 +1,81 @@
 ---
-title: 'Building SafeStep Without Turning Care Into Surveillance'
-description: 'How an elderly-care hackathon build used caregiver dashboards, a Node backend, and computer-vision checks without defaulting to surveillance.'
+title: 'SafeStep: when an observation becomes a care record'
+description: 'A care prototype with separate senior and caregiver screens, an object-detection experiment, and an unresolved gap between seeing and confirming.'
 date: 2026-04-02
-image: './assets/banner.png'
+updated: 2026-10-03
+image: './cover.png'
 tags: ['hackathons', 'social-impact', 'computer-vision', 'react']
 authors: ['chai-pin-zheng']
 draft: false
 ---
 
-SafeStep started with a care loop that can quietly take over a relationship: Did you eat? Did you take your medication? Where are you? Are you safe?
+SafeStep was a hackathon prototype for supporting older adults and their caregivers. It appears as AgeWell in the repository, and the public submission credits Anton Ang, Ivan Chua, Faith Lee and me. I worked on the backend, which was an early Node.js project for me.
 
-The public submission called it **SafeStep**. The repo and PRD later called it **AgeWell**. The name changed, but the core idea did not: reduce caregiver anxiety without turning the care recipient into someone who feels watched all day.
+We wanted to reduce repeated checking around meals, medication and safety. The proposed system would observe routine activities, keep a checklist and give caregivers useful context. Building it exposed a problem with that proposal: seeing something happen and knowing that a care task is complete are different things.
 
-That tension is why the project stayed with me. It is easy to build something technically capable and emotionally clumsy. It is much harder to build something useful that still preserves dignity.
+## Two views of the same day
 
-<div class="overflow-hidden rounded-lg border [&_img,p]:m-0">
-![AgeWell landing page](assets/landing.png)
-</div>
-
-## The problem felt human before it felt technical
-
-The strongest part of the Devpost write-up was not the AI section. It was the description of what caregiving can feel like when everything slowly collapses into checking:
-
-- Did you eat?
-- Did you take your medication?
-- Where are you?
-- Are you safe?
-
-Those are reasonable questions, but repeated often enough they start to reshape the relationship itself. Care becomes supervision. Concern becomes friction. The senior feels nagged. The caregiver feels guilty and exhausted.
-
-That was the real problem we were trying to solve.
-
-What made SafeStep interesting to me was that it was not pitching "more monitoring" as the answer. It was trying to shift the burden away from repeated human checking and toward quieter forms of support: verify routines automatically, raise alerts when something actually matters, and otherwise get out of the way.
-
-## The product thesis was the real feature
-
-This was submitted together with **Ivan Chua** and **Faith Lee**, and I think the best part of the project was that the feature set actually served one coherent idea instead of feeling like a pile of hackathon tricks.
-
-The system covered a broad but believable care loop:
-
-- fall detection with emergency escalation
-- navigation support for seniors who might get lost
-- checklist tracking for meals, hydration, and medication
-- voice reminders that nudged instead of scolding
-- caregiver dashboards and medical summaries
-
-What I liked was that these were not random "AI features." They were all trying to answer the same product question: how do you support independence without forcing the caregiver to manually track everything?
-
-The split between the two main surfaces mattered too. The senior-facing interface had to be clear, high-contrast, and low-friction. The caregiver-facing dashboard had to be richer in context. If both users were given the same surface, the product would have failed immediately.
+The senior-facing screen emphasised the current time, a daily checklist and large actions for navigation and help. The caregiver screen held a denser timeline, task progress, alerts and a location map.
 
 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 [&_img,p]:m-0">
-  <div class="overflow-hidden rounded-lg border">
-    ![Patient-facing dashboard](assets/patient-dashboard.png)
+  <div class="overflow-hidden border">
+    ![AgeWell senior-facing dashboard with large actions and a daily
+    checklist](assets/patient-dashboard.png)
   </div>
-  <div class="overflow-hidden rounded-lg border">
-    ![Caregiver dashboard](assets/caregiver-dashboard.png)
+  <div class="overflow-hidden border">
+    ![AgeWell caregiver dashboard with activity history, tasks and
+    location](assets/caregiver-dashboard.png)
   </div>
 </div>
 
-## I worked on the backend, and it was my first real Node project
+_The two prototype dashboards. Their sample records illustrate the intended views, rather than a connected, live care history._
 
-I worked on the backend for SafeStep, and this was my first time seriously using **Node.js**. That was a little intimidating at the time, which is honestly part of why I still remember the build so clearly.
+That split was worth keeping. Someone trying to find their way home needs a clear next action, while a caregiver reviewing the day needs context and timestamps. Putting all of that on one screen would make both tasks harder.
 
-What made it interesting was that the backend was not just a boring CRUD layer. Even in prototype form, it had to hold the logic that made the product feel like an actual care system:
+The implementation was less complete than the screenshots might suggest. Both dashboards used their own sample state. The camera page could open a live webcam, but its activity and fall buttons simulated detections with fixed confidence values. Those screens demonstrated interactions, without demonstrating the whole proposed care flow.
 
-- receive AI-detected activities from the Python service
-- log events into an activity timeline
-- auto-complete the right daily tasks when meals, hydration, or medication were detected
-- expose patient status and progress to the caregiver dashboard
-- accept location updates and fall alerts
-- generate weekly summary data
+## The backend's consequential shortcut
 
-That meant wiring together a simple **Express** API with a separate **Python** service that handled the computer-vision side using **YOLOv8** and **MediaPipe**. For a hackathon project, that was enough moving parts to feel very real very quickly.
+The [Express server](https://github.com/Ducksss/hack4good/blob/a8948fc101dbc1a9af251ec18316fd39aec791a0/backend/server.js) provided routes for activities, tasks, location, fall alerts and a weekly summary. A separate Python service could post detected activities to it.
 
-I learned a lot from that. Not just about Node itself, but about how backend work changes when the job is to preserve trust. If the data is stale, the caregiver panics for no reason. If the alerts are noisy, the whole system becomes annoying. If the logic is unclear, the product starts feeling fake.
+Receiving an activity appended a timestamped record and completed a matching task. For an eating event, the server chose breakfast, lunch or dinner from the hour of day. For medication, it selected the first unfinished medication task.
 
-<div class="overflow-hidden rounded-lg border [&_img,p]:m-0">
-![Camera and activity-detection view](assets/camera-view.png)
+```text wrap=false
+activity label -> timestamped record -> matching task marked complete
+```
+
+It was a small amount of code, which made the intended flow easy to inspect. It also gave the label too much authority. The event's confidence was stored, but did not decide whether the task should be completed. The task selection did not establish which meal was eaten or which medication was taken.
+
+The server stored its data in memory, so restarting it lost the activity history. The weekly summary returned fixed demonstration values. These were prototype choices, rather than a basis for reporting someone's health or medication adherence.
+
+## What an object label can establish
+
+The [Python experiment](https://github.com/Ducksss/hack4good/blob/a8948fc101dbc1a9af251ec18316fd39aec791a0/ai-service/app.py) used YOLOv8 to detect objects, then mapped labels into activities. Cutlery, food and cups could suggest eating. A bottle could suggest medication or hydration.
+
+That mapping contains ambiguity before any model error enters the picture. A cup on a table does not establish that someone drank from it. A bottle does not establish that the right person took the right dose. In this implementation, the category order could classify a cup as eating or a bottle as medication before reaching hydration.
+
+A high confidence in the object label would not resolve that ambiguity, because confidence that an object is a bottle is different from evidence that medication was taken.
+
+<div class="my-6 overflow-hidden border [&_img,p]:m-0">
+  ![AgeWell camera interface with activity-detection
+  controls](assets/camera-view.png)
 </div>
 
-## The hard part was not adding more AI
+_The camera interface. Its simulation controls helped demonstrate the intended response to events, while the separate Python service explored object detection._
 
-The repo's core philosophy said it well: care should be delivered when needed, not constantly imposed.
+The fall endpoint was also a simulation, and the alert route returned a success message without making an emergency call. It would be misleading to treat either as validated fall detection or a completed emergency response.
 
-That line stuck with me because it captures the actual difficulty here. A project like this does not become better just because it can detect more things. In fact, it can become worse. If the system escalates too aggressively, it becomes oppressive. If it is too passive, it misses real danger. If it is too visible, it undermines the independence it claims to protect.
+## Less checking still needs consent
 
-So the real design challenge was not "how much AI can we fit in?" It was how to make the technology recede into the background until it was genuinely needed.
+Our aim was to make support feel less intrusive, but a camera and location feed do not become private simply because their interface is quiet. They can reduce the need for phone calls while increasing how much of someone's day is observable.
 
-That is why the quieter features mattered as much as the dramatic ones. Fall detection gets the headline, but automatic meal verification, gentle reminders, and useful summaries are what actually turn the product from a demo into something that could change the emotional texture of care.
+The prototype did not resolve who could see that information, when monitoring should stop or how the person receiving care could control it. Those questions belong in the interaction itself, including a visible monitoring state, an accessible way to pause it and clear control over sharing.
 
-## What stayed with me
+I would also change the status model before adding more detection features. An observation could be shown as **possible activity**, then confirmed or corrected by a person, instead of immediately becoming **task complete**. A missed observation should remain unknown rather than automatically mean a missed meal.
 
-SafeStep stuck with me because it reminded me that social-impact software lives or dies on the quality of its restraint.
-
-The easy version of elderly-care tech is surveillance with a nicer interface. The harder version is a system that gives caregivers reassurance while still letting the person being cared for feel capable. That second version is much more interesting to build, and much more worth building.
-
-It also marked an early moment where I felt myself getting pulled toward product work that sits right between technical capability and human dignity. The backend taught me a lot, the hackathon pressure was fun in the usual chaotic way, but the thing I still remember most is the philosophy: build support that helps people feel less controlled, not more.
+That would make the dashboard less reassuring at a glance, but more useful to someone deciding whether to check in. The valuable record is one that shows what was observed, what was confirmed and what remains uncertain.
 
 ## Project links
 
-- [Devpost submission](https://devpost.com/software/safesteps-9x4o7i)
 - [GitHub repository](https://github.com/Ducksss/hack4good)
+- [Devpost submission](https://devpost.com/software/safesteps-9x4o7i)

@@ -1,133 +1,62 @@
 ---
-title: 'Winning LifeHack 2023 With EcoCart'
-description: 'How our LifeHack-winning browser extension and dashboard made shopping tradeoffs visible before checkout.'
+title: 'EcoCart: putting a carbon estimate beside the buy button'
+description: 'A LifeHack 2023 shopping-extension prototype, how it read Shopee pages, and why its emissions numbers needed better evidence.'
 date: 2023-05-30
-image: './assets/lifehack-grand-prize.jpeg'
+updated: 2026-10-03
+image: './cover.png'
 tags: ['hackathons', 'ai', 'nextjs', 'sustainability']
 authors: ['chai-pin-zheng']
 ---
 
-## The product clicked because it showed up at the right moment
+EcoCart was a browser extension and dashboard we built for LifeHack 2023. The idea was to bring environmental information onto a shopping page, while someone could still change their mind, and collect the resulting records in a separate dashboard.
 
-EcoCart became a winning project once we reduced it to one useful moment: show the environmental cost of online shopping while the person is still deciding what to buy.
+Kei Lok Tham handled design and frontend work, Yu Hoe Tan handled AI and backend work, and I worked on the frontend and browser extension. Our team won the [grand prize and SGID award](https://github.com/keiloktql/LifeHack2023-EcoCart). The extension reached into a shop we did not control, and the apparent precision of its numbers exceeded the evidence behind them.
 
-That turned the idea into **EcoCart**, a sustainable shopping companion with two parts:
+## Reading a shop from the outside
 
-- a browser extension that could live close to the shopping flow
-- a dashboard web app that could show impact, progress, and alternatives more clearly
+We could change our dashboard whenever we wanted. We could not change Shopee, so the extension had to read the page that the shopper saw.
 
-The project ended up winning **LifeHack 2023** and the **SGID Award** because the story was legible fast: surface the tradeoff in-context, then give the user somewhere deeper to go afterward.
+On a product page, it collected the title, category breadcrumbs and details such as the shipping origin. It sent those to a backend endpoint and inserted a banner near the product title. The [content script](https://github.com/keiloktql/LifeHack2023-EcoCart/blob/bb1068be8965a74df0822303d4d17e627da6376a/extensions/src/foreground.ts) waited for the relevant page elements to appear before doing that work.
 
-## The Idea
+```text wrap=false
+Shopee page -> product details -> backend response -> inline banner
+```
 
-### The problem we were trying to solve
+The placement was the useful part. A separate website would have asked someone to copy a product name, leave the shop and research it. An inline banner could make the information available alongside the price and description.
 
-The starting point was pretty simple. People shop online all the time, but the environmental consequences of what they buy are mostly invisible. Even if someone genuinely wants to make a better choice, the burden is still on them to leave the page, do extra research, compare alternatives, and figure out what the information actually means.
+It was also a fragile integration. The script depended on Shopee's CSS selectors and page structure, including generated class names. A shop redesign could break extraction without changing a line of our code. Supporting another marketplace would mean understanding another page structure, rather than simply adding its name to a list.
 
-That felt wrong to me.
+## From the cart to a history
 
-I did not think the answer was to build yet another sustainability dashboard that people only open after everything is already done. By then, the interesting moment is over. So the thought process became: how do we move closer to the decision itself?
+The [cart script](https://github.com/keiloktql/LifeHack2023-EcoCart/blob/bb1068be8965a74df0822303d4d17e627da6376a/extensions/src/cart.ts) collected product titles, requested a combined emissions estimate and displayed it near checkout. Its custom checkout handler wrote a record to Supabase with the user ID, estimate, merchant and cart URL.
 
-### Why we split it into two surfaces
+The Next.js dashboard read those records into a table and grouped their values by month for a chart. That gave the prototype a second view: the extension showed an individual shopping moment, while the dashboard showed an accumulated history.
 
-That gave us a clearer product shape very quickly. Instead of building one big app that tried to do everything, we split the experience into two surfaces:
+There was an important limitation in the handoff. Clicking our button created the record, but it was not proof that the shop had completed a purchase. A reliable purchase history would need an order-confirmation signal and a way to handle cancellations, returns and repeated clicks. Otherwise, the chart can faithfully add up records that do not describe actual purchases.
 
-- the extension would show up where the purchase was happening
-- the dashboard would give the user the fuller story afterward
+## The estimate was the weakest link
 
-I liked that split because it gave the project a believable flow. It was not just "AI plus sustainability." It was a product that could meet the user in context and then support them more deeply afterward.
+The backend used GPT-3.5 Turbo to generate emissions information from product names and categories. The [cart-estimate prompt](https://github.com/keiloktql/LifeHack2023-EcoCart/blob/bb1068be8965a74df0822303d4d17e627da6376a/backend/functions/calculate-total-co/app.py) explicitly asked for a rough number even when the available information was limited.
 
-## My Part In It
+A product title is not a record of its materials, manufacturing process or delivery route. Asking a model to fill those gaps made it easy to demonstrate the interface, but did not make the result a measured carbon footprint.
 
-### How we split the team
+The code also used random-number fallbacks when generation or parsing failed. I would remove those before taking this beyond a demonstration. An unavailable estimate should remain unavailable, because a plausible number in a green banner invites people to treat it as evidence.
 
-There were three of us, and the split helped a lot. **Kei Lok** focused on frontend engineering and UI/UX design, **Yu Hoe** handled the AI and backend side, and I worked on the **frontend** and the **web extension**.
+The same issue appeared in the preferred-brand badges. They came from a hard-coded list of brand names, rather than an assessment of the specific product. A badge might look like verification even though the script had only matched a word in the title.
 
-### Why the extension was the interesting part for me
+## What I would keep
 
-For me, the extension was the most interesting part.
+I would keep the extension's position in the shopping flow and the dashboard's simple history. I would change what they were allowed to claim.
 
-The challenge was not only making it work. The challenge was making it feel like it belonged inside a real shopping flow. If the extension was too clunky, too slow, or too disconnected from what the user was looking at, the whole product would start to feel like a school project pasted on top of an e-commerce site.
+A stronger version would show the source and assumptions behind an estimate, distinguish category-level information from product-specific data, and leave gaps visible. SGID could help with account verification, but it could not verify the environmental calculation. A chart could help someone explore their records, but it could not make uncertain inputs accurate by adding them together.
 
-So a lot of my thinking went into immediacy:
+![The EcoCart team at LifeHack 2023 holding the SGID award board](assets/lifehack-sgid-team.jpeg)
 
-- how do we make the information appear at the right moment
-- how do we keep it understandable without overwhelming the user
-- how do we make the experience feel helpful instead of preachy
+_The team at LifeHack 2023. The award was a highlight of the event, while the prototype still left the data-quality problem open._
 
-That last part mattered to me. I never wanted the product to feel like it was scolding the user. The better version was something that helped them see a tradeoff clearly and then gave them a better next step.
+EcoCart showed how a browser extension could put a new question beside an existing decision. It also showed how much care a number needs once it is presented as a reason to act.
 
-## The Build
+## Project links
 
-### What we actually shipped
-
-The final build covered more ground than people might expect from a hackathon project. Based on the public repo, the stack included **Next.js**, **Chrome Extension Manifest V3**, **Supabase**, **AWS**, **Docker**, **Netlify**, **Tailwind CSS**, **OpenAI API**, and **SGID**.
-
-On paper that sounds like a lot, but it did fit the project:
-
-- **Next.js** gave us a fast way to build the dashboard
-- the **Chrome extension** let us sit inside real shopping behavior
-- **Supabase** gave us a backend foundation without too much setup friction
-- **OpenAI** helped turn raw information into something more useful and readable
-- **SGID** made the project feel more credible as something that could extend beyond a one-weekend prototype
-
-What I liked most was that the build had a real product loop behind it. The extension handled the in-the-moment part. The dashboard handled the reflective part. Together, they made the idea feel much more complete than if we had only built one side.
-
-### The product loop we kept protecting
-
-The part we kept protecting was the handoff between the two surfaces. The extension made the tradeoff visible while the choice was still live. The dashboard gave the user a place to understand patterns, track impact, and keep engaging with the idea after the purchase moment had passed. That handoff was what made the project feel like a product instead of a single feature.
-
-## The Hackathon Constraint
-
-### What had to feel real in the demo
-
-The biggest constraint was time, which is obvious, but the real problem was deciding what deserved time.
-
-Once we had the core idea, we kept coming back to a simple question: what absolutely has to feel real in the demo?
-
-That question helped us cut through a lot of noise. We did not need to solve everything about sustainable commerce. We needed to show a believable flow:
-
-1. a user is shopping
-2. EcoCart appears at the right moment
-3. the product makes the hidden cost easier to understand
-4. the user sees that a better choice is possible
-
-That was the story. Everything else had to support it.
-
-I think that helped us avoid a common hackathon trap, which is building a lot of disconnected clever features. We still had technical ambition, but we were not adding things just to sound impressive. We were trying to protect the clarity of the demo.
-
-## Why It Landed
-
-### Why the judges could understand it quickly
-
-Looking back, I do not think EcoCart worked because it used a long list of technologies. I think it worked because the idea was easy to explain and the demo made immediate sense.
-
-There were a few reasons for that:
-
-- the problem was real and easy to understand
-- the extension made the product feel present in the right place
-- the dashboard made it feel like more than a gimmick
-- the whole thing told one clear story instead of four unrelated ones
-
-That mattered a lot in a judging setting. Judges see many projects in a short amount of time. If they have to work too hard to understand what the product is trying to do, you are already losing ground. EcoCart had a cleaner sentence behind it, and I think that helped us.
-
-It also helped that I genuinely believed in the timing of the product. To me, the strongest part of EcoCart was never just that it could generate information. It was that it could surface the information while the choice was still live.
-
-![Team photo from LifeHack 2023 with the SGID prize board.](assets/lifehack-sgid-team.jpeg)
-
-_One of the moments from LifeHack 2023 after presenting EcoCart._
-
-## What Stayed With Me
-
-### What this clarified for me
-
-This project made something click for me quite early: I really like building products that sit between technical capability and human behavior.
-
-I liked the frontend side of EcoCart, and I liked working on the extension itself, but the deeper thing I liked was shaping when and how the product entered the user's flow. That is still something I care about now. A technically strong system becomes much more interesting to me when it is also well-timed, legible, and easy for someone to act on.
-
-EcoCart was one of the first projects where I felt that clearly. It was not just a hackathon build that happened to win. It was an early sign of the kind of work I wanted to keep doing.
-
-## Links
-
-- [Devpost submission](https://devpost.com/software/ecocart-rkmcjg)
 - [GitHub repository](https://github.com/keiloktql/LifeHack2023-EcoCart)
+- [Devpost submission](https://devpost.com/software/ecocart-rkmcjg)

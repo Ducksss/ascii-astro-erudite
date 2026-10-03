@@ -73,6 +73,7 @@ export default defineConfig({
               },
             },
             styleOverrides: {
+              borderRadius: '0',
               codeFontSize: '0.75rem',
               borderColor: 'var(--border)',
               codeFontFamily: 'var(--font-mono)',

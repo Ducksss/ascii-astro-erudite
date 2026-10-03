@@ -7,56 +7,36 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
-import { cn } from '@/lib/utils'
-import { Icon } from 'astro-icon/components'
 
 export interface BreadcrumbItem {
   href?: string
   label: string
-  icon?: string
 }
 
 interface Props {
   items: BreadcrumbItem[]
-  variant?: 'default' | 'immersive'
 }
 
-const { items, variant = 'default' } = Astro.props
-const isImmersive = variant === 'immersive'
+const { items } = Astro.props
 ---
 
-<Breadcrumb className={cn(isImmersive && 'immersive-breadcrumb')}>
+<Breadcrumb className="breadcrumbs">
   <BreadcrumbList>
     <BreadcrumbItem>
-      <BreadcrumbLink href="/" className={cn(isImmersive && 'text-white/52')}>
-        <Icon name="lucide:home" class="size-4 shrink-0" />
-      </BreadcrumbLink>
+      <BreadcrumbLink href="/">Home</BreadcrumbLink>
     </BreadcrumbItem>
     {
       items.map((item, index) => (
         <>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            {index === items.length - 1 ? (
-              <BreadcrumbPage className={cn(isImmersive && 'text-white')}>
-                <span class="flex items-center gap-x-2">
-                  {item.icon && (
-                    <Icon name={item.icon} class="size-4 shrink-0" />
-                  )}
-                  <span>{item.label}</span>
-                </span>
+          <BreadcrumbSeparator>/</BreadcrumbSeparator>
+          <BreadcrumbItem className="min-w-0">
+            {index === items.length - 1 || !item.href ? (
+              <BreadcrumbPage className="breadcrumbs__current">
+                {item.label}
               </BreadcrumbPage>
             ) : (
-              <BreadcrumbLink
-                href={item.href}
-                className={cn(isImmersive && 'text-white/52 hover:text-white')}
-              >
-                <span class="flex items-center gap-x-2">
-                  {item.icon && (
-                    <Icon name={item.icon} class="size-4 shrink-0" />
-                  )}
-                  <span>{item.label}</span>
-                </span>
+              <BreadcrumbLink href={item.href} className="breadcrumbs__link">
+                {item.label}
               </BreadcrumbLink>
             )}
           </BreadcrumbItem>

@@ -1,10 +1,10 @@
 ---
+import AsciiObject from '@/components/ascii-object.astro'
 import ArchiveProof from '@/components/landing/archive-proof.astro'
-import LandingAsciiField from '@/components/landing/ascii-field.astro'
 import FeaturedWork from '@/components/landing/featured-work.astro'
-import SignalMarquee from '@/components/landing/signal-marquee.astro'
 import Link from '@/components/link.astro'
 import PageHead from '@/components/page-head.astro'
+import TechnicalSymbol from '@/components/technical-symbol.astro'
 import { LANDING, PROFILE, SITE } from '@/consts'
 import Layout from '@/layouts/layout.astro'
 import {
@@ -13,251 +13,521 @@ import {
   getRecentPosts,
 } from '@/lib/data-utils'
 
-const archivePosts = await getRecentPosts(
-  Math.max(SITE.featuredPostCount + 1, 4),
-)
+const archivePosts = await getRecentPosts(4)
 const featuredProjects = await getFeaturedProjects(3)
 const archiveStats = await getArchiveStats()
 const [featuredPost, ...supportingPosts] = archivePosts
-const [nameLineOne = 'Chai', nameLineTwo = 'Pin', nameLineThree = 'Zheng'] =
-  LANDING.name.split(' ')
-const heroPills = [
-  'NUS CS / First Class track',
-  '70% training-efficiency lift',
-  '2.5k -> 6k weekly reach',
-]
-const linkedInLink =
-  PROFILE.links.find((item) => item.label === 'LinkedIn')?.href ??
-  'https://www.linkedin.com/in/chai-pin-zheng/'
-const consoleNotes = [
-  'Best fit: technically strong products that still feel too hard to enter, operate, or hand off.',
-  'Recent proof: MetaLearner onboarding, GovTech platform tooling, and SAF readiness systems.',
-]
-const proofPoints = [
+const projects = PROFILE.hackathonStats[1]
+const disciplines = [
   {
-    company: 'MetaLearner',
-    metric: 'Reduced onboarding drop-offs',
-    label: 'Self-serve product adoption',
-    context:
-      'Guided onboarding and a four-category User Guide made a complex forecasting workflow easier to enter and trust.',
+    label: 'Adoption',
+    title: 'Clearer first steps',
+    copy: 'Onboarding, guides and charts that help people find their own way in.',
+    symbol: 'adoption' as const,
   },
   {
-    company: 'Singapore Armed Forces',
-    metric: '70% efficiency lift',
-    label: 'Operational readiness systems',
-    context:
-      'Automated fault injection and structured drills lifted training efficiency across a 40+ operator environment.',
+    label: 'Delivery',
+    title: 'Platforms that ship',
+    copy: 'Internal tools, tested releases and handoffs that keep teams moving.',
+    symbol: 'delivery' as const,
   },
   {
-    company: 'Government Technology Agency',
-    metric: '2.5k -> 6k weekly users',
-    label: 'Platform delivery + SEO',
-    context:
-      'SEO improvements expanded reach, and Cypress-backed CI removed manual release checking from production merges.',
+    label: 'Systems',
+    title: 'Operations that hold',
+    copy: 'Automation and training built for the people doing the work.',
+    symbol: 'systems' as const,
   },
 ]
 ---
 
-<Layout variant="landing">
+<Layout>
   <PageHead slot="head" title={SITE.title} description={LANDING.description} />
 
-  <section
-    class="relative isolate min-h-[calc(100svh-4.6rem)] overflow-hidden bg-[#050505]"
-  >
-    <LandingAsciiField class="opacity-[0.76]" />
-    <div
-      class="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black via-black/55 to-transparent"
-    >
-    </div>
-    <div
-      class="pointer-events-none absolute inset-0 [background-image:linear-gradient(to_bottom,transparent_0,transparent_11px,rgba(255,255,255,0.045)_12px)] [background-size:100%_12px] opacity-35"
-    >
-    </div>
-    <div
-      class="landing-dot-mass absolute top-8 -left-24 h-[26rem] w-[26rem] sm:h-[34rem] sm:w-[34rem]"
-    >
-    </div>
-    <div
-      class="landing-dot-mass landing-dot-mass--reverse absolute -right-28 bottom-[-8rem] h-[28rem] w-[28rem] sm:h-[36rem] sm:w-[36rem]"
-    >
-    </div>
-    <div class="landing-grain pointer-events-none absolute inset-0"></div>
+  <section class="hero surface-blue" aria-labelledby="hero-title">
+    <div class="site-container">
+      <h1 id="hero-title" class="hero__title t-display">
+        <span>Complex systems,</span>
+        <span class="hero__title-step">made human.</span>
+      </h1>
 
-    <div
-      class="mx-auto grid min-h-[calc(100svh-4.6rem)] max-w-[1400px] grid-cols-1 px-4 py-6 sm:px-6 sm:py-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)] lg:px-8 lg:py-16"
-    >
-      <div class="flex flex-col justify-between gap-6 sm:gap-10 lg:pr-10">
-        <div class="max-w-4xl" transition:name="page-intro">
-          <p class="landing-kicker">{LANDING.eyebrow}</p>
-          <h1
-            class="landing-wordmark mt-4 text-[clamp(3.3rem,18vw,7rem)] leading-[0.84] font-semibold tracking-[-0.09em] text-white uppercase sm:mt-6 lg:text-[clamp(4rem,14vw,12rem)]"
+      <div class="hero__stage">
+        <div class="hero__art frame-brackets" aria-hidden="true">
+          <span class="tag tag--solid hero__tag hero__tag--a"
+            >Rubber duck debugging</span
           >
-            <span class="block"> {nameLineOne}</span>
-            <!-- ml-[10vw] text-white/68 sm:ml-[18vw] lg:ml-[11vw] -->
-            <span class="block">{nameLineTwo}</span>
-            <span class="block">{nameLineThree}</span>
-          </h1>
-          <p
-            class="landing-manifesto mt-6 max-w-xl text-[0.98rem] leading-7 text-balance text-white/70 sm:mt-8 sm:max-w-2xl sm:text-lg sm:leading-8"
+          <span class="tag hero__tag hero__tag--b"
+            >{projects.value} Devpost projects</span
           >
+          <AsciiObject
+            object="duck"
+            tone="blue"
+            cols={132}
+            rows={68}
+            zoom={0.92}
+            offsetX={0.02}
+            trails={{ density: 0.4, length: 54, side: 'left' }}
+            motion="sway"
+            class="hero__duck"
+          />
+        </div>
+
+        <div class="hero__signal" aria-hidden="true">
+          <span class="rule-dotted rule-dotted--start"></span>
+          <AsciiObject
+            object="coin"
+            tone="blue"
+            cols={30}
+            rows={17}
+            yaw={0.5}
+            size="4px"
+          />
+          <AsciiObject
+            object="coin"
+            tone="blue"
+            cols={30}
+            rows={17}
+            yaw={1.25}
+            size="4px"
+            class="hero__coin-far"
+          />
+        </div>
+
+        <div class="hero__copy">
+          <p class="t-label hero__kicker">
+            <span class="mark-cross" aria-hidden="true"></span>
+            Chai Pin Zheng / Software engineer
+          </p>
+          <p class="t-lede hero__lede">
             {LANDING.manifesto}
           </p>
+          <div class="hero__actions">
+            <Link href="#work" class="btn btn--solid">
+              Explore the work <span aria-hidden="true">↓</span>
+            </Link>
+            <Link href="/about" class="btn">
+              Meet Chai <span aria-hidden="true">↗</span>
+            </Link>
+          </div>
         </div>
 
-        <div class="max-w-xl space-y-4 sm:max-w-none sm:space-y-6">
-          <div class="flex flex-col gap-3 sm:flex-row">
-            <Link href={LANDING.primaryLink.href} class="landing-button group">
-              <span>{LANDING.primaryLink.label}</span>
-              <span
-                class="font-mono text-[0.7rem] tracking-[0.25em] text-white/42 uppercase transition-colors duration-300 group-hover:text-white/70"
-              >
-                {LANDING.primaryLink.note}
-              </span>
-            </Link>
-            <Link
-              href={LANDING.secondaryLink.href}
-              class="landing-button landing-button--ghost group"
-            >
-              <span>{LANDING.secondaryLink.label}</span>
-              <span
-                class="font-mono text-[0.7rem] tracking-[0.25em] text-white/38 uppercase transition-colors duration-300 group-hover:text-white/62"
-              >
-                {LANDING.secondaryLink.note}
-              </span>
-            </Link>
-          </div>
-
-          <div
-            class="hidden flex-wrap items-center gap-3 text-[0.72rem] tracking-[0.26em] text-white/42 uppercase sm:flex"
-          >
-            {
-              heroPills.map((pill) => (
-                <span class="rounded-full border border-white/12 px-3 py-1.5">
-                  {pill}
-                </span>
-              ))
-            }
-          </div>
-          <div
-            class="hidden flex-wrap items-center gap-4 text-sm text-white/54 sm:flex"
-          >
-            <span class="text-white/38">Proof path</span>
-            <Link
-              href={linkedInLink}
-              external
-              class="font-mono text-[0.72rem] tracking-[0.24em] text-white/72 uppercase hover:text-white"
-            >
-              View LinkedIn
-            </Link>
-            <span class="hidden text-white/22 sm:inline">/</span>
-            <span class="text-sm text-white/48">
-              Start with the outcomes here, then open the case studies and build
-              logs.
-            </span>
-          </div>
+        <div class="tree hero__tree hero__tree--now">
+          <p>Now / 2026</p>
+          <ul>
+            <li>Product Engineer at Reactor School</li>
+            <li>Penultimate-year NUS Computer Science</li>
+            <li>Maintaining Payload Components</li>
+          </ul>
         </div>
-      </div>
-
-      <div class="hidden items-end justify-end lg:flex">
-        <div
-          class="landing-terminal relative w-full max-w-[32rem] overflow-hidden"
-        >
-          <div
-            class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.14),transparent_60%)] opacity-70"
-          >
-          </div>
-          <div class="landing-terminal-bar">
-            <span>Collaboration surface</span>
-            <span>best fit</span>
-          </div>
-          <div class="relative space-y-6 p-6">
-            <div class="space-y-3">
-              <p
-                class="font-mono text-[0.68rem] tracking-[0.28em] text-white/42 uppercase"
-              >
-                who I help
-              </p>
-              <div class="space-y-2 text-sm text-white/75">
-                {consoleNotes.map((note) => <p>{note}</p>)}
-              </div>
-            </div>
-            <div class="grid grid-cols-2 gap-3 border-t border-white/10 pt-4">
-              {
-                LANDING.capabilityLines.map((capability) => (
-                  <div class="space-y-1">
-                    <p class="font-mono text-[0.66rem] tracking-[0.28em] text-white/35 uppercase">
-                      {capability.label}
-                    </p>
-                    <p class="text-lg leading-none font-medium text-white">
-                      {capability.title}
-                    </p>
-                  </div>
-                ))
-              }
-            </div>
-          </div>
+        <div class="tree hero__tree hero__tree--shipped">
+          <p>Shipped / 2022 – 2026</p>
+          <ul>
+            <li>MetaLearner onboarding and charts</li>
+            <li>Taskade automation connectors</li>
+            <li>GovTech tooling and SAF cyber training</li>
+          </ul>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="border-y border-white/10 bg-[#020202]">
-    <div
-      class="mx-auto max-w-[1400px] px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12"
-    >
-      <div
-        class="flex flex-col gap-4 border-b border-white/10 pb-6 sm:gap-5 sm:pb-8 lg:flex-row lg:items-end lg:justify-between"
-      >
-        <div class="max-w-2xl">
-          <p class="landing-section-label">Selected proof</p>
-          <h2 class="landing-section-title mt-4 max-w-xl">
-            Attributed outcomes that make the homepage pitch checkable.
-          </h2>
-        </div>
-        <p
-          class="max-w-xl text-sm leading-6 text-white/56 sm:text-base sm:leading-7"
+  <FeaturedWork projects={featuredProjects} />
+
+  <section class="proof surface-ink" aria-labelledby="proof-title">
+    <span class="field proof__field" aria-hidden="true"></span>
+    <div class="site-container">
+      <div class="proof__head">
+        <p class="t-label t-muted">Impact / reported outcomes</p>
+        <p class="t-label t-muted bracketed">2022 – 2026</p>
+      </div>
+      <h2 id="proof-title" class="sr-only">
+        Less friction. More forward motion.
+      </h2>
+      <div class="t-poster proof__poster" aria-hidden="true">
+        <span>Less friction.</span>
+        <span
+          >M<span class="proof__coin"
+            ><AsciiObject
+              object="coin"
+              tone="ink"
+              cols={44}
+              rows={26}
+              zoom={0.98}
+              yaw={0.62}
+              gamma={0.72}
+              motion="spin"
+              class="ascii--bright"
+              size="0.0285em"
+            /></span
+          >re forward</span
         >
-          Start with the outcomes. The case studies below explain how those
-          gains were made and where the work fits best.
-        </p>
+        <span>motion.</span>
       </div>
 
-      <div class="mt-6 grid gap-4 sm:mt-8 sm:gap-5 lg:grid-cols-3">
+      <dl class="proof__metrics">
         {
-          proofPoints.map((point) => (
-            <article class="border border-white/10 bg-black/35 px-6 py-6 sm:px-7 sm:py-7">
-              <p class="font-mono text-[0.68rem] tracking-[0.26em] text-white/34 uppercase">
-                {point.company}
-              </p>
-              <p class="mt-4 text-[1.65rem] leading-none font-semibold tracking-[-0.06em] text-white sm:text-[1.9rem]">
-                {point.metric}
-              </p>
-              <p class="mt-2 font-mono text-[0.7rem] tracking-[0.22em] text-white/52 uppercase">
-                {point.label}
-              </p>
-              <p class="mt-5 max-w-[30ch] text-sm leading-7 text-white/60">
-                {point.context}
-              </p>
+          PROFILE.metrics.map((metric) => (
+            <div>
+              <dt class="t-label t-muted">{metric.label}</dt>
+              <dd>{metric.value.replace(' -> ', ' → ')}</dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      <div class="proof__practice">
+        {
+          disciplines.map((discipline) => (
+            <article>
+              <div class="proof__tile">
+                <TechnicalSymbol kind={discipline.symbol} />
+              </div>
+              <p class="t-label">{discipline.label}</p>
+              <h3>{discipline.title}</h3>
+              <p class="t-body">{discipline.copy}</p>
             </article>
           ))
         }
       </div>
+
+      <div class="proof__cta">
+        <p class="t-lede">
+          Useful systems. Measurable outcomes.<br />
+          <span class="t-dim">The work to back them up.</span>
+        </p>
+        <Link href="/about" class="btn">
+          Read the experience <span aria-hidden="true">↗</span>
+        </Link>
+      </div>
     </div>
   </section>
 
-  <SignalMarquee lines={LANDING.marqueeLines} />
-
-  <FeaturedWork
-    title={LANDING.featuredWorkTitle}
-    intro={LANDING.featuredWorkIntro}
-    projects={featuredProjects}
-  />
-
   <ArchiveProof
-    title={LANDING.archiveTitle}
-    intro={LANDING.archiveIntro}
     featuredPost={featuredPost ?? null}
-    supportingPosts={supportingPosts.slice(0, SITE.featuredPostCount)}
+    supportingPosts={supportingPosts}
     stats={archiveStats}
   />
 </Layout>
+
+<style>
+  /* Hero */
+  .hero {
+    overflow: hidden;
+  }
+
+  .hero__title {
+    padding-top: clamp(20px, 3vw, 44px);
+  }
+
+  .hero__title span {
+    display: block;
+    white-space: nowrap;
+  }
+
+  .hero__title-step {
+    text-align: right;
+  }
+
+  .hero__stage {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-rows: auto auto auto 1fr;
+    column-gap: 20px;
+    min-height: clamp(420px, 38vw, 560px);
+  }
+
+  .hero__art {
+    --bracket-color: rgb(255 255 255 / 0.62);
+    --bracket-top: 34%;
+    --bracket-bottom: 7%;
+    --bracket-left: calc(var(--gutter) - 12px);
+    --bracket-right: 8%;
+    position: absolute;
+    bottom: 0;
+    left: calc(var(--gutter) * -1);
+    pointer-events: none;
+  }
+
+  .hero__art::after {
+    top: 50%;
+    bottom: 14%;
+  }
+
+  .hero__art :global(.hero__duck) {
+    --ascii-size: clamp(3.4px, 0.67vw, 9.6px);
+    position: relative;
+    display: block;
+    margin-bottom: -9%;
+  }
+
+  .hero__tag {
+    position: absolute;
+    z-index: 1;
+  }
+
+  .hero__tag--a {
+    top: 27%;
+    left: calc(var(--gutter) + 3%);
+  }
+
+  .hero__tag--b {
+    top: 82%;
+    right: 12%;
+  }
+
+  .hero__signal {
+    grid-column: 6 / 13;
+    grid-row: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: clamp(16px, 2.2vw, 32px);
+  }
+
+  .hero__signal .rule-dotted {
+    flex: 1;
+  }
+
+  .hero__signal :global(.hero__coin-far) {
+    margin-left: -18px;
+    opacity: 0.55;
+  }
+
+  .hero__copy {
+    grid-column: 8 / 13;
+    grid-row: 2;
+    margin-top: clamp(20px, 2.6vw, 40px);
+  }
+
+  .hero__kicker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--muted-foreground);
+  }
+
+  .hero__lede {
+    max-width: 21ch;
+    margin-top: 16px;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 28px;
+  }
+
+  .hero__tree {
+    grid-row: 3;
+    align-self: start;
+    margin-top: clamp(28px, 3vw, 44px);
+    padding-bottom: clamp(32px, 3.4vw, 52px);
+  }
+
+  .hero__tree--now {
+    grid-column: 10 / 13;
+  }
+
+  .hero__tree--shipped {
+    grid-column: 7 / 10;
+    margin-top: clamp(64px, 6.4vw, 92px);
+  }
+
+  /* Proof */
+  .proof {
+    overflow: hidden;
+    padding-block: var(--section-y);
+  }
+
+  .proof__field {
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 720px;
+    color: #575757;
+    -webkit-mask-image: url('/fields/cross-corner.svg');
+    mask-image: url('/fields/cross-corner.svg');
+    -webkit-mask-position: right top;
+    mask-position: right top;
+  }
+
+  .proof .site-container {
+    position: relative;
+  }
+
+  .proof__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .proof__poster {
+    margin-top: clamp(40px, 5vw, 72px);
+    font-size: clamp(4.2rem, 12.6vw, 11.5rem);
+    color: #fff;
+  }
+
+  .proof__poster > span {
+    display: block;
+    white-space: nowrap;
+  }
+
+  .proof__coin {
+    display: inline-block;
+    vertical-align: -0.015em;
+    margin-inline: -0.035em 0.01em;
+    line-height: 0;
+  }
+
+  .proof__metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+    margin-top: clamp(64px, 8vw, 120px);
+    border-top: 1px solid var(--border);
+  }
+
+  .proof__metrics > div {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: start;
+    gap: 14px;
+    padding-top: 26px;
+  }
+
+  .proof__metrics dd {
+    font-size: clamp(2.4rem, 4.6vw, 4.25rem);
+    font-weight: 300;
+    line-height: 0.95;
+    letter-spacing: -0.055em;
+    color: #fff;
+  }
+
+  .proof__practice {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(24px, 4vw, 64px);
+    margin-top: clamp(80px, 10vw, 150px);
+  }
+
+  .proof__tile {
+    width: 132px;
+    margin-bottom: 18px;
+    color: #e8e8e8;
+  }
+
+  .proof__practice .t-label {
+    color: var(--foreground);
+  }
+
+  .proof__practice h3 {
+    margin-top: 18px;
+    font-size: clamp(1.4rem, 2vw, 1.75rem);
+    font-weight: 350;
+    letter-spacing: -0.035em;
+    line-height: 1.1;
+  }
+
+  .proof__practice .t-body {
+    max-width: 30ch;
+    margin-top: 10px;
+  }
+
+  .proof__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 28px;
+    margin-top: clamp(72px, 9vw, 128px);
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 1023px) {
+    .hero__copy {
+      grid-column: 7 / 13;
+    }
+
+    .hero__tree--now {
+      grid-column: 7 / 13;
+      grid-row: 3;
+    }
+
+    .hero__tree--shipped {
+      grid-column: 7 / 13;
+      grid-row: 4;
+      margin-top: 4px;
+    }
+
+    .proof__metrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      row-gap: 8px;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .hero__title {
+      font-size: 10vw;
+    }
+
+    .hero__art :global(.hero__duck) {
+      --ascii-size: calc(100vw / 82);
+    }
+
+    .hero__stage {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .hero__signal {
+      order: 1;
+      margin-top: 28px;
+    }
+
+    .hero__copy {
+      order: 2;
+      margin-top: 28px;
+    }
+
+    .hero__tree--now {
+      order: 3;
+      margin-top: 36px;
+      padding-bottom: 0;
+      padding-left: 34%;
+    }
+
+    .hero__tree--shipped {
+      order: 4;
+      margin-top: 24px;
+      padding-bottom: 0;
+      padding-left: 12%;
+    }
+
+    .hero__art {
+      position: relative;
+      order: 5;
+      margin-top: 8px;
+      margin-right: calc(var(--gutter) * -1);
+      --bracket-left: 3%;
+      --bracket-right: 3%;
+    }
+
+    .proof__practice {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .proof__tile {
+      width: 104px;
+    }
+  }
+
+  @media (max-width: 479px) {
+    .proof__poster {
+      font-size: clamp(2.8rem, 14.8vw, 4.6rem);
+    }
+  }
+</style>

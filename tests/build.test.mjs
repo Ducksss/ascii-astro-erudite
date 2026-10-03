@@ -45,6 +45,133 @@ const xmlValues = (xml, name) =>
     ([, value]) => decode(value),
   )
 
+test('portfolio publishes the current career and source-qualified record', () => {
+  const text = (file) =>
+    decode(read(file).replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ')
+  const home = text('index.html')
+  const about = text('about/index.html')
+  const author = text('authors/chai-pin-zheng/index.html')
+  const payload = text('blog/why-i-built-payload-kits/index.html')
+
+  assert.match(home, /Product Engineer at Reactor School/)
+  assert.match(home, /Payload Components/)
+  assert.match(home, /17 Devpost projects/)
+  assert.match(
+    home,
+    /Built ReactorOS participant imports, a tenant-safe data layer and a pathfinder ranking up to five warm-introduction routes/,
+  )
+  assert.match(
+    home,
+    /Shipped contextual onboarding, a four-category User Guide and nine interactive chart demos/,
+  )
+  for (const id of [
+    'reactor-school',
+    'metalearner',
+    'taskade',
+    'saf',
+    'govtech',
+    'associates-consulting',
+  ])
+    assert.match(read('about/index.html'), new RegExp(`id="${id}"`))
+  assert.match(about, /May 2026 - Present.*Reactor School.*Product Engineer/)
+  assert.match(about, /May 2025 - Aug 2025.*Taskade.*Software Engineer Intern/)
+  assert.match(
+    about,
+    /Apr 2022 - Jul 2023.*GovTech Singapore.*Software Engineer Intern/,
+  )
+  assert.match(about, /4\.50\/5\.00/)
+  assert.match(about, /2028 \(expected\)/)
+  assert.match(about, /The LaunchPad Challenge/)
+  assert.match(about, /The Collective/)
+  assert.match(about, /Resumify.*Co-founder \/ Fullstack Lead Engineer/)
+  assert.match(about, /14 September 2026/)
+  assert.match(about, /registrations/)
+  assert.doesNotMatch(
+    about,
+    /25%|15%|20 minutes per merge|Eliminated onboarding drop-offs/,
+  )
+  assert.match(author, /Product Engineer at Reactor School/)
+  assert.match(payload, /npx payload-components add hero-basic/)
+  assert.match(payload, /MIT/)
+  for (const page of [home, about, author, payload])
+    assert.doesNotMatch(
+      page,
+      /Payload Kits|npx payload-kit(?:\s|$)|4\.60\/5\.00/,
+    )
+})
+
+test('writing publishes the curated archive with ASCII covers and revision dates', () => {
+  const parents = [
+    'beacon',
+    'daybreak',
+    'ecocart',
+    'metalearner',
+    'saf-journey',
+    'safesteps-agewell',
+    'why-i-built-payload-kits',
+  ]
+  const rss = read('rss.xml')
+  assert.equal([...rss.matchAll(/<item>/g)].length, parents.length)
+  for (const id of parents) {
+    const cover = readFileSync(new URL(`${id}/cover.png`, content))
+    assert.deepEqual(
+      cover.subarray(0, 8),
+      Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]),
+    )
+    assert.equal(cover.readUInt32BE(16), 1200, `${id}: cover width`)
+    assert.equal(cover.readUInt32BE(20), 630, `${id}: cover height`)
+    const html = read(`blog/${id}/index.html`)
+    const attributes = tags(html)
+    const metadata = JSON.parse(
+      html.match(
+        /<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/,
+      )[1],
+    )
+    assert.equal(metadata.dateModified, '2026-10-03T00:00:00.000Z')
+    assert.ok(metadata.datePublished < metadata.dateModified)
+    assert.ok(
+      attributes.some(
+        ([name, attrs]) =>
+          name === 'meta' &&
+          attrs.property === 'article:modified_time' &&
+          attrs.content === metadata.dateModified,
+      ),
+    )
+    const social = attributes.find(
+      ([name, attrs]) => name === 'meta' && attrs.property === 'og:image',
+    )[1].content
+    assert.doesNotMatch(social, /\/static\/1200x630\.png$/)
+    assert.match(social, /cover/)
+    assert.ok(
+      attributes.some(
+        ([name, attrs]) =>
+          name === 'img' && attrs.class?.includes('post-figure__image'),
+      ),
+    )
+    assert.match(rss, new RegExp(`/blog/${id}(?:/|<)`))
+  }
+  const retired = [
+    'how-i-write-product-and-engineering-case-studies',
+    'how-this-astro-portfolio-is-structured',
+    'callouts-component',
+    'mobile-nav-and-subposts',
+    'rehype-patch',
+    'the-state-of-static-blogs',
+    'saf-journey/bmt',
+    'saf-journey/enlistment',
+    'saf-journey/ocs',
+    'saf-journey/leading-men',
+  ]
+  const files = readdirSync(dist, { recursive: true })
+  for (const id of retired) {
+    assert.ok(
+      !files.includes(`blog/${id}/index.html`),
+      `${id}: retired post published`,
+    )
+    assert.ok(!rss.includes(`/blog/${id}`), `${id}: retired post in feed`)
+  }
+})
+
 test('production build preserves routes, content, local links and SEO metadata', () => {
   const files = new Set(
     readdirSync(dist, { recursive: true }).filter((file) =>

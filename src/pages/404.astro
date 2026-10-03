@@ -1,58 +1,71 @@
 ---
-import AsciiEyeField from '@/components/404/ascii-eye-field.astro'
+import AsciiObject from '@/components/ascii-object.astro'
+import BinaryField from '@/components/binary-field.astro'
 import Link from '@/components/link.astro'
 import PageHead from '@/components/page-head.astro'
-import { buttonVariants } from '@/components/ui/button'
 import Layout from '@/layouts/layout.astro'
-import { cn } from '@/lib/utils'
+
+const destinations = [
+  { href: '/blog', label: 'Writing archive' },
+  { href: '/about', label: 'About' },
+  { href: '/tags', label: 'Topics' },
+  { href: '/authors', label: 'Authors' },
+]
 ---
 
-<Layout variant="immersive">
+<Layout>
   <PageHead
     slot="head"
     title="404"
     description="The requested page could not be found."
     noindex
   />
+  <section class="error surface-ink">
+    <span class="field error__field" aria-hidden="true"></span>
+    <BinaryField cols={64} rows={30} class="error__binary" />
+    <div class="site-container error__inner">
+      <div class="error__head">
+        <p class="t-label t-muted">Error 404 / signal lost</p>
+        <p class="t-label t-muted bracketed">No route</p>
+      </div>
 
-  <section class="error-eye-hero">
-    <AsciiEyeField class="error-eye-hero__field" />
+      <div class="t-poster error__digits" aria-hidden="true">
+        4<span class="error__coin"
+          ><AsciiObject
+            object="coin"
+            tone="ink"
+            cols={44}
+            rows={26}
+            zoom={0.98}
+            yaw={0.62}
+            gamma={0.72}
+            motion="spin"
+            class="ascii--bright"
+            size="0.0285em"
+          /></span
+        >4
+      </div>
 
-    <div class="error-eye-hero__top-fade"></div>
-    <div class="error-eye-hero__left-fade"></div>
-    <div class="error-eye-hero__right-grid"></div>
-
-    <div class="error-eye-hero__inner">
-      <div class="error-eye-copy" transition:name="page-intro">
-        <p class="landing-section-label">404</p>
-        <h1 class="error-eye-copy__title">
-          The archive is still looking for that route.
-        </h1>
-        <p class="error-eye-copy__body">
-          This address is gone, but the rest of the system is still live if you
-          want a clean way back in.
-        </p>
-
-        <div class="error-eye-copy__actions">
-          <Link
-            href="/"
-            class={cn(
-              buttonVariants({ variant: 'outline' }),
-              'group border-white/12 bg-white/[0.03] text-white hover:border-white/24 hover:bg-white/[0.08] hover:text-white',
-            )}
-          >
-            <span class="transition-transform group-hover:-translate-x-1"
-              >&larr;</span
-            >
-            Return home
+      <div class="error__grid">
+        <h1 class="t-title">Lost in the system?</h1>
+        <div class="error__copy">
+          <p class="t-body">
+            This page couldn't be found. There's still plenty to explore.
+          </p>
+          <Link href="/" class="btn btn--solid">
+            Return home <span aria-hidden="true">↗</span>
           </Link>
-        </div>
-
-        <div class="error-eye-copy__links">
-          <Link href="/blog" class="immersive-chip"> Writing archive </Link>
-          <Link href="/about" class="immersive-chip"> About </Link>
-          <Link href="/tags" class="immersive-chip"> Tags </Link>
-          <Link href="/authors" class="immersive-chip"> Authors </Link>
+          <ul class="error__links" aria-label="Other places">
+            {
+              destinations.map((item) => (
+                <li>
+                  <Link href={item.href} class="tag">
+                    {item.label}
+                  </Link>
+                </li>
+              ))
+            }
+          </ul>
         </div>
       </div>
     </div>
@@ -60,126 +73,84 @@ import { cn } from '@/lib/utils'
 </Layout>
 
 <style>
-  .error-eye-hero {
-    position: relative;
-    min-height: calc(100svh - 4.7rem);
+  .error {
     overflow: hidden;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    background: #020202;
   }
 
-  .error-eye-hero__field,
-  .error-eye-hero__top-fade,
-  .error-eye-hero__left-fade,
-  .error-eye-hero__right-grid {
+  .error__field {
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    color: #4f4f4f;
+    -webkit-mask: url('/fields/cross-corner.svg') right top no-repeat;
+    mask: url('/fields/cross-corner.svg') right top no-repeat;
+  }
+
+  .error :global(.error__binary) {
+    --ascii-size: clamp(9px, 1.05vw, 15px);
     position: absolute;
-    inset: 0;
+    top: 14%;
+    left: 58%;
+    letter-spacing: 0.35em;
+    opacity: 0.5;
   }
 
-  .error-eye-hero__field {
-    inset: 0;
-  }
-
-  .error-eye-hero__top-fade {
-    pointer-events: none;
-    background: linear-gradient(
-      180deg,
-      rgba(0, 0, 0, 0.72) 0%,
-      rgba(0, 0, 0, 0.18) 18%,
-      rgba(0, 0, 0, 0) 38%
-    );
-  }
-
-  .error-eye-hero__left-fade {
-    pointer-events: none;
-    background:
-      radial-gradient(circle at 18% 58%, rgba(0, 0, 0, 0.88), transparent 32%),
-      linear-gradient(
-        90deg,
-        rgba(0, 0, 0, 0.8),
-        rgba(0, 0, 0, 0.12) 32%,
-        transparent 52%
-      );
-  }
-
-  .error-eye-hero__right-grid {
-    pointer-events: none;
-    opacity: 0.22;
-    background-image: radial-gradient(
-      circle,
-      rgba(255, 255, 255, 0.2) 1px,
-      transparent 1.6px
-    );
-    background-size: 14px 14px;
-    mask-image: linear-gradient(
-      90deg,
-      transparent 0,
-      transparent 46%,
-      black 72%
-    );
-  }
-
-  .error-eye-hero__inner {
+  .error__inner {
     position: relative;
-    z-index: 2;
+    padding-block: clamp(48px, 6vw, 80px) var(--section-y);
+  }
+
+  .error__head {
     display: flex;
-    min-height: calc(100svh - 4.7rem);
-    align-items: flex-end;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
   }
 
-  .error-eye-copy {
-    width: min(100%, 34rem);
-    padding: 2.5rem 1rem 3rem;
+  .error__digits {
+    margin-top: clamp(32px, 4vw, 56px);
+    color: #fff;
+    font-size: clamp(9rem, 34vw, 31rem);
+    white-space: nowrap;
   }
 
-  .error-eye-copy__title {
-    margin-top: 1rem;
+  .error__coin {
+    display: inline-block;
+    vertical-align: -0.015em;
+    margin-inline: -0.02em;
+    line-height: 0;
+  }
+
+  .error__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.7fr);
+    align-items: end;
+    gap: clamp(32px, 5vw, 80px);
+    margin-top: clamp(40px, 5vw, 72px);
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+
+  .error__grid .t-title {
     max-width: 12ch;
-    font-size: clamp(2.8rem, 7vw, 5.8rem);
-    line-height: 0.92;
-    letter-spacing: -0.08em;
-    font-weight: 600;
-    color: white;
-    text-wrap: balance;
   }
 
-  .error-eye-copy__body {
-    margin-top: 1.25rem;
-    max-width: 30rem;
-    font-size: 1rem;
-    line-height: 1.85;
-    color: rgba(255, 255, 255, 0.66);
+  .error__copy {
+    display: grid;
+    justify-items: start;
+    gap: 24px;
   }
 
-  .error-eye-copy__actions {
-    margin-top: 1.75rem;
+  .error__links {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 6px;
   }
 
-  .error-eye-copy__links {
-    margin-top: 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  @media (min-width: 640px) {
-    .error-eye-copy {
-      padding: 3rem 1.5rem 3.6rem;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .error-eye-copy {
-      padding: 3.5rem 2rem 4rem 4rem;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .error-eye-hero__right-grid {
-      opacity: 0.16;
+  @media (max-width: 767px) {
+    .error__grid {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 </style>

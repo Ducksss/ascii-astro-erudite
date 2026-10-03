@@ -1,7 +1,7 @@
 ---
 import BlogCard from '@/components/blog-card.astro'
-import Breadcrumbs from '@/components/breadcrumbs.astro'
 import PageHead from '@/components/page-head.astro'
+import PageIntro from '@/components/page-intro.astro'
 import PaginationComponent from '@/components/ui/pagination'
 import { SITE } from '@/consts'
 import Layout from '@/layouts/layout.astro'
@@ -28,117 +28,64 @@ const { page, archiveYearCount } = Astro.props
 
 const postsByYear = groupPostsByYear(page.data)
 const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a))
-const pagePosition = `${String(page.currentPage).padStart(2, '0')}/${String(page.lastPage).padStart(2, '0')}`
+const pad = (value: number) => String(value).padStart(2, '0')
 ---
 
-<Layout variant="immersive">
+<Layout>
   <PageHead
     slot="head"
     title="Blog"
-    description="Build logs, hackathon writeups, and technical notes that stay close to shipped work."
+    description="Notes on software, interfaces and experiments, including how they work and where the prototypes fall short."
   />
 
-  <section
-    class="relative overflow-hidden border-b border-white/10 bg-black/30"
+  <PageIntro
+    items={[
+      { label: 'Writing', href: '/blog' },
+      { label: `Page ${page.currentPage}` },
+    ]}
+    label="Writing / archive"
+    title="Notes from the work."
+    description="Software, interfaces and experiments. How the pieces work, which choices shaped them and what I would question now."
+    asideLabel="Archive"
   >
-    <div
-      class="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 sm:py-14 lg:px-8 lg:py-20"
-    >
-      <Breadcrumbs
-        variant="immersive"
-        items={[
-          { label: 'Blog', href: '/blog', icon: 'lucide:library-big' },
-          { label: `Page ${page.currentPage}`, icon: 'lucide:book-copy' },
-        ]}
-      />
-
-      <div
-        class="immersive-animate-in mt-8 max-w-4xl"
-        transition:name="page-intro"
-      >
-        <div
-          class="immersive-animate-in max-w-4xl"
-          transition:name="page-intro"
-        >
-          <p class="landing-section-label">Blog index</p>
-          <h1 class="landing-section-title mt-4 max-w-3xl">
-            Build logs, hackathon writeups, and technical notes.
-          </h1>
-          <p
-            class="immersive-copy mt-6 max-w-2xl text-base leading-7 sm:text-lg sm:leading-8"
+    <div slot="aside" class="stat-row">
+      <div>
+        <p class="stat__value">{pad(page.total)}</p>
+        <p class="t-label stat__label">Notes</p>
+      </div>
+      <div>
+        <p class="stat__value">{pad(archiveYearCount)}</p>
+        <p class="t-label stat__label">Years</p>
+      </div>
+      <div>
+        <p class="stat__value">
+          {pad(page.currentPage)}<span class="t-dim">/{pad(page.lastPage)}</span
           >
-            This archive keeps the proof trail visible: what got built, what
-            changed, what was hard, and why the implementation choices mattered.
-          </p>
-        </div>
-
-        <aside class="immersive-panel immersive-animate-in self-start">
-          <p class="immersive-eyebrow">Archive snapshot</p>
-          <div
-            class="mt-6 grid grid-cols-3 gap-px border border-white/10 bg-white/[0.03]"
-          >
-            <div class="p-4">
-              <p
-                class="text-2xl leading-none font-semibold tracking-[-0.06em] text-white"
-              >
-                {String(page.total).padStart(2, '0')}
-              </p>
-              <p
-                class="mt-2 font-mono text-[0.66rem] tracking-[0.24em] text-white/38 uppercase"
-              >
-                Published notes
-              </p>
-            </div>
-            <div class="border-x border-white/10 p-4">
-              <p
-                class="text-2xl leading-none font-semibold tracking-[-0.06em] text-white"
-              >
-                {String(archiveYearCount).padStart(2, '0')}
-              </p>
-              <p
-                class="mt-2 font-mono text-[0.66rem] tracking-[0.24em] text-white/38 uppercase"
-              >
-                Years covered
-              </p>
-            </div>
-            <div class="p-4">
-              <p
-                class="text-2xl leading-none font-semibold tracking-[-0.06em] text-white"
-              >
-                {pagePosition}
-              </p>
-              <p
-                class="mt-2 font-mono text-[0.66rem] tracking-[0.24em] text-white/38 uppercase"
-              >
-                Page position
-              </p>
-            </div>
-          </div>
-        </aside>
+        </p>
+        <p class="t-label stat__label">Page</p>
       </div>
     </div>
-  </section>
+  </PageIntro>
 
-  <section class="border-b border-white/10">
-    <div class="mx-auto max-w-[1400px] px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
-      <div class="flex min-h-[calc(100vh-18rem)] flex-col gap-y-10">
-        {
-          years.map((year) => (
-            <section class="grid gap-4 border-t border-white/10 pt-6 xl:grid-cols-[9rem_minmax(0,1fr)] xl:gap-10">
-              <div class="font-mono text-[1.5rem] tracking-[0.18em] text-white/26 uppercase">
-                {year}
-              </div>
-              <div class="flex flex-col">
-                {postsByYear[year].map((post) => (
-                  <BlogCard entry={post} variant="immersive" />
-                ))}
-              </div>
-            </section>
-          ))
-        }
-      </div>
+  <section class="archive surface-paper">
+    <div class="site-container">
+      {
+        years.map((year) => (
+          <section class="archive__year" aria-labelledby={`year-${year}`}>
+            <h2 id={`year-${year}`} class="archive__year-label">
+              <span class="tab">{year}</span>
+              <span class="rule-dotted" aria-hidden="true" />
+            </h2>
+            <div>
+              {postsByYear[year].map((post) => (
+                <BlogCard entry={post} />
+              ))}
+            </div>
+          </section>
+        ))
+      }
 
-      <div class="mt-10 border-t border-white/10 pt-8">
+      <div class="archive__pagination">
         <PaginationComponent
           currentPage={page.currentPage}
           totalPages={page.lastPage}
@@ -150,3 +97,30 @@ const pagePosition = `${String(page.currentPage).padStart(2, '0')}/${String(page
     </div>
   </section>
 </Layout>
+
+<style>
+  .archive {
+    padding-block: clamp(64px, 8vw, 112px) var(--section-y);
+  }
+
+  .archive__year + .archive__year {
+    margin-top: 56px;
+  }
+
+  .archive__year-label {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 8px;
+  }
+
+  .archive__year-label .rule-dotted {
+    flex: 1;
+  }
+
+  .archive__pagination {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+</style>

@@ -1,78 +1,62 @@
 ---
-title: 'Prototyping real-time ideas and leaving a usable handoff'
-description: 'The Socket.IO research repo, future-only search references, and the handoff materials that made the MetaLearner internship easier to continue after I left.'
+title: 'MetaLearner: passing a message between backend replicas'
+description: 'How a separate FastAPI WebSocket prototype uses PostgreSQL for unread messages and Redis pub/sub to notify other backend processes.'
 date: 2026-04-03
-tags: ['projects', 'product-engineering', 'fastapi', 'redis', 'data-visualization']
+updated: 2026-10-03
+tags:
+  ['projects', 'product-engineering', 'fastapi', 'redis', 'data-visualization']
 authors: ['chai-pin-zheng']
 order: 4
 ---
 
-At the end of the internship, the deliverable was no longer just code. It was a handoff site, a Socket.IO research repo, a graph demo video, a Figma redesign file, and a short list of future-only search references that someone else could actually pick up.
+The real-time messaging work was a separate prototype, outside MetaLearner's production scope. The [repo is named socketio-chat](https://github.com/Ducksss/socketio-chat), but its implementation uses FastAPI WebSocket endpoints with PostgreSQL and Redis pub/sub.
 
-That was how I wanted the internship to end: not with scattered context, half-remembered ideas, or work that only made sense if I were still around to narrate it.
+Its interesting problem appears when there is more than one backend process. A WebSocket belongs to the process that accepted its connection, so a message arriving at process A cannot reach a browser connected to process B through A's local connection list alone.
 
-That mattered especially for the future-facing parts of the internship. Research work disappears quickly when it is left as conversation. Design work drifts when the references are hard to find. Even shipped work can become surprisingly hard to extend if the handoff is vague.
+## Storing the message and notifying the listeners
 
-## What I handed over
+The prototype separates those two jobs. PostgreSQL holds messages and unread records, while Redis carries a notification between backend processes.
 
-My actual handoff collected a few different artifacts:
+```text wrap=false
+Sender --> Process A --> PostgreSQL: message + unread records
+                |
+                v
+             Redis: group notification
+                |
+        +-------+-------+
+        v               v
+    Process A       Process B --> read unread records
+                                  --> connected browser
+```
 
-- a public [handoff site / presentation](https://metalearner-internship-logs.vercel.app/)
-- the [Socket.IO research repo](https://github.com/Ducksss/socketio-chat)
-- the [graph gallery demo video](https://www.youtube.com/watch?v=vEYGuY5jr-U)
-- the [MetaLearner frontend redesign Figma](https://www.figma.com/design/uoDY5aY1Nk7Qflo3dSn0qn/MetaLearner_Frontend?node-id=2191-3428&t=fLh1oOA7GISETV3f-1)
-- [Lunr.js](https://lunrjs.com/) and [research notes](https://docs.google.com/document/d/15dLIdhJCZmVgX5iFa9-Nf4JFLEWoh-Pj0mjqrZzu180/edit?usp=sharing) as future-only references for search
+The [send and receive handlers](https://github.com/Ducksss/socketio-chat/blob/21d477ea2b690396a59af6565f39f9e065df51e7/backend/chat/views/websocket.py) make that flow visible:
 
-I wanted the links to be boringly easy to follow. What was done, what was exploratory, what lived in code, and what was only a future option should all be obvious.
+1. The sender's message is stored in PostgreSQL.
+2. An unread record is created for each member of the group.
+3. The backend publishes a Redis event containing the group ID.
+4. Each subscribed backend wakes its local listeners for that group.
+5. Those listeners read unread records from PostgreSQL and send the messages through their own WebSockets.
 
-## The Socket.IO prototype was meant to be reusable, not just impressive
+The group ID tells a backend which listeners to wake. Redis does not need to carry the complete message because the receiving process can read it from the database. This is fan-out: one notification reaches several processes, and each process serves the connections it owns.
 
-The clearest example of that was the [Socket.IO research repo](https://github.com/Ducksss/socketio-chat).
+Edit and delete events take a different path. Their Redis payload contains the change details, which the [event manager](https://github.com/Ducksss/socketio-chat/blob/21d477ea2b690396a59af6565f39f9e065df51e7/backend/chat/realtime.py) sends directly to local listeners.
 
-This was research and prototyping work for a real-time chat setup. What made it worth handing over was that it contained more than an architectural suggestion:
+## A notification is not a delivery guarantee
 
-- a Redis pub/sub layer for fan-out messaging
-- setup instructions
-- architecture diagrams
-- a concrete repo the team could open if a similar direction became relevant later
+[Redis pub/sub has at-most-once delivery](https://redis.io/docs/latest/develop/pubsub/#delivery-semantics). A subscriber that misses an event cannot ask pub/sub to replay it later.
 
-Looking through the repo again made that even clearer. The README describes it as a real-time WebSocket chat application built with **FastAPI**, **PostgreSQL**, **Redis pub/sub**, and vanilla JavaScript, with **Docker Compose** bringing up Nginx, FastAPI, PostgreSQL, and Redis together in one command. It also explains why Redis pub/sub was added: to remove the single-instance websocket bottleneck so multiple backend replicas could receive the same event and notify their own local websocket clients.
+In this prototype, an unread message remains in PostgreSQL until the receive handler sends it and removes the unread record. The handler checks unread records when a listener connects, then waits for notifications when there is nothing pending. Reading that flow shows a limit: a missed notification can leave an already connected listener waiting even though an unread record exists. Reconnecting triggers another database check, but pub/sub itself does not repair the missed signal.
 
-That is the difference between "we discussed chat" and "the team has something concrete to reference." The latter survives much better.
+That distinction is useful when reading the architecture. Adding Redis lets a process notify peers, while reliable recovery requires its own design. This repo is a reference implementation of the message path, rather than evidence of a measured throughput or production delivery guarantee.
 
-## I wanted to be precise about what was and was not shipped
+## What the handoff contained
 
-The same was true for search.
+The [internship handoff](https://metalearner-internship-logs.vercel.app/) kept the frontend work, design exploration and research references together:
 
-I did **not** implement search during the internship. What I did do was share [Lunr.js](https://lunrjs.com/) with Lim as a lightweight client-side option if the team wanted to explore it later, together with [research notes](https://docs.google.com/document/d/15dLIdhJCZmVgX5iFa9-Nf4JFLEWoh-Pj0mjqrZzu180/edit?usp=sharing) on:
+| Material                                                                                                        | Use                                                                  |
+| --------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Frontend implementation and [chart walkthrough](https://www.youtube.com/watch?v=vEYGuY5jr-U)                    | Inspect the delivered onboarding, guide and chart interactions       |
+| [Figma exploration](https://www.figma.com/design/uoDY5aY1Nk7Qflo3dSn0qn/MetaLearner_Frontend?node-id=2191-3428) | Review the proposed frontend direction                               |
+| [Messaging repo](https://github.com/Ducksss/socketio-chat)                                                      | Follow the prototype through source, setup instructions and diagrams |
 
-- inverted indexing
-- tokenisation
-- stop-word removal
-- stemming
-- relevance-based ranking
-
-I care about making that boundary explicit because good handoffs should not blur shipped work and future-facing references into one vague bucket.
-
-## The handoff site and reflections
-
-To wrap everything up cleanly, I also put together a public [handoff site / presentation](https://metalearner-internship-logs.vercel.app/). That site collects the work I had already completed and handed over, and it also points toward my reflections and reports on the internship.
-
-I liked having that separate surface because it does a different job from this blog series. The handoff site is closer to a wrap-up document. This series is the more product-engineering explanation of what the work was trying to solve.
-
-I was also pretty stretched academically toward the end of the internship, which made the handoff even more important to me. If I could not be infinitely available afterward, then the materials themselves needed to be clearer.
-
-## Why I think this matters
-
-Internships have a very obvious time boundary. That makes the final shape of the work matter even more. If the work is hard to locate, hard to explain, or hard to extend, then a lot of its value evaporates the moment the internship ends.
-
-So one of the things I wanted to do well here was leave behind:
-
-- clear links
-- concrete artifacts
-- honest boundaries around what shipped and what did not
-- enough context for someone else to continue without guessing
-
-That is not the most glamorous category of engineering work, but I think it is part of doing shared work responsibly. A good handoff is one of the last real deliverables of an internship.
-
-In MetaLearner's case, that mattered because the durable outputs were not only code. They were the onboarding flow, the User Guide, the chart gallery, the redesign direction, and the references the team could keep building from after I was gone.
+Search remained a possible extension to the guide. I shared [Lunr.js](https://lunrjs.com/) with Lim and [notes on indexing and ranking](https://docs.google.com/document/d/15dLIdhJCZmVgX5iFa9-Nf4JFLEWoh-Pj0mjqrZzu180/edit?usp=sharing), but did not implement guide search during the internship. The four guide categories were the delivered navigation structure.

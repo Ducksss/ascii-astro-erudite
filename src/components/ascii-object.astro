@@ -1,0 +1,34 @@
+---
+import { renderCached, type AsciiRenderOptions } from '@/lib/ascii'
+import { cn } from '@/lib/utils'
+
+interface Props extends AsciiRenderOptions {
+  tone: 'blue' | 'ink' | 'paper'
+  /** `sway` turns gently toward the pointer; `spin` rotates continuously. */
+  motion?: 'sway' | 'spin'
+  /** CSS font size of one character cell. */
+  size?: string
+  class?: string
+}
+
+const { tone, motion, size, class: className, ...render } = Astro.props
+const { frame, html } = renderCached({ samples: [2, 3], ...render })
+---
+
+<pre
+  class={cn('ascii', `ascii--${tone}`, className)}
+  style={size ? `--ascii-size: ${size}` : undefined}
+  aria-hidden="true"
+  data-ascii-motion={motion}
+  data-ascii-options={motion
+    ? JSON.stringify({ ...render, range: frame.range })
+    : undefined}
+  set:html={html}
+/>
+
+<script>
+  import { watchAsciiMotion } from '@/lib/ascii/motion'
+
+  // Only starts a worker when the page has `[data-ascii-motion]` objects.
+  watchAsciiMotion()
+</script>

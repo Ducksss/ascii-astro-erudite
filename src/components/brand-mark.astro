@@ -1,0 +1,20 @@
+---
+import type { HTMLAttributes } from 'astro/types'
+
+type Props = HTMLAttributes<'svg'> & { size?: number }
+
+const { size = 22, ...rest } = Astro.props
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  aria-hidden="true"
+  focusable="false"
+  {...rest}
+>
+  <path d="M19 6H8v12h11" stroke="currentColor" stroke-width="3.2"></path>
+  <path d="M4 2.5h16M4 21.5h16" stroke="currentColor" stroke-width="1.2"></path>
+</svg>

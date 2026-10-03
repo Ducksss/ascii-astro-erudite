@@ -1,94 +1,148 @@
 ---
+import BrandMark from '@/components/brand-mark.astro'
 import Link from '@/components/link.astro'
-import ThemeToggle from '@/components/theme-toggle.astro'
-import { LANDING, NAV_LINKS, PROFILE, SITE } from '@/consts'
+import { FOOTER, LANDING, NAV_LINKS, PROFILE } from '@/consts'
 
-interface Props {
-  variant?: 'default' | 'landing' | 'immersive'
-}
-
-const { variant = 'default' } = Astro.props
-const isLanding = variant === 'landing'
-const isImmersive = variant === 'immersive'
-const isAtmospheric = isLanding || isImmersive
-const linkedInLink =
-  PROFILE.links.find((item) => item.label === 'LinkedIn')?.href ??
-  'https://www.linkedin.com/in/chai-pin-zheng/'
+const github = PROFILE.links.find((item) => item.label === 'GitHub')!
+const path = Astro.url.pathname
+const items = [{ href: '/#work', label: 'Work' }, ...NAV_LINKS]
 ---
 
-<div class="site-header-shell">
-  <div
-    class:list={[
-      'mx-auto flex items-center justify-between gap-4 px-4 py-3',
-      isAtmospheric ? 'max-w-[1400px] sm:px-6 lg:px-8' : 'max-w-3xl',
-    ]}
-  >
-    <Link
-      href="/"
-      transition:persist
-      transition:name="site-brand"
-      class:list={[
-        'flex shrink-0 items-center justify-center gap-3',
-        isAtmospheric ? 'text-white' : 'text-foreground',
-      ]}
-    >
-      {
-        isAtmospheric ? (
-          <>
-            <span class="inline-flex size-10 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] font-mono text-[0.64rem] tracking-[0.36em] text-white/88 uppercase">
-              {LANDING.monogram}
-            </span>
-            <span class="hidden h-full text-[0.7rem] leading-none font-medium tracking-[0.38em] text-white/58 uppercase min-[520px]:block">
-              {LANDING.name}
-            </span>
-          </>
-        ) : (
-          <>
-            <span class="border-border bg-muted text-foreground/86 inline-flex size-9 items-center justify-center rounded-full border font-mono text-[0.64rem] tracking-[0.28em] uppercase">
-              {LANDING.monogram}
-            </span>
-            <span class="hidden h-full text-lg leading-none font-medium min-[400px]:block">
-              {SITE.title}
-            </span>
-          </>
-        )
-      }
-    </Link>
-    <div class="flex items-center gap-4">
-      <nav
-        class:list={[
-          'flex items-center gap-2.5 sm:gap-6',
-          isAtmospheric
-            ? 'font-mono text-[0.62rem] tracking-[0.24em] text-white/60 uppercase min-[420px]:text-[0.68rem] min-[420px]:tracking-[0.28em]'
-            : 'text-sm',
-        ]}
-      >
-        {
-          NAV_LINKS.map((item) => (
-            <Link
-              href={item.href}
-              class:list={[
-                'inline-flex min-h-11 items-center rounded-full px-3 py-2 transition-colors',
-                isAtmospheric
-                  ? 'hover:bg-white/[0.03] hover:text-white'
-                  : 'text-foreground/60 hover:text-foreground hover:bg-muted/60 capitalize',
-              ]}
-            >
-              {item.label}
-            </Link>
-          ))
-        }
-      </nav>
-      {isAtmospheric && (
+<div class="site-header__bar site-container">
+  <Link href="/" class="site-brand" aria-label={`${LANDING.name}, home`}>
+    <BrandMark class="site-brand__mark" />
+    <span class="site-brand__name">{LANDING.name}</span>
+  </Link>
+  <nav class="site-nav" aria-label="Main navigation">
+    {
+      items.map((item) => (
         <Link
-          href={linkedInLink}
-          external
-          class="hidden min-h-11 items-center rounded-full border border-white/12 px-4 py-2 font-mono text-[0.68rem] tracking-[0.24em] text-white/74 uppercase transition-colors hover:border-white/22 hover:bg-white/[0.04] hover:text-white min-[640px]:inline-flex"
+          href={item.href}
+          aria-current={
+            item.href !== '/#work' && path.startsWith(item.href)
+              ? 'page'
+              : undefined
+          }
         >
-          LinkedIn
+          {item.label}
+          <span class="cross-box" aria-hidden="true">
+            <span class="mark-cross" />
+          </span>
         </Link>
-      )}
-      {!isAtmospheric && <ThemeToggle transition:persist />}
-    </div>
+      ))
+    }
+  </nav>
+  <div class="site-header__actions">
+    <Link href={FOOTER.primaryContact.href} class="btn btn--solid">
+      Get in touch
+    </Link>
+    <Link href={github.href} external class="btn site-header__secondary">
+      GitHub <span aria-hidden="true">↗</span>
+    </Link>
   </div>
 </div>
+
+<style>
+  .site-header__bar {
+    display: flex;
+    min-height: 72px;
+    align-items: center;
+    gap: 40px;
+  }
+
+  .site-brand {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .site-brand__mark {
+    width: 22px;
+    height: 22px;
+  }
+
+  .site-brand__name {
+    white-space: nowrap;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.045em;
+    text-transform: uppercase;
+  }
+
+  .site-nav {
+    display: flex;
+    gap: 34px;
+  }
+
+  .site-nav :global(a) {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 9px;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .site-nav :global(a[aria-current='page']) {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 6px;
+  }
+
+  .site-nav :global(a:hover .cross-box) {
+    background: transparent;
+    color: #fff;
+    outline: 1px solid #fff;
+    outline-offset: -1px;
+  }
+
+  .site-header__actions {
+    display: flex;
+    gap: 12px;
+    margin-left: auto;
+  }
+
+  .site-header__actions :global(.btn) {
+    min-height: 40px;
+  }
+
+  @media (max-width: 1023px) {
+    .site-header__bar {
+      gap: 28px;
+    }
+
+    .site-header__secondary {
+      display: none;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .site-header__bar {
+      min-height: 60px;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .site-brand__name,
+    .site-header__actions {
+      display: none;
+    }
+
+    .site-nav {
+      gap: 18px;
+    }
+  }
+
+  @media (max-width: 399px) {
+    .site-nav {
+      gap: 14px;
+    }
+
+    .site-nav .cross-box {
+      display: none;
+    }
+  }
+</style>

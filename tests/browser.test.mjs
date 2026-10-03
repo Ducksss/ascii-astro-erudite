@@ -5,6 +5,374 @@ import { fileURLToPath } from 'node:url'
 import { preview } from 'astro'
 import { chromium } from 'playwright'
 
+test('rewritten articles keep covers, screenshots and diagrams readable', async () => {
+  const server = await preview({
+    configFile: false,
+    root: fileURLToPath(new URL('../', import.meta.url)),
+    server: { host: '127.0.0.1', port: 0 },
+    logLevel: 'silent',
+  })
+  let browser
+  try {
+    browser = await chromium.launch()
+    const page = await browser.newPage({ reducedMotion: 'reduce' })
+    const errors = []
+    page.on('pageerror', (error) => errors.push(error.message))
+    const posts = [
+      'beacon',
+      'beacon/workflow',
+      'beacon/telegram-stack',
+      'metalearner',
+      'metalearner/onboarding',
+      'metalearner/charts',
+      'metalearner/redesign',
+      'metalearner/handoff',
+      'daybreak',
+      'ecocart',
+      'safesteps-agewell',
+      'saf-journey',
+      'why-i-built-payload-kits',
+    ]
+    for (const width of [1440, 390, 320]) {
+      await page.setViewportSize({ width, height: 900 })
+      for (const id of posts) {
+        await page.goto(`http://127.0.0.1:${server.port}/blog/${id}`)
+        await page.evaluate(() => document.fonts.ready)
+        const context = `${id} at ${width}px`
+        assert.ok(
+          await page.locator('.prose h2').count(),
+          `${context}: missing article sections`,
+        )
+        if (!id.includes('/')) {
+          const cover = page.locator('.post-figure__image')
+          assert.equal(await cover.count(), 1, `${context}: missing cover`)
+          assert.ok(
+            await cover.getAttribute('alt'),
+            `${context}: cover has no description`,
+          )
+          const size = await cover.boundingBox()
+          assert.ok(
+            Math.abs(size.width / size.height - 1200 / 630) < 0.01,
+            `${context}: cropped cover`,
+          )
+        }
+        for (const image of await page.locator('main img').all()) {
+          await image.scrollIntoViewIfNeeded()
+          await image.evaluate((element) => element.decode())
+          assert.ok(
+            await image.evaluate((element) => element.naturalWidth > 0),
+            `${context}: unloaded image`,
+          )
+        }
+        assert.equal(
+          await page.evaluate(
+            () => document.documentElement.scrollWidth > innerWidth + 1,
+          ),
+          false,
+          `${context}: horizontal overflow`,
+        )
+        for (const block of await page
+          .locator('.prose pre, .prose table')
+          .all()) {
+          const bounds = await block.boundingBox()
+          assert.ok(
+            bounds.x >= -1 && bounds.x + bounds.width <= width + 1,
+            `${context}: diagram or table escapes article`,
+          )
+        }
+      }
+    }
+    assert.deepEqual(errors, [])
+  } finally {
+    await browser?.close()
+    await server.stop()
+  }
+})
+
+test('editorial design stays readable, responsive and navigable across the site', async () => {
+  const server = await preview({
+    configFile: false,
+    root: fileURLToPath(new URL('../', import.meta.url)),
+    server: { host: '127.0.0.1', port: 0 },
+    logLevel: 'silent',
+  })
+  let browser
+
+  try {
+    browser = await chromium.launch()
+    const page = await browser.newPage({ reducedMotion: 'reduce' })
+    page.setDefaultTimeout(5000)
+    const base = `http://127.0.0.1:${server.port}`
+    const errors = []
+    page.on('pageerror', (error) => errors.push(error.message))
+    const routes = [
+      ['/', /Chai Pin Zheng/],
+      ['/about', /About/],
+      ['/blog', /Blog/],
+      ['/blog/metalearner', /MetaLearner/],
+      ['/blog/metalearner/onboarding', /onboarding/i],
+      ['/tags', /Tags/],
+      ['/tags/product-engineering', /product-engineering/],
+      ['/authors', /Authors/],
+      ['/authors/chai-pin-zheng', /Chai Pin Zheng/],
+      ['/signal-room/ascii-signal', /ASCII Art Playground/],
+      ['/404.html', /404/],
+    ]
+
+    for (const width of [1440, 768, 390, 320]) {
+      await page.setViewportSize({ width, height: 900 })
+      for (const [path, title] of routes) {
+        await page.goto(`${base}${path}`)
+        await page.evaluate(() => document.fonts.ready)
+        const context = `${path} at ${width}px`
+        assert.match(await page.title(), title, context)
+        assert.equal(await page.locator('main h1').count(), 1, context)
+        assert.ok(await page.locator('main h1').isVisible(), context)
+        assert.ok((await page.locator('main h1').innerText()).trim(), context)
+        if (await page.getByRole('navigation', { name: 'breadcrumb' }).count())
+          assert.ok(
+            await page
+              .getByRole('link', { name: 'Home', exact: true })
+              .isVisible(),
+            `${context}: unnamed breadcrumb home link`,
+          )
+        for (const region of ['header', 'header nav', 'footer'])
+          assert.ok(await page.locator(region).first().isVisible(), context)
+        for (const path of ['/about', '/blog'])
+          assert.ok(
+            await page.locator(`header nav a[href="${path}"]`).isVisible(),
+            `${context}: navigation to ${path}`,
+          )
+
+        const presentation = await page.evaluate(() => {
+          const visible = (element) => {
+            const style = getComputedStyle(element)
+            return (
+              element.getClientRects().length && style.visibility !== 'hidden'
+            )
+          }
+          const paragraph = [...document.querySelectorAll('main p')].find(
+            (element) =>
+              visible(element) &&
+              !element.closest('[aria-hidden="true"]') &&
+              element.textContent.trim().length >= 50 &&
+              !getComputedStyle(element).fontFamily.includes('monospace') &&
+              parseFloat(getComputedStyle(element).fontSize) <= 20,
+          )
+          const style = paragraph && getComputedStyle(paragraph)
+          const canvas = document.createElement('canvas').getContext('2d')
+          const rgba = (color) => {
+            canvas.clearRect(0, 0, 1, 1)
+            canvas.fillStyle = color
+            canvas.fillRect(0, 0, 1, 1)
+            return [...canvas.getImageData(0, 0, 1, 1).data]
+          }
+          const composite = (front, back) =>
+            back.map(
+              (channel, index) =>
+                channel * (1 - front[3] / 255) +
+                (front[index] * front[3]) / 255,
+            )
+          const ancestors = []
+          for (
+            let element = paragraph;
+            element;
+            element = element.parentElement
+          )
+            ancestors.unshift(element)
+          const background = ancestors.reduce(
+            (back, element) =>
+              composite(rgba(getComputedStyle(element).backgroundColor), back),
+            [255, 255, 255],
+          )
+          const luminance = (color) =>
+            color
+              .map((channel) => channel / 255)
+              .map((channel) =>
+                channel <= 0.04045
+                  ? channel / 12.92
+                  : ((channel + 0.055) / 1.055) ** 2.4,
+              )
+              .reduce(
+                (sum, channel, index) =>
+                  sum + channel * [0.2126, 0.7152, 0.0722][index],
+                0,
+              )
+          const brightness = style && [
+            luminance(background),
+            luminance(composite(rgba(style.color), background)),
+          ]
+          const headingBounds = document
+            .querySelector('main h1')
+            .getBoundingClientRect()
+          const headingText = document.createTreeWalker(
+            document.querySelector('main h1'),
+            NodeFilter.SHOW_TEXT,
+          )
+          let headingClipped = false
+          while (headingText.nextNode()) {
+            if (!headingText.currentNode.textContent.trim()) continue
+            const range = document.createRange()
+            range.selectNodeContents(headingText.currentNode)
+            for (const bounds of range.getClientRects())
+              if (
+                bounds.left < headingBounds.left - 1 ||
+                bounds.right > headingBounds.right + 1
+              )
+                headingClipped = true
+          }
+          return {
+            overflow: document.documentElement.scrollWidth > innerWidth + 1,
+            headingClipped,
+            paragraph: style && {
+              fontSize: parseFloat(style.fontSize),
+              lineHeight: parseFloat(style.lineHeight),
+              color: style.color,
+              opacity: style.opacity,
+              contrast:
+                (Math.max(...brightness) + 0.05) /
+                (Math.min(...brightness) + 0.05),
+            },
+            missingTargets: [
+              ...document.querySelectorAll('header a, main a, footer a'),
+            ]
+              .filter(visible)
+              .filter((link) => link.getAttribute('aria-disabled') !== 'true')
+              .filter(
+                (link) =>
+                  !link.getAttribute('href') ||
+                  link.getAttribute('href') === '#',
+              )
+              .map((link) => link.textContent.trim()),
+          }
+        })
+        assert.equal(
+          presentation.overflow,
+          false,
+          `${context}: horizontal overflow`,
+        )
+        assert.equal(
+          presentation.headingClipped,
+          false,
+          `${context}: clipped heading`,
+        )
+        assert.ok(presentation.paragraph, `${context}: missing body copy`)
+        assert.ok(
+          presentation.paragraph.fontSize >= 14,
+          `${context}: undersized body copy`,
+        )
+        assert.ok(
+          presentation.paragraph.lineHeight >=
+            presentation.paragraph.fontSize * 1.4,
+          `${context}: cramped body copy`,
+        )
+        assert.notEqual(
+          presentation.paragraph.color,
+          'rgba(0, 0, 0, 0)',
+          context,
+        )
+        assert.notEqual(presentation.paragraph.opacity, '0', context)
+        assert.ok(
+          presentation.paragraph.contrast >= 4.5,
+          `${context}: low-contrast body copy`,
+        )
+        assert.deepEqual(
+          presentation.missingTargets,
+          [],
+          `${context}: empty link destinations`,
+        )
+
+        if (path === '/blog' && width >= 768) {
+          for (const image of await page
+            .locator('.post-row__thumb img')
+            .all()) {
+            const bounds = await image.boundingBox()
+            assert.ok(
+              Math.abs(bounds.width / bounds.height - 1200 / 630) < 0.01,
+              `${context}: archive crops the cover`,
+            )
+            assert.equal(
+              await image.evaluate(
+                (element) => getComputedStyle(element).filter,
+              ),
+              'none',
+              `${context}: archive changes cover colours`,
+            )
+          }
+        }
+
+        if (path === '/') {
+          const colors = await page
+            .locator('main > section')
+            .evaluateAll((sections) =>
+              sections.map((section) =>
+                getComputedStyle(section)
+                  .backgroundColor.match(/[\d.]+/g)
+                  .map(Number),
+              ),
+            )
+          assert.ok(
+            colors[0][0] < 65 && colors[0][1] < 65 && colors[0][2] > 180,
+            `${context}: missing electric-blue hero`,
+          )
+          assert.ok(
+            colors.some(
+              ([r, g, b, alpha = 1]) => Math.min(r, g, b) > 230 && alpha === 1,
+            ),
+            `${context}: missing paper section`,
+          )
+          assert.ok(
+            colors.some(
+              ([r, g, b, alpha = 1]) =>
+                Math.max(r, g, b) < 30 &&
+                Math.max(r, g, b) - Math.min(r, g, b) < 4 &&
+                alpha === 1,
+            ),
+            `${context}: missing ink section`,
+          )
+        }
+      }
+    }
+
+    await page.goto(base)
+    await page.keyboard.press('Tab')
+    const skip = page.getByRole('link', { name: 'Skip to main content' })
+    assert.ok(await skip.isVisible(), 'Keyboard skip link is hidden')
+    assert.equal(
+      await skip.evaluate((link) => link === document.activeElement),
+      true,
+    )
+    await page.keyboard.press('Enter')
+    assert.equal(
+      await page
+        .locator('main')
+        .evaluate((main) => main === document.activeElement),
+      true,
+    )
+
+    await page.evaluate(() => {
+      window.__designNavigation = true
+    })
+    for (const path of ['/about', '/blog', '/signal-room/ascii-signal']) {
+      const region = path.startsWith('/signal-room') ? 'footer' : 'header nav'
+      await page.locator(`${region} a[href="${path}"]`).click()
+      await page.waitForURL(`${base}${path}`)
+      assert.equal(
+        await page.evaluate(() => window.__designNavigation),
+        true,
+        'Navigation reloaded the document',
+      )
+      assert.equal(await page.locator('header').count(), 1)
+      assert.equal(await page.locator('footer').count(), 1)
+      assert.ok(await page.locator('main h1').isVisible())
+    }
+    assert.deepEqual(errors, [])
+  } finally {
+    await browser?.close()
+    await server.stop()
+  }
+})
+
 test('TOC survives navigation and the ASCII playground renders and exports', async () => {
   const server = await preview({
     configFile: false,
@@ -128,6 +496,74 @@ test('TOC survives navigation and the ASCII playground renders and exports', asy
     assert.deepEqual(
       readFileSync(await png.path()).subarray(0, 8),
       Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]),
+    )
+    assert.deepEqual(errors, [])
+  } finally {
+    await browser?.close()
+    await server.stop()
+  }
+})
+
+test('the about page tunes through roles and opens the door as you scroll', async () => {
+  const server = await preview({
+    configFile: false,
+    root: fileURLToPath(new URL('../', import.meta.url)),
+    server: { host: '127.0.0.1', port: 0 },
+    logLevel: 'silent',
+  })
+  let browser
+
+  try {
+    browser = await chromium.launch()
+    const page = await browser.newPage({
+      viewport: { width: 1440, height: 900 },
+    })
+    page.setDefaultTimeout(6000)
+    const errors = []
+    page.on('pageerror', (error) => errors.push(error.message))
+    await page.goto(`http://127.0.0.1:${server.port}/about`)
+
+    const tunedTo = (name) =>
+      page.waitForFunction(
+        (name) =>
+          document.querySelector('[data-tuner-name]')?.textContent === name,
+        name,
+      )
+    const first = await page.locator('[data-tuner-ascii] pre').textContent()
+    await page
+      .locator('#saf')
+      .evaluate((chapter) => chapter.scrollIntoView({ block: 'center' }))
+    await tunedTo('Singapore Armed Forces')
+    await page.waitForFunction(
+      (first) =>
+        document.querySelector('[data-tuner-ascii] pre')?.textContent !== first,
+      first,
+    )
+    assert.equal(await page.locator('#saf').getAttribute('data-active'), '')
+    assert.equal(
+      (
+        await page.locator('[data-tuner-link][aria-current="step"]').innerText()
+      ).trim(),
+      'SAF',
+    )
+
+    await page.locator('[data-tuner-link][href="#metalearner"]').click()
+    await tunedTo('MetaLearner')
+
+    await page.locator('#doorway-title').evaluate((title) => {
+      title.scrollIntoView({ block: 'start' })
+      window.scrollBy(0, 240)
+    })
+    await page.waitForFunction(
+      () =>
+        document.querySelector('[data-doorway-state]')?.textContent === 'Open',
+    )
+
+    const strip = page.getByRole('region', { name: 'Hackathon awards' })
+    await strip.focus()
+    await page.keyboard.press('ArrowRight')
+    await page.waitForFunction(
+      () => document.querySelector('[data-wins-strip]').scrollLeft > 0,
     )
     assert.deepEqual(errors, [])
   } finally {

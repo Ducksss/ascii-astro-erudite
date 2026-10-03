@@ -29,6 +29,7 @@ const socialImage =
 const imageUrl = socialImage ? new URL(socialImage.src, SITE.href).href : image
 const author = SITE.author
 const publishedTime = post.data.date.toISOString()
+const modifiedTime = (post.data.updated ?? post.data.date).toISOString()
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'BlogPosting',
@@ -41,7 +42,7 @@ const structuredData = {
   },
   image: [imageUrl],
   datePublished: publishedTime,
-  dateModified: publishedTime,
+  dateModified: modifiedTime,
   inLanguage: SITE.locale,
   author: {
     '@type': 'Person',
@@ -72,6 +73,7 @@ const structuredData = {
 <meta property="og:site_name" content={SITE.title} />
 <meta property="og:url" content={canonical} />
 <meta property="article:published_time" content={publishedTime} />
+<meta property="article:modified_time" content={modifiedTime} />
 
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />

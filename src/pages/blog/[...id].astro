@@ -58,7 +58,7 @@ const combinedReadingTime =
 const tocSections = await getTOCSections(currentPostId)
 ---
 
-<Layout variant="immersive">
+<Layout>
   <PostHead slot="head" post={post} />
   {
     (hasChildPosts || isCurrentSubpost) && (
@@ -78,171 +78,144 @@ const tocSections = await getTOCSections(currentPostId)
   }
 
   <section
-    class="relative overflow-hidden border-b border-white/10 bg-black/30"
+    class:list={[
+      'post-intro surface-blue',
+      post.data.image && 'post-intro--figure',
+    ]}
   >
-    <div class="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+    <div class="site-container post-intro__inner">
       <Breadcrumbs
-        variant="immersive"
         items={[
-          { href: '/blog', label: 'Blog', icon: 'lucide:library-big' },
+          { href: '/blog', label: 'Writing' },
           ...(isCurrentSubpost && parentPost
             ? [
                 {
                   href: `/blog/${parentPost.id}`,
                   label: parentPost.data.title,
-                  icon: 'lucide:book-open',
                 },
-                {
-                  href: `/blog/${currentPostId}`,
-                  label: post.data.title,
-                  icon: 'lucide:file-text',
-                },
+                { href: `/blog/${currentPostId}`, label: post.data.title },
               ]
-            : [
-                {
-                  href: `/blog/${currentPostId}`,
-                  label: post.data.title,
-                  icon: 'lucide:book-open-text',
-                },
-              ]),
+            : [{ href: `/blog/${currentPostId}`, label: post.data.title }]),
         ]}
       />
 
-      <div
-        class="mt-8 grid gap-10 xl:grid-cols-[minmax(0,1.08fr)_minmax(280px,0.92fr)] xl:items-start"
-      >
-        <div
-          class="immersive-animate-in max-w-4xl"
-          transition:name="page-intro"
-        >
-          <p class="landing-section-label">
-            {isCurrentSubpost ? 'Subpost' : 'Note'}
+      <div class="post-intro__grid">
+        <div class="post-intro__main rise-in" transition:name="page-intro">
+          <p class="t-label post-intro__label">
+            <span class="mark-cross" aria-hidden="true"></span>
+            {isCurrentSubpost ? 'Field note / part' : 'Field note'}
           </p>
-          <h1
-            class="mt-4 scroll-mt-31 text-[clamp(2.8rem,6vw,5.8rem)] leading-[0.92] font-semibold tracking-[-0.07em] text-white"
-            id="post-title"
-          >
+          <h1 class="t-title post-intro__title scroll-mt-31" id="post-title">
             {post.data.title}
           </h1>
 
-          <div class="mt-6 flex flex-wrap gap-3">
-            {
-              authors.length > 0 &&
-                authors.map((author) => (
-                  <div class="immersive-chip">
-                    <Image
-                      src={author.avatar}
-                      alt={author.name}
-                      width={20}
-                      height={20}
-                      class="size-5 rounded-full"
-                    />
-                    {author.isRegistered ? (
-                      <Link href={`/authors/${author.id}`} class="text-white">
-                        {author.name}
-                      </Link>
-                    ) : (
-                      <span>{author.name}</span>
-                    )}
-                  </div>
-                ))
-            }
-          </div>
-
           {
             post.data.description && (
-              <p class="immersive-copy mt-6 max-w-2xl text-base leading-7 sm:text-lg sm:leading-8">
-                {post.data.description}
-              </p>
+              <p class="post-intro__description">{post.data.description}</p>
             )
           }
 
-          {
-            post.data.tags && post.data.tags.length > 0 && (
-              <div class="mt-6 flex flex-wrap gap-2">
-                {post.data.tags.map((tag) => (
-                  <a
-                    href={`/tags/${tag}`}
-                    class="immersive-chip immersive-chip--solid"
-                  >
-                    <Icon name="lucide:hash" class="size-3" />
-                    {tag}
-                  </a>
-                ))}
-              </div>
-            )
-          }
+          <div class="post-intro__byline">
+            {
+              authors.map((author) => (
+                <span class="tag tag--solid post-intro__author">
+                  <Image
+                    src={author.avatar}
+                    alt=""
+                    width={20}
+                    height={20}
+                    class="post-intro__avatar"
+                  />
+                  {author.isRegistered ? (
+                    <Link href={`/authors/${author.id}`}>{author.name}</Link>
+                  ) : (
+                    <span>{author.name}</span>
+                  )}
+                </span>
+              ))
+            }
+            {
+              post.data.tags?.map((tag) => (
+                <a href={`/tags/${tag}`} class="tag">
+                  #{tag}
+                </a>
+              ))
+            }
+          </div>
         </div>
 
-        <aside class="immersive-panel immersive-animate-in self-start">
-          <p class="immersive-eyebrow">Reading details</p>
-          <div class="immersive-rule-list mt-6">
-            <div class="space-y-2">
-              <p
-                class="font-mono text-[0.66rem] tracking-[0.26em] text-white/34 uppercase"
-              >
-                Published
-              </p>
-              <p class="text-base text-white/68">
-                {formatDate(post.data.date)}
-              </p>
-            </div>
-            <div class="space-y-2">
-              <p
-                class="font-mono text-[0.66rem] tracking-[0.26em] text-white/34 uppercase"
-              >
-                Reading time
-              </p>
-              <p class="text-base text-white/68">
-                {postReadingTime}
-                {
-                  combinedReadingTime &&
-                    combinedReadingTime !== postReadingTime && (
-                      <span class="text-white/42">
-                        {' '}
-                        ({combinedReadingTime} total)
-                      </span>
-                    )
-                }
-              </p>
-            </div>
-            {
-              subpostCount > 0 && (
-                <div class="space-y-2">
-                  <p class="font-mono text-[0.66rem] tracking-[0.26em] text-white/34 uppercase">
-                    Structure
-                  </p>
-                  <p class="text-base text-white/68">
-                    {subpostCount} subpost{subpostCount === 1 ? '' : 's'}
-                  </p>
-                </div>
-              )
-            }
+        <aside class="post-intro__aside rise-in">
+          <span class="tab post-intro__tab">Reading</span>
+          <div class="frame-double">
+            <dl class="frame-double__panel meta-list post-intro__panel">
+              <div>
+                <dt class="t-label">Published</dt>
+                <dd>{formatDate(post.data.date)}</dd>
+              </div>
+              {
+                post.data.updated && (
+                  <div>
+                    <dt class="t-label">Updated</dt>
+                    <dd>{formatDate(post.data.updated)}</dd>
+                  </div>
+                )
+              }
+              <div>
+                <dt class="t-label">Reading time</dt>
+                <dd>
+                  {postReadingTime}
+                  {
+                    combinedReadingTime &&
+                      combinedReadingTime !== postReadingTime && (
+                        <span class="t-muted">
+                          {' '}
+                          / {combinedReadingTime} total
+                        </span>
+                      )
+                  }
+                </dd>
+              </div>
+              {
+                subpostCount > 0 && (
+                  <div>
+                    <dt class="t-label">Structure</dt>
+                    <dd>
+                      {subpostCount} part{subpostCount === 1 ? '' : 's'}
+                    </dd>
+                  </div>
+                )
+              }
+            </dl>
           </div>
         </aside>
       </div>
 
       {
         post.data.image && (
-          <div class="mt-10 overflow-hidden border border-white/12 bg-black/40">
+          <figure class="post-figure frame-brackets">
             <Image
               src={post.data.image}
               alt={post.data.title}
               width={1200}
               height={630}
-              class="mx-auto w-full max-w-5xl object-cover"
+              class="post-figure__image"
               transition:name="page-media"
             />
-          </div>
+          </figure>
         )
       }
     </div>
   </section>
 
-  <section>
-    <div class="mx-auto max-w-[1400px] px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+  <section
+    class:list={[
+      'post-body surface-paper',
+      post.data.image && 'post-body--after-figure',
+    ]}
+  >
+    <div class="site-container">
       <div
-        class="grid gap-8 xl:grid-cols-[minmax(220px,1fr)_minmax(0,820px)_minmax(220px,1fr)] xl:items-start"
+        class="grid gap-8 xl:grid-cols-[minmax(140px,0.7fr)_minmax(0,720px)_minmax(140px,0.7fr)] xl:items-start"
       >
         {
           tocSections.length > 0 && (
@@ -250,12 +223,10 @@ const tocSections = await getTOCSections(currentPostId)
           )
         }
 
-        <div class="col-start-1 space-y-8 xl:col-start-2">
-          <div class="immersive-prose-shell">
-            <article class="prose max-w-none">
-              <Content />
-            </article>
-          </div>
+        <div class="col-start-1 min-w-0 space-y-16 xl:col-start-2">
+          <article class="prose max-w-none">
+            <Content />
+          </article>
 
           <PostNavigation
             newerPost={navigation.newer}
@@ -280,7 +251,7 @@ const tocSections = await getTOCSections(currentPostId)
   <Button
     variant="outline"
     size="icon"
-    className="group fixed right-8 bottom-8 z-50 hidden"
+    className="scroll-top group fixed right-8 bottom-8 z-50 hidden rounded-none"
     id="scroll-to-top"
     title="Scroll to top"
     aria-label="Scroll to top"
@@ -326,3 +297,124 @@ const tocSections = await getTOCSections(currentPostId)
     })()
   </script>
 </Layout>
+
+<style>
+  .post-intro {
+    --figure-overlap: clamp(56px, 9vw, 150px);
+  }
+
+  .post-intro__inner {
+    padding-block: clamp(28px, 3.4vw, 48px) clamp(64px, 8vw, 112px);
+  }
+
+  .post-intro--figure .post-intro__inner {
+    padding-bottom: 0;
+  }
+
+  .post-intro__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+    align-items: end;
+    gap: clamp(40px, 6vw, 96px);
+    margin-top: clamp(48px, 7vw, 96px);
+  }
+
+  .post-intro__label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--muted-foreground);
+  }
+
+  .post-intro__title {
+    max-width: 18ch;
+    margin-top: 22px;
+    font-size: clamp(2.4rem, 5.4vw, 5rem);
+  }
+
+  .post-intro__description {
+    max-width: 40rem;
+    margin-top: 26px;
+    color: var(--muted-foreground);
+    font-size: clamp(1.0625rem, 1.4vw, 1.25rem);
+    line-height: 1.55;
+    letter-spacing: -0.01em;
+  }
+
+  .post-intro__byline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 28px;
+  }
+
+  .post-intro__author :global(a) {
+    display: inline-flex;
+    min-height: 24px;
+    align-items: center;
+  }
+
+  .post-intro__avatar {
+    width: 18px;
+    height: 18px;
+    margin-left: -3px;
+    filter: url('#duotone-blue');
+  }
+
+  .post-intro__aside {
+    position: relative;
+    --frame: rgb(255 255 255 / 0.5);
+  }
+
+  .post-intro__tab {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+  }
+
+  .post-intro__panel {
+    padding: 22px;
+  }
+
+  .post-figure {
+    --bracket-color: rgb(255 255 255 / 0.7);
+    --bracket-top: -16px;
+    --bracket-bottom: 22%;
+    --bracket-left: -16px;
+    --bracket-right: -16px;
+    position: relative;
+    z-index: 2;
+    max-width: 1080px;
+    margin: clamp(64px, 8vw, 112px) auto calc(var(--figure-overlap) * -1);
+    background: var(--ink);
+  }
+
+  .post-figure__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1200 / 630;
+    object-fit: cover;
+  }
+
+  .post-body {
+    padding-block: clamp(64px, 8vw, 112px) var(--section-y);
+  }
+
+  .post-body--after-figure {
+    padding-top: calc(
+      var(--figure-overlap, clamp(56px, 9vw, 150px)) + clamp(56px, 7vw, 96px)
+    );
+  }
+
+  @media (max-width: 1023px) {
+    .post-intro__grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 56px;
+    }
+
+    .post-intro__aside {
+      max-width: 420px;
+    }
+  }
+</style>

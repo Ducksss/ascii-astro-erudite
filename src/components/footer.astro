@@ -1,100 +1,231 @@
 ---
+import AsciiObject from '@/components/ascii-object.astro'
 import Link from '@/components/link.astro'
 import { FOOTER } from '@/consts'
-const isExternalLink = (href: string) =>
-  href.startsWith('http://') ||
-  href.startsWith('https://') ||
-  href.startsWith('mailto:')
+
+const directory = [
+  { href: '/#work', label: 'Selected work' },
+  { href: '/about', label: 'About' },
+  { href: '/blog', label: 'Writing' },
+  { href: '/tags', label: 'Topics' },
+  { href: '/signal-room/ascii-signal', label: 'ASCII playground' },
+]
+const elsewhere = FOOTER.contactLinks.filter(
+  (item) =>
+    item.href.startsWith('http') ||
+    item.href.startsWith('mailto:') ||
+    item.href.endsWith('.xml'),
+)
 ---
 
-<footer
-  transition:persist
-  class="relative isolate w-full overflow-hidden border-t border-white/10 bg-[#050505] text-white"
->
-  <div
-    class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.06),transparent_30%),linear-gradient(180deg,rgba(255,255,255,0.015),transparent_18%)]"
-  >
+<footer class="site-footer surface-ink" transition:persist>
+  <div class="site-container site-footer__top">
+    <span class="site-footer__marks" aria-hidden="true">
+      <span class="mark-cross"></span><span class="mark-cross"></span>
+    </span>
+    <div class="site-footer__lead">
+      <p class="site-footer__headline">
+        Real work, real impact.<br />
+        <span class="t-dim">Let's build the next one.</span>
+      </p>
+      <span class="rule-dotted site-footer__rule" aria-hidden="true"></span>
+      <nav class="site-footer__nav" aria-label="Footer navigation">
+        {directory.map((item) => <Link href={item.href}>{item.label}</Link>)}
+      </nav>
+    </div>
+    <div class="site-footer__object frame-brackets" aria-hidden="true">
+      <AsciiObject
+        object="coin"
+        tone="ink"
+        cols={70}
+        rows={40}
+        yaw={0.35}
+        size="clamp(3.6px, 0.4vw, 5.8px)"
+      />
+    </div>
   </div>
-  <div
-    class="relative mx-auto w-full max-w-[1400px] px-4 py-12 sm:px-6 sm:py-14 lg:px-8 lg:py-16"
-  >
-    <div
-      class="grid gap-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(300px,0.92fr)] lg:gap-10"
-    >
-      <div class="max-w-3xl">
-        <p
-          class="font-mono text-[0.72rem] tracking-[0.34em] text-white/34 uppercase"
-        >
-          {FOOTER.eyebrow}
-        </p>
-        <h2
-          class="mt-6 max-w-[13ch] text-[clamp(2.5rem,5vw,4.4rem)] leading-[0.94] font-semibold tracking-[-0.075em] text-balance text-white/94"
-        >
-          {FOOTER.headline}
-        </h2>
-        <p
-          class="mt-6 max-w-xl text-base leading-7 text-white/54 sm:text-[1.02rem]"
-        >
-          {FOOTER.copy}
-        </p>
-        <Link
-          href={FOOTER.primaryContact.href}
-          external={isExternalLink(FOOTER.primaryContact.href)}
-          class="mt-8 inline-flex max-w-full items-center rounded-full border border-white/12 bg-white/[0.04] px-4 py-2.5 text-sm font-medium tracking-[-0.02em] text-white/84 transition-all duration-300 hover:border-white/18 hover:bg-white/[0.06] hover:text-white"
-        >
-          <span class="truncate">{FOOTER.primaryContact.label}</span>
-        </Link>
-      </div>
 
-      <div class="border-l-0 border-white/10 lg:pl-12">
-        <div class="space-y-9 lg:border-l lg:border-white/10 lg:pl-12">
-          <section class="space-y-3">
-            <p
-              class="font-mono text-[0.72rem] tracking-[0.34em] text-white/30 uppercase"
-            >
-              {FOOTER.baseLabel}
-            </p>
-            <p
-              class="text-[1.4rem] leading-none tracking-[-0.05em] text-white/78 sm:text-[1.7rem]"
-            >
-              {FOOTER.baseValue}
-            </p>
-          </section>
+  <div class="site-container site-footer__legal">
+    <p>© {FOOTER.signature}. Built in Singapore.</p>
+    <div class="site-footer__links">
+      {
+        elsewhere.map((item) => (
+          <Link
+            href={item.href}
+            external={item.href.startsWith('http')}
+            class="link-line"
+          >
+            {item.label} <span aria-hidden="true">↗</span>
+          </Link>
+        ))
+      }
+    </div>
+  </div>
 
-          <section class="space-y-3">
-            <p
-              class="font-mono text-[0.72rem] tracking-[0.34em] text-white/30 uppercase"
-            >
-              {FOOTER.linksLabel}
-            </p>
-            <div class="border-t border-white/8">
-              {
-                FOOTER.contactLinks.map((item) => (
-                  <Link
-                    href={item.href}
-                    external={isExternalLink(item.href)}
-                    class="group flex items-center justify-between gap-4 border-b border-white/8 py-3.5 font-mono text-[0.76rem] tracking-[0.28em] text-white/58 uppercase transition-colors duration-300 hover:text-white/84"
-                  >
-                    <span>{item.label}</span>
-                    <span
-                      aria-hidden="true"
-                      class="text-white/18 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-white/42"
-                    >
-                      &rarr;
-                    </span>
-                  </Link>
-                ))
-              }
-            </div>
-          </section>
-        </div>
-
-        <p
-          class="mt-10 font-mono text-[0.68rem] tracking-[0.34em] text-white/20 uppercase"
-        >
-          {FOOTER.signature}
-        </p>
-      </div>
+  <div class="site-footer__wordmark" aria-hidden="true">
+    <span class="field site-footer__band"></span>
+    <div class="site-container site-footer__word">
+      <span class="site-footer__letters">Chai</span>
+      <span class="site-footer__scatter"></span>
     </div>
   </div>
 </footer>
+
+<style>
+  .site-footer {
+    overflow: hidden;
+  }
+
+  .site-footer__top {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr) minmax(220px, 0.62fr);
+    gap: 32px;
+    padding-top: clamp(72px, 9vw, 128px);
+  }
+
+  .site-footer__marks {
+    display: flex;
+    gap: 6px;
+    padding-top: 10px;
+  }
+
+  .site-footer__headline {
+    max-width: 15ch;
+    font-size: clamp(2rem, 3.6vw, 3.25rem);
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.045em;
+  }
+
+  .site-footer__rule {
+    max-width: 440px;
+    margin-block: 40px 28px;
+  }
+
+  .site-footer__nav {
+    display: grid;
+    justify-items: start;
+  }
+
+  .site-footer__nav :global(a) {
+    display: inline-flex;
+    min-height: 40px;
+    align-items: center;
+    font-size: 1.0625rem;
+    letter-spacing: -0.01em;
+    transition: color 0.2s;
+  }
+
+  .site-footer__nav :global(a:hover) {
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 5px;
+    text-decoration-thickness: 1px;
+  }
+
+  .site-footer__object {
+    --bracket-color: #5a5a5a;
+    --bracket-top: 22%;
+    --bracket-bottom: 0;
+    display: grid;
+    align-self: start;
+    justify-self: end;
+    padding: 4px 30px;
+  }
+
+  .site-footer__object::after {
+    top: 0;
+    bottom: 24%;
+  }
+
+  .site-footer__legal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 12px 32px;
+    padding-top: clamp(56px, 7vw, 96px);
+    color: var(--muted-foreground);
+    font-size: 0.8125rem;
+  }
+
+  .site-footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 28px;
+  }
+
+  .site-footer__links :global(.link-line) {
+    color: var(--foreground);
+    font-size: 0.9375rem;
+  }
+
+  .site-footer__wordmark {
+    position: relative;
+    margin-top: 18px;
+    padding-bottom: clamp(16px, 2vw, 28px);
+  }
+
+  .site-footer__band {
+    inset: 18% 0 0;
+    color: #3a3a3a;
+    -webkit-mask-image: url('/fields/cross-band.svg');
+    mask-image: url('/fields/cross-band.svg');
+    -webkit-mask-position: left bottom;
+    mask-position: left bottom;
+    -webkit-mask-repeat: repeat-x;
+    mask-repeat: repeat-x;
+  }
+
+  .site-footer__word {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+  }
+
+  .site-footer__letters {
+    font-family: var(--font-poster);
+    font-size: clamp(5.5rem, 24.5vw, 22.5rem);
+    font-weight: 900;
+    font-stretch: 125%;
+    font-variation-settings: 'wdth' 125;
+    line-height: 0.74;
+    letter-spacing: -0.045em;
+    text-transform: uppercase;
+    color: #fff;
+    padding-top: 0.06em;
+    -webkit-mask: url('/fields/dissolve.svg') 0 0 / 100% 100% no-repeat;
+    mask: url('/fields/dissolve.svg') 0 0 / 100% 100% no-repeat;
+  }
+
+  .site-footer__scatter {
+    flex: 1;
+    margin-left: 0.4%;
+    background: #fff;
+    -webkit-mask: url('/fields/scatter.svg') 0 0 / 100% 100% no-repeat;
+    mask: url('/fields/scatter.svg') 0 0 / 100% 100% no-repeat;
+  }
+
+  @media (max-width: 1023px) {
+    .site-footer__top {
+      grid-template-columns: 56px minmax(0, 1fr) minmax(180px, 0.7fr);
+      gap: 20px;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .site-footer__top {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 28px;
+    }
+
+    .site-footer__object {
+      display: none;
+    }
+
+    .site-footer__legal {
+      flex-direction: column;
+      align-items: start;
+    }
+  }
+</style>
