@@ -7,16 +7,18 @@ import { PROFILE } from '@/consts'
 const [entered, ...stats] = PROFILE.hackathonStats
 const TILTS = [-3, 2, -1.5, 3, -2.5, 1.5, -1, 2.5, -2, 1]
 const LIFTS = [0, 18, -10, 12, -4, 22, -14, 6, 16, -8]
+// Badges only state a placing the award itself states.
+const BADGES: [RegExp, string][] = [
+  [/first place/i, '1st'],
+  [/second place/i, '2nd'],
+  [/champion/i, 'Champ'],
+  [/runner-up/i, 'Runner'],
+  [/winner/i, 'Winner'],
+  [/merit/i, 'Merit'],
+  [/best/i, 'Best'],
+]
 const badge = (award: string) =>
-  /first place|champion/i.test(award)
-    ? '1st'
-    : /second place|runner-up/i.test(award)
-      ? '2nd'
-      : /merit/i.test(award)
-        ? 'Merit'
-        : /best/i.test(award)
-          ? 'Best'
-          : 'Win'
+  BADGES.find(([pattern]) => pattern.test(award))?.[1] ?? 'Award'
 const wins = PROFILE.hackathonWins.map((entry, index) => {
   const [event, ...rest] = entry.split(' - ')
   const year = event.match(/\b20\d\d\b/)?.[0]
@@ -360,9 +362,10 @@ const years = wins.flatMap((win) => (win.year ? [Number(win.year)] : []))
 
   .win-card__badge {
     display: grid;
-    width: 56px;
+    min-width: 56px;
     height: 56px;
     place-items: center;
+    padding-inline: 8px;
     background: var(--blue);
     color: #fff;
     font-size: 1.15rem;
