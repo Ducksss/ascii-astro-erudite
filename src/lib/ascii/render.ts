@@ -1,4 +1,9 @@
-import { ASCII_OBJECTS, type AsciiObjectName } from './objects'
+import {
+  ASCII_OBJECTS,
+  type AsciiObject,
+  type AsciiObjectName,
+  type Pose,
+} from './objects'
 import { clamp01 } from './sdf'
 
 export interface TrailOptions {
@@ -40,6 +45,12 @@ export interface AsciiRenderOptions {
   /** Sub-samples per cell, across and down. */
   samples?: [number, number]
   shadows?: boolean
+  /** Blends the object into another one: 0 is this object, 1 the other. */
+  morph?: { to: AsciiObjectName; t: number }
+  /** Signal loss from 0 to 1: slipped rows, corrupted glyphs and static. */
+  noise?: number
+  /** Animated object state from 0 to 1, such as how far the door is open. */
+  state?: number
 }
 
 export interface AsciiFrame {
@@ -57,6 +68,7 @@ const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map(
   (value) => (value + 0.5) / 16 - 0.5,
 )
 const TRAIL_GLYPHS = '--=-.-=:'
+const STATIC_GLYPHS = '.:-=.:'
 
 export const hash = (a: number, b: number, c: number) => {
   let h =
@@ -94,6 +106,73 @@ function rotationMatrix(yaw: number, pitch: number, roll: number) {
   )
 }
 
+type Field = (x: number, y: number, z: number) => number
+
+interface Scene {
+  /** Radius used to clip rays. */
+  bound: number
+  /** Radius used to frame the object, so morphs zoom smoothly. */
+  framing: number
+  pose: Pose
+  sdf: Field
+  albedo: Field
+  glow?: Field
+}
+
+// Shifts an object so its visual centre sits on the rotation origin.
+function centred(object: AsciiObject, state: number) {
+  const [cx, cy, cz] = object.center ?? [0, 0, 0]
+  const { albedo, glow } = object
+  return {
+    sdf: (x: number, y: number, z: number) =>
+      object.sdf(x + cx, y + cy, z + cz, state),
+    albedo: albedo
+      ? (x: number, y: number, z: number) =>
+          albedo(x + cx, y + cy, z + cz, state)
+      : () => 1,
+    glow: glow
+      ? (x: number, y: number, z: number) => glow(x + cx, y + cy, z + cz, state)
+      : undefined,
+  }
+}
+
+function resolveScene(options: AsciiRenderOptions): Scene {
+  const state = options.state ?? 0
+  const from = ASCII_OBJECTS[options.object]
+  const to = options.morph && ASCII_OBJECTS[options.morph.to]
+  const t = to ? clamp01(options.morph?.t ?? 0) : 0
+  const single = (object: AsciiObject): Scene => ({
+    bound: object.bound,
+    framing: object.bound,
+    pose: object.pose,
+    ...centred(object, state),
+  })
+  if (!to || t === 0) return single(from)
+  if (t === 1) return single(to)
+
+  // Blending the distance fields melts one shape into the other.
+  const a = centred(from, state)
+  const b = centred(to, state)
+  const mix = (start: number, end: number) => start + (end - start) * t
+  const glow =
+    a.glow || b.glow
+      ? (x: number, y: number, z: number) =>
+          mix(a.glow?.(x, y, z) ?? 0, b.glow?.(x, y, z) ?? 0)
+      : undefined
+  return {
+    bound: Math.max(from.bound, to.bound),
+    framing: mix(from.bound, to.bound),
+    pose: {
+      yaw: mix(from.pose.yaw, to.pose.yaw),
+      pitch: mix(from.pose.pitch, to.pose.pitch),
+      roll: mix(from.pose.roll, to.pose.roll),
+    },
+    sdf: (x, y, z) => mix(a.sdf(x, y, z), b.sdf(x, y, z)),
+    albedo: (x, y, z) => mix(a.albedo(x, y, z), b.albedo(x, y, z)),
+    glow,
+  }
+}
+
 /** Ray-marches the object into a luminance grid: -1 marks an empty cell. */
 function shadeGrid(options: AsciiRenderOptions) {
   const {
@@ -105,19 +184,11 @@ function shadeGrid(options: AsciiRenderOptions) {
     samples = [1, 2],
     shadows = true,
   } = options
-  const object = ASCII_OBJECTS[options.object]
-  const { bound } = object
-  const [cx, cy, cz] = object.center ?? [0, 0, 0]
-  const sdf = (x: number, y: number, z: number) =>
-    object.sdf(x + cx, y + cy, z + cz)
-  const surfaceAlbedo = object.albedo
-  const albedo = surfaceAlbedo
-    ? (x: number, y: number, z: number) => surfaceAlbedo(x + cx, y + cy, z + cz)
-    : () => 1
+  const { bound, framing, pose, sdf, albedo, glow } = resolveScene(options)
   const world = rotationMatrix(
-    object.pose.yaw + (options.yaw ?? 0),
-    object.pose.pitch + (options.pitch ?? 0),
-    object.pose.roll + (options.roll ?? 0),
+    pose.yaw + (options.yaw ?? 0),
+    pose.pitch + (options.pitch ?? 0),
+    pose.roll + (options.roll ?? 0),
   )
   // Object space = transpose(world) · world space.
   const toObject = (x: number, y: number, z: number, out: number[]) => {
@@ -127,7 +198,7 @@ function shadeGrid(options: AsciiRenderOptions) {
   }
 
   const distance = 7
-  const tanY = bound / zoom / distance
+  const tanY = framing / zoom / distance
   const tanX = tanY * ((cols * cellAspect) / rows)
   const origin = [0, 0, 0]
   toObject(0, 0, distance, origin)
@@ -227,7 +298,8 @@ function shadeGrid(options: AsciiRenderOptions) {
     return Math.max(
       surface * (0.08 + 0.9 * diffuse * falloff * 1.35 + bounce) * ao +
         specular +
-        rim * ao,
+        rim * ao +
+        (glow ? glow(px, py, pz) : 0),
       0,
     )
   }
@@ -284,6 +356,7 @@ export function renderAsciiFrame(options: AsciiRenderOptions): AsciiFrame {
     invert = false,
     trails = false,
     seed = 1,
+    noise = 0,
   } = options
   const values = shadeGrid(options)
   const range = options.range ?? luminanceRange(values)
@@ -318,6 +391,7 @@ export function renderAsciiFrame(options: AsciiRenderOptions): AsciiFrame {
   }
 
   if (trails) addTrails(glyphRows, levelGrid, cols, rows, trails, seed)
+  if (noise > 0) addStatic(glyphRows, levelGrid, cols, rows, noise, seed, ramp)
 
   return {
     cols,
@@ -381,6 +455,47 @@ function addTrails(
       col += side
       travelled++
       segment--
+    }
+  }
+}
+
+// Signal loss: glyphs corrupt, static fills the gaps and rows slip sideways.
+function addStatic(
+  glyphRows: string[][],
+  levelGrid: Uint8Array,
+  cols: number,
+  rows: number,
+  noise: number,
+  seed: number,
+  ramp: string,
+) {
+  for (let row = 0; row < rows; row++) {
+    const glyphs = glyphRows[row]
+    for (let col = 0; col < cols; col++) {
+      const index = row * cols + col
+      const roll = hash(col, row, seed + 31)
+      if (levelGrid[index]) {
+        if (roll < noise * 0.16)
+          glyphs[col] =
+            ramp[Math.floor(hash(row, col, seed + 37) * ramp.length)]
+      } else if (roll < noise * 0.05) {
+        glyphs[col] =
+          STATIC_GLYPHS[
+            Math.floor(hash(row, col, seed + 41) * STATIC_GLYPHS.length)
+          ]
+        levelGrid[index] = roll < noise * 0.012 ? 2 : 1
+      }
+    }
+    if (hash(row, seed, 43) >= noise * 0.3) continue
+    const shift = Math.round((hash(row, seed, 47) - 0.5) * 2 * (2 + noise * 14))
+    if (!shift) continue
+    const source = glyphs.slice()
+    const sourceLevels = levelGrid.slice(row * cols, (row + 1) * cols)
+    for (let col = 0; col < cols; col++) {
+      const from = col - shift
+      const inside = from >= 0 && from < cols
+      glyphs[col] = inside ? source[from] : ' '
+      levelGrid[row * cols + col] = inside ? sourceLevels[from] : 0
     }
   }
 }

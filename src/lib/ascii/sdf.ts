@@ -144,3 +144,29 @@ export function extrude(
     rounding
   )
 }
+
+// Capsule between points a and b.
+export function capsule(
+  x: number,
+  y: number,
+  z: number,
+  ax: number,
+  ay: number,
+  az: number,
+  bx: number,
+  by: number,
+  bz: number,
+  radius: number,
+) {
+  const px = x - ax
+  const py = y - ay
+  const pz = z - az
+  const ex = bx - ax
+  const ey = by - ay
+  const ez = bz - az
+  const t = Math.min(
+    Math.max((px * ex + py * ey + pz * ez) / (ex * ex + ey * ey + ez * ez), 0),
+    1,
+  )
+  return length3(px - ex * t, py - ey * t, pz - ez * t) - radius
+}

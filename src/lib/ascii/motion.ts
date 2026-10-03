@@ -15,8 +15,16 @@ interface Instance {
   roll: number
 }
 
+interface Scrub {
+  element: HTMLElement
+  pending: boolean
+  queued?: AsciiRenderOptions
+}
+
 const FRAME_INTERVAL = 1000 / 14
 const instances = new Map<number, Instance>()
+const scrubs = new Map<number, Scrub>()
+const scrubIds = new WeakMap<HTMLElement, number>()
 const pointer = { x: 0, y: 0, active: false }
 const startedAt = performance.now()
 let worker: Worker | undefined
@@ -73,10 +81,34 @@ function scan() {
   }
 }
 
+/**
+ * Renders a frame into `element` off the main thread, for objects a page drives
+ * itself (for example from scroll position). Requests made while a frame is in
+ * flight collapse into the latest one.
+ */
+export function renderInto(element: HTMLElement, options: AsciiRenderOptions) {
+  if (typeof Worker === 'undefined') return
+  worker ??= createWorker()
+  let id = scrubIds.get(element)
+  if (id === undefined) {
+    id = nextId++
+    scrubIds.set(element, id)
+  }
+  const scrub = scrubs.get(id) ?? { element, pending: false }
+  scrubs.set(id, scrub)
+  if (scrub.pending) {
+    scrub.queued = options
+    return
+  }
+  scrub.pending = true
+  worker.postMessage({ id, options })
+}
+
 function reset() {
   for (const instance of instances.values())
     delete instance.element.dataset.asciiLive
   instances.clear()
+  scrubs.clear()
   observer?.disconnect()
   observer = undefined
   cancelAnimationFrame(frameHandle)
@@ -90,6 +122,15 @@ function createWorker() {
   created.onmessage = ({
     data,
   }: MessageEvent<{ id: number; html: string; ms: number }>) => {
+    const scrub = scrubs.get(data.id)
+    if (scrub) {
+      scrub.element.innerHTML = data.html
+      scrub.pending = false
+      const queued = scrub.queued
+      scrub.queued = undefined
+      if (queued) renderInto(scrub.element, queued)
+      return
+    }
     const instance = instances.get(data.id)
     if (!instance) return
     instance.pending = false

@@ -1,4 +1,7 @@
 ---
+import Doorway from '@/components/about/doorway.astro'
+import Tuner from '@/components/about/tuner.astro'
+import Wins from '@/components/about/wins.astro'
 import AsciiObject from '@/components/ascii-object.astro'
 import Breadcrumbs from '@/components/breadcrumbs.astro'
 import Link from '@/components/link.astro'
@@ -13,7 +16,6 @@ const heroLinks = ['LinkedIn', 'Email', 'GitHub'].flatMap(
     return match ? [match] : []
   },
 )
-const pad = (value: number) => String(value).padStart(2, '0')
 ---
 
 <Layout>
@@ -88,94 +90,11 @@ const pad = (value: number) => String(value).padStart(2, '0')
     </div>
   </section>
 
-  <section class="experience surface-paper" aria-labelledby="experience-title">
-    <div class="site-container">
-      <div class="section-head">
-        <p class="t-label t-muted">Experience / 2021 – 2026</p>
-        <h2 id="experience-title" class="t-title">A record of useful work.</h2>
-        <p class="t-body section-head__intro">
-          Product onboarding, platform delivery and operational systems. The
-          roles, decisions and outcomes behind the work.
-        </p>
-      </div>
+  <Tuner />
 
-      <div class="roles">
-        {
-          PROFILE.experience.map((experience, index) => (
-            <article id={experience.id} class="role scroll-mt-28">
-              <span class="rule-dotted role__rule" aria-hidden="true" />
-              <div class="role__grid">
-                <div class="role__head">
-                  <p class="t-label t-muted">
-                    {pad(index + 1)} / {experience.period}
-                  </p>
-                  <h3 class="role__company">{experience.company}</h3>
-                  <p class="role__title">{experience.role}</p>
-                </div>
-                <div class="role__body">
-                  <p class="role__context">{experience.caseStudyContext}</p>
-                  <ul class="tree tree--text role__highlights">
-                    {experience.highlights.map((highlight) => (
-                      <li>{highlight}</li>
-                    ))}
-                  </ul>
-                  <ul class="role__tags" aria-label="Skills">
-                    {experience.tags.map((tag) => (
-                      <li class="tag tag--quiet">{tag}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </article>
-          ))
-        }
-      </div>
-    </div>
-  </section>
+  <Doorway />
 
-  <section class="impact-work surface-ink" aria-labelledby="impact-title">
-    <span class="field impact-work__field" aria-hidden="true"></span>
-    <div class="site-container">
-      <div class="section-head">
-        <p class="t-label t-muted">
-          Projects / open source, volunteering and client work
-        </p>
-        <h2 id="impact-title" class="t-title">Building beyond the role.</h2>
-        <p class="t-body section-head__intro">
-          Open-source tools, inclusive hiring and collaborative client work.
-          Projects built alongside communities, partners and other engineers.
-        </p>
-      </div>
-
-      {
-        PROFILE.initiatives.map((initiative) => (
-          <article class="role role--ink">
-            <span class="rule-dotted role__rule" aria-hidden="true" />
-            <div class="role__grid">
-              <div class="role__head">
-                <p class="t-label t-muted">{initiative.period}</p>
-                <h3 class="role__company">{initiative.name}</h3>
-                <p class="role__title">{initiative.role}</p>
-              </div>
-              <div class="role__body">
-                <p class="role__context">{initiative.summary}</p>
-                <ul class="tree tree--text role__highlights">
-                  {initiative.highlights.map((highlight) => (
-                    <li>{highlight}</li>
-                  ))}
-                </ul>
-                <ul class="role__tags" aria-label="Focus areas">
-                  {initiative.tags.map((tag) => (
-                    <li class="tag tag--quiet">{tag}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </article>
-        ))
-      }
-    </div>
-  </section>
+  <Wins />
 
   <section
     class="credentials surface-paper"
@@ -206,33 +125,6 @@ const pad = (value: number) => String(value).padStart(2, '0')
                   </article>
                 ))
               }
-            </div>
-          </div>
-        </section>
-
-        <section class="panel panel--blue" aria-labelledby="hackathons-title">
-          <span class="tab panel__tab" id="hackathons-title">Hackathons</span>
-          <div class="frame-double">
-            <div class="frame-double__panel panel__body surface-blue">
-              <div class="stat-row">
-                {
-                  PROFILE.hackathonStats.map((stat) => (
-                    <div>
-                      <p class="stat__value">{stat.value}</p>
-                      <p class="t-label stat__label">
-                        {stat.label.replace('Devpost ', '')}
-                      </p>
-                    </div>
-                  ))
-                }
-              </div>
-              <ul class="tree tree--text panel__list">
-                {PROFILE.hackathonWins.map((win) => <li>{win}</li>)}
-              </ul>
-              <p class="panel__meta">
-                Devpost snapshot: 14 September 2026. Joined events include
-                registrations, and submission links can reuse the same project.
-              </p>
             </div>
           </div>
         </section>
@@ -444,85 +336,8 @@ const pad = (value: number) => String(value).padStart(2, '0')
     letter-spacing: -0.055em;
   }
 
-  /* Roles */
-  .experience,
-  .impact-work,
   .credentials {
     padding-block: var(--section-y);
-  }
-
-  .roles {
-    margin-top: clamp(48px, 6vw, 88px);
-  }
-
-  .role + .role {
-    margin-top: clamp(40px, 5vw, 72px);
-  }
-
-  .role__rule {
-    margin-bottom: clamp(28px, 3.4vw, 44px);
-  }
-
-  .role__grid {
-    display: grid;
-    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-    gap: clamp(28px, 5vw, 88px);
-  }
-
-  .role__company {
-    margin-top: 14px;
-    font-size: clamp(2rem, 3.6vw, 3.25rem);
-    font-weight: 300;
-    line-height: 1;
-    letter-spacing: -0.05em;
-  }
-
-  .role__title {
-    max-width: 28ch;
-    margin-top: 14px;
-    color: var(--muted-foreground);
-    font-size: 1rem;
-    line-height: 1.5;
-  }
-
-  .role__context {
-    font-size: clamp(1.15rem, 1.6vw, 1.4rem);
-    font-weight: 350;
-    line-height: 1.38;
-    letter-spacing: -0.02em;
-  }
-
-  .role__highlights {
-    margin-top: 28px;
-  }
-
-  .role__tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 28px;
-  }
-
-  .impact-work {
-    overflow: hidden;
-  }
-
-  .impact-work__field {
-    top: 0;
-    right: 0;
-    width: 100%;
-    height: 620px;
-    color: #4a4a4a;
-    -webkit-mask: url('/fields/cross-corner.svg') right top no-repeat;
-    mask: url('/fields/cross-corner.svg') right top no-repeat;
-  }
-
-  .impact-work .site-container {
-    position: relative;
-  }
-
-  .role--ink {
-    margin-top: clamp(48px, 6vw, 88px);
   }
 
   /* Credentials */
@@ -556,10 +371,6 @@ const pad = (value: number) => String(value).padStart(2, '0')
     background: var(--paper-raised);
   }
 
-  .panel__body.surface-blue {
-    background: var(--blue);
-  }
-
   .panel__entry + .panel__entry {
     padding-top: 26px;
     border-top: 1px dotted var(--rule);
@@ -580,11 +391,6 @@ const pad = (value: number) => String(value).padStart(2, '0')
 
   .panel__entry .tree {
     margin-top: 16px;
-  }
-
-  .panel__list {
-    padding-top: 24px;
-    border-top: 1px dotted var(--rule);
   }
 
   .panel__skills {
@@ -611,8 +417,7 @@ const pad = (value: number) => String(value).padStart(2, '0')
   }
 
   @media (max-width: 1023px) {
-    .about-hero__grid,
-    .role__grid {
+    .about-hero__grid {
       grid-template-columns: minmax(0, 1fr);
     }
 

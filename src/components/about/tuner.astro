@@ -1,0 +1,733 @@
+---
+import AsciiObject from '@/components/ascii-object.astro'
+import { PROFILE } from '@/consts'
+import type { AsciiObjectName } from '@/lib/ascii'
+
+// The career as a radio dial: each role is a station, each station an
+// object, and scrolling tunes from one to the next through static.
+const OBJECTS: Record<string, AsciiObjectName> = {
+  'associates-consulting': 'database',
+  govtech: 'terminal',
+  saf: 'padlock',
+  taskade: 'chain',
+  metalearner: 'bars',
+  'reactor-school': 'network',
+}
+const SHORT_NAMES: Record<string, string> = {
+  'associates-consulting': 'Associates',
+  govtech: 'GovTech',
+  saf: 'SAF',
+  'reactor-school': 'Reactor',
+}
+const MONTHS = 'janfebmaraprmayjunjulaugsepoctnovdec'
+
+// "May 2025 - Aug 2025" starts at 2025.33; "2023 - 2025" at 2023.
+const startDate = (period: string) => {
+  const [, month = '', year = '0'] =
+    period.match(/^(?:([A-Za-z]{3})\w*\s+)?(\d{4})/) ?? []
+  const index = MONTHS.indexOf(month.toLowerCase())
+  return Number(year) + (index > 0 ? index / 36 : 0)
+}
+
+const stations = PROFILE.experience
+  .map((role) => ({
+    id: role.id,
+    object: OBJECTS[role.id] ?? ('cursor' as const),
+    date: startDate(role.period),
+    short: SHORT_NAMES[role.id] ?? role.company,
+    name: role.company,
+    period: role.period,
+    role: role.role,
+    context: role.caseStudyContext,
+    highlights: role.highlights,
+    tags: role.tags,
+  }))
+  .sort((a, b) => a.date - b.date)
+const first = stations[0]
+const DIAL_START = Math.floor(first.date)
+const DIAL_YEARS =
+  Math.ceil(stations[stations.length - 1].date + 0.4) - DIAL_START
+const dialAt = (date: number) => (date - DIAL_START) / DIAL_YEARS
+const years = Array.from(
+  { length: DIAL_YEARS },
+  (_, index) => DIAL_START + index,
+)
+const pad = (value: number) => String(value).padStart(2, '0')
+---
+
+<section
+  class="tuner surface-ink"
+  aria-labelledby="tuner-title"
+  data-tuner
+  data-stations={JSON.stringify(
+    stations.map(({ object, date, name }) => ({ object, date, name })),
+  )}
+>
+  <div class="site-container tuner__intro">
+    <p class="t-label t-muted">
+      Experience / {DIAL_START} – {new Date().getFullYear()}
+    </p>
+    <h2 id="tuner-title" class="t-title">A record of useful work.</h2>
+    <p class="t-body tuner__lede">
+      Every role since {DIAL_START}, from workflow software and cyber training
+      to product engineering. Scroll to tune through the decisions and outcomes
+      behind the work.
+    </p>
+  </div>
+
+  <div class="site-container tuner__body">
+    <div class="tuner__rail">
+      <div class="tuner__stage">
+        <div class="tuner__top" aria-hidden="true">
+          <span class="t-label">[ RX ] Career transmission</span>
+          <span class="tuner__meter" data-tuner-meter>
+            {Array.from({ length: 6 }, () => <i data-on />)}
+          </span>
+        </div>
+
+        <div
+          class="tuner__screen"
+          data-tuner-screen
+          style="--cols: 120; --rows: 60"
+          aria-hidden="true"
+        >
+          <span class="t-poster tuner__year" data-tuner-year
+            >{Math.floor(first.date)}</span
+          >
+          <div class="tuner__ascii" data-tuner-ascii>
+            <AsciiObject
+              object={first.object}
+              tone="ink"
+              cols={120}
+              rows={60}
+              zoom={0.94}
+              class="ascii--bright"
+            />
+          </div>
+          <div class="tuner__readout">
+            <p class="t-label">
+              <span data-tuner-index>01</span> /
+              <span data-tuner-name>{first.name}</span>
+            </p>
+            <p class="t-label t-muted">
+              Freq <span data-tuner-freq>{first.date.toFixed(2)}</span>
+              / <span data-tuner-lock>Locked</span>
+            </p>
+          </div>
+        </div>
+
+        <nav
+          class="tuner__dial"
+          aria-label="Jump to a role"
+          style={`--needle: ${dialAt(first.date)}`}
+          data-tuner-dial
+        >
+          <span class="tuner__ticks" aria-hidden="true"></span>
+          {
+            years.map((year) => (
+              <span
+                class="tuner__year-mark t-label"
+                style={`--at: ${dialAt(year)}`}
+                aria-hidden="true"
+              >
+                {year}
+              </span>
+            ))
+          }
+          <span class="tuner__needle" aria-hidden="true"></span>
+          <ol class="tuner__stations">
+            {
+              stations.map((station, index) => (
+                <li
+                  style={`--at: ${dialAt(station.date)}`}
+                  data-row={index % 2}
+                  data-end={dialAt(station.date) > 0.92 ? '' : undefined}
+                >
+                  <a
+                    href={`#${station.id}`}
+                    class="tuner__station"
+                    data-tuner-link
+                    aria-current={index === 0 ? 'step' : undefined}
+                  >
+                    <span aria-hidden="true" />
+                    {station.short}
+                  </a>
+                </li>
+              ))
+            }
+          </ol>
+        </nav>
+      </div>
+    </div>
+
+    <ol class="tuner__chapters">
+      {
+        stations.map((station, index) => (
+          <li
+            class="chapter"
+            id={station.id}
+            data-chapter
+            data-active={index === 0 ? '' : undefined}
+          >
+            <p class="t-label t-muted">
+              Station {pad(index + 1)} / {station.period}
+            </p>
+            <h3 class="chapter__name">{station.name}</h3>
+            <p class="chapter__role">{station.role}</p>
+            <p class="chapter__context">{station.context}</p>
+            <ul class="tree tree--text chapter__highlights">
+              {station.highlights.map((highlight) => (
+                <li>{highlight}</li>
+              ))}
+            </ul>
+            <ul class="chapter__tags" aria-label="Focus areas">
+              {station.tags.map((tag) => (
+                <li class="tag tag--quiet">{tag}</li>
+              ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<script>
+  import type { AsciiObjectName, AsciiRenderOptions } from '@/lib/ascii'
+  import { renderInto } from '@/lib/ascii/motion'
+  import { scramble } from '@/lib/scramble'
+
+  interface Station {
+    object: AsciiObjectName
+    date: number
+    name: string
+  }
+
+  const clamp01 = (value: number) => Math.min(Math.max(value, 0), 1)
+  const smooth = (from: number, to: number, value: number) => {
+    const t = clamp01((value - from) / (to - from))
+    return t * t * (3 - 2 * t)
+  }
+  let teardown: (() => void) | undefined
+
+  function setup() {
+    teardown?.()
+    teardown = undefined
+    const root = document.querySelector<HTMLElement>('[data-tuner]')
+    const ascii = root?.querySelector<HTMLElement>('[data-tuner-ascii] pre')
+    const screen = root?.querySelector<HTMLElement>('[data-tuner-screen]')
+    const dial = root?.querySelector<HTMLElement>('[data-tuner-dial]')
+    const stage = root?.querySelector<HTMLElement>('.tuner__stage')
+    if (!root || !ascii || !screen || !dial || !stage) return
+    const stations: Station[] = JSON.parse(root.dataset.stations ?? '[]')
+    const chapters = [...root.querySelectorAll<HTMLElement>('[data-chapter]')]
+    if (stations.length < 2 || chapters.length !== stations.length) return
+
+    const query = <T extends HTMLElement>(selector: string) =>
+      root.querySelector<T>(selector)
+    const year = query('[data-tuner-year]')
+    const name = query('[data-tuner-name]')
+    const index = query('[data-tuner-index]')
+    const freq = query('[data-tuner-freq]')
+    const lock = query('[data-tuner-lock]')
+    const bars = [...root.querySelectorAll<HTMLElement>('[data-tuner-meter] i')]
+    const links = [
+      ...root.querySelectorAll<HTMLAnchorElement>('[data-tuner-link]'),
+    ]
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+    const compact = matchMedia('(max-width: 1023px)')
+    const controller = new AbortController()
+    const startedAt = performance.now()
+    let active = 0
+    let visible = false
+    let frame = 0
+    let lastRender = 0
+    let lastKey = ''
+    root.dataset.live = ''
+
+    const progress = () => {
+      const focus = compact.matches
+        ? stage.getBoundingClientRect().bottom +
+          (innerHeight - stage.getBoundingClientRect().bottom) * 0.4
+        : innerHeight * 0.5
+      const centres = chapters.map((chapter) => {
+        const bounds = chapter.getBoundingClientRect()
+        return bounds.top + bounds.height / 2
+      })
+      if (focus <= centres[0]) return 0
+      for (let step = 0; step < centres.length - 1; step++)
+        if (focus < centres[step + 1])
+          return (
+            step + (focus - centres[step]) / (centres[step + 1] - centres[step])
+          )
+      return centres.length - 1
+    }
+
+    const tune = (station: number) => {
+      active = station
+      const { name: label, date } = stations[station]
+      if (year) scramble(year, String(Math.floor(date)))
+      if (name) scramble(name, label, 640)
+      if (index) index.textContent = String(station + 1).padStart(2, '0')
+      chapters.forEach((chapter, step) =>
+        chapter.toggleAttribute('data-active', step === station),
+      )
+      links.forEach((link, step) =>
+        step === station
+          ? link.setAttribute('aria-current', 'step')
+          : link.removeAttribute('aria-current'),
+      )
+    }
+
+    const update = (now: number) => {
+      frame = 0
+      const position = progress()
+      const from = Math.min(Math.floor(position), stations.length - 2)
+      const t = clamp01(position - from)
+      const blend = reduce ? Math.round(t) : smooth(0.3, 0.7, t)
+      const noise = reduce ? 0 : Math.sin(Math.PI * smooth(0.1, 0.9, t)) ** 1.5
+      const nearest = Math.round(position)
+      if (nearest !== active) tune(nearest)
+
+      const date =
+        stations[from].date +
+        (stations[from + 1].date - stations[from].date) * t
+      dial.style.setProperty('--needle', String((date - 2021) / 6))
+      if (freq) freq.textContent = date.toFixed(2)
+      if (lock) lock.textContent = noise < 0.08 ? 'Locked' : 'Scanning'
+      const lit = Math.round((1 - noise) * bars.length)
+      bars.forEach((bar, step) => bar.toggleAttribute('data-on', step < lit))
+
+      const [cols, rows] = compact.matches ? [84, 40] : [120, 60]
+      screen.style.setProperty('--cols', String(cols))
+      screen.style.setProperty('--rows', String(rows))
+      // Static only flickers mid-transition; a locked station holds still,
+      // so nothing renders unless the visitor is tuning.
+      const tuning = !reduce && noise > 0.05
+      const seconds = (now - startedAt) / 1000
+      const options: AsciiRenderOptions = {
+        object: blend >= 1 ? stations[from + 1].object : stations[from].object,
+        ...(blend > 0 && blend < 1
+          ? { morph: { to: stations[from + 1].object, t: blend } }
+          : {}),
+        cols,
+        rows,
+        zoom: 0.94,
+        samples: [1, 2],
+        noise,
+        trails: tuning
+          ? {
+              density: 0.2 + noise * 0.6,
+              length: 16 + noise * 40,
+              side: 'both',
+            }
+          : false,
+        seed: tuning ? Math.floor(seconds * 9) : 1,
+      }
+      const key = JSON.stringify(options)
+      if (key !== lastKey && now - lastRender > 1000 / 15) {
+        lastKey = key
+        lastRender = now
+        renderInto(ascii, options)
+      }
+      if (visible && (tuning || key !== lastKey))
+        frame = requestAnimationFrame(update)
+    }
+
+    const request = () => {
+      if (!frame) frame = requestAnimationFrame(update)
+    }
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting
+      if (visible) request()
+    })
+    observer.observe(root)
+    addEventListener('scroll', request, {
+      passive: true,
+      signal: controller.signal,
+    })
+    addEventListener('resize', request, { signal: controller.signal })
+    for (const link of links)
+      link.addEventListener(
+        'click',
+        (event) => {
+          const target = document.getElementById(link.hash.slice(1))
+          if (!target) return
+          event.preventDefault()
+          target.scrollIntoView({
+            behavior: reduce ? 'auto' : 'smooth',
+            block: 'center',
+          })
+          history.replaceState(history.state, '', link.hash)
+        },
+        { signal: controller.signal },
+      )
+
+    teardown = () => {
+      controller.abort()
+      observer.disconnect()
+      cancelAnimationFrame(frame)
+    }
+  }
+
+  document.addEventListener('astro:page-load', setup)
+  document.addEventListener('astro:before-swap', () => teardown?.())
+</script>
+
+<style>
+  .tuner {
+    padding-top: var(--section-y);
+  }
+
+  .tuner__intro .t-title {
+    margin-top: 22px;
+  }
+
+  .tuner__lede {
+    max-width: 40rem;
+    margin-top: 24px;
+    font-size: 1.0625rem;
+  }
+
+  .tuner__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.82fr);
+    gap: 0 clamp(32px, 5vw, 88px);
+    margin-top: clamp(32px, 4vw, 56px);
+  }
+
+  .tuner__stage {
+    position: sticky;
+    top: 72px;
+    display: flex;
+    height: calc(100vh - 72px);
+    flex-direction: column;
+    gap: 14px;
+    padding-block: 24px 28px;
+  }
+
+  .tuner__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .tuner__meter {
+    display: flex;
+    align-items: end;
+    gap: 3px;
+    height: 14px;
+  }
+
+  .tuner__meter i {
+    width: 5px;
+    background: #333;
+    transition: background-color 0.15s;
+  }
+
+  .tuner__meter i:nth-child(1) {
+    height: 30%;
+  }
+  .tuner__meter i:nth-child(2) {
+    height: 44%;
+  }
+  .tuner__meter i:nth-child(3) {
+    height: 58%;
+  }
+  .tuner__meter i:nth-child(4) {
+    height: 72%;
+  }
+  .tuner__meter i:nth-child(5) {
+    height: 86%;
+  }
+  .tuner__meter i:nth-child(6) {
+    height: 100%;
+  }
+
+  .tuner__meter i[data-on] {
+    background: #fff;
+  }
+
+  .tuner__screen {
+    position: relative;
+    display: grid;
+    flex: 1;
+    min-height: 0;
+    place-items: center;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    container-type: size;
+  }
+
+  .tuner__year {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    color: #1f1f1f;
+    font-size: min(46cqh, 30cqw);
+    line-height: 0.8;
+    transform: translate(-50%, -52%);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .tuner__ascii {
+    position: relative;
+  }
+
+  .tuner__ascii :global(.ascii) {
+    --ascii-size: min(
+      calc(100cqw / (var(--cols) * 0.6) - 0.05px),
+      calc(92cqh / var(--rows))
+    );
+  }
+
+  .tuner__readout {
+    position: absolute;
+    right: 16px;
+    bottom: 14px;
+    left: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 6px 16px;
+  }
+
+  .tuner__dial {
+    --needle: 0;
+    position: relative;
+    height: 100px;
+    flex: none;
+  }
+
+  .tuner__ticks {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 18px;
+    background:
+      repeating-linear-gradient(
+          90deg,
+          var(--foreground) 0 1px,
+          transparent 1px calc(100% / 6)
+        )
+        0 0 / 100% 18px no-repeat,
+      repeating-linear-gradient(
+          90deg,
+          #4a4a4a 0 1px,
+          transparent 1px calc(100% / 72)
+        )
+        0 0 / 100% 8px no-repeat;
+  }
+
+  .tuner__year-mark {
+    position: absolute;
+    top: 22px;
+    left: calc(var(--at) * 100%);
+    color: var(--muted-foreground);
+    transform: translateX(-1px);
+  }
+
+  .tuner__needle {
+    position: absolute;
+    top: -6px;
+    bottom: 0;
+    left: calc(var(--needle) * 100%);
+    width: 2px;
+    background: var(--blue);
+    box-shadow: 0 0 0 1px var(--ink);
+    transform: translateX(-1px);
+  }
+
+  .tuner__stations li {
+    position: absolute;
+    bottom: 0;
+    left: calc(var(--at) * 100%);
+    transform: translateX(-4px);
+  }
+
+  .tuner__stations li[data-row='1'] {
+    bottom: 30px;
+  }
+
+  .tuner__station {
+    display: inline-flex;
+    min-height: 32px;
+    align-items: center;
+    gap: 6px;
+    color: var(--muted-foreground);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.045em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: color 0.2s;
+  }
+
+  .tuner__station span {
+    width: 8px;
+    height: 8px;
+    border: 1px solid currentColor;
+  }
+
+  .tuner__station:hover,
+  .tuner__station[aria-current] {
+    color: var(--foreground);
+  }
+
+  .tuner__station[aria-current] span {
+    border-color: var(--blue);
+    background: var(--blue);
+  }
+
+  .tuner__stations li[data-end] {
+    transform: translateX(calc(-100% + 4px));
+  }
+
+  .tuner__stations li[data-end] .tuner__station {
+    flex-direction: row-reverse;
+  }
+
+  .tuner__chapters {
+    padding-bottom: clamp(48px, 12vh, 140px);
+  }
+
+  .chapter {
+    display: flex;
+    min-height: calc(100vh - 72px);
+    flex-direction: column;
+    justify-content: center;
+    padding-block: 64px;
+    scroll-margin-top: 72px;
+    transition: opacity 0.5s ease;
+  }
+
+  .tuner[data-live] .chapter:not([data-active]) {
+    opacity: 0.26;
+  }
+
+  .chapter__name {
+    margin-top: 16px;
+    font-size: clamp(2rem, 3.4vw, 3.25rem);
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.05em;
+  }
+
+  .chapter__role {
+    max-width: 32ch;
+    margin-top: 14px;
+    color: var(--muted-foreground);
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .chapter__context {
+    margin-top: 28px;
+    font-size: clamp(1.125rem, 1.45vw, 1.3rem);
+    font-weight: 350;
+    line-height: 1.42;
+    letter-spacing: -0.02em;
+  }
+
+  .chapter__highlights {
+    margin-top: 26px;
+  }
+
+  .tuner[data-live] .chapter__highlights li {
+    transition:
+      opacity 0.45s ease,
+      transform 0.45s ease;
+  }
+
+  .tuner[data-live] .chapter:not([data-active]) .chapter__highlights li {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  .tuner[data-live] .chapter[data-active] .chapter__highlights li:nth-child(2) {
+    transition-delay: 0.08s;
+  }
+  .tuner[data-live] .chapter[data-active] .chapter__highlights li:nth-child(3) {
+    transition-delay: 0.16s;
+  }
+  .tuner[data-live] .chapter[data-active] .chapter__highlights li:nth-child(4) {
+    transition-delay: 0.24s;
+  }
+
+  .chapter__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 26px;
+  }
+
+  @media (max-width: 1023px) {
+    /* One column: the whole rail sticks so chapters can slide beneath it. */
+    .tuner__body {
+      display: block;
+    }
+
+    .tuner__rail {
+      position: sticky;
+      top: 60px;
+      z-index: 2;
+      background: var(--ink);
+      box-shadow: 0 1px 0 var(--border);
+    }
+
+    .tuner__stage {
+      position: static;
+      height: 40vh;
+      min-height: 280px;
+      gap: 8px;
+      padding-block: 12px 6px;
+    }
+
+    .tuner__top {
+      display: none;
+    }
+
+    .tuner__dial {
+      height: 72px;
+    }
+
+    .tuner__stations li[data-row='1'] {
+      bottom: 24px;
+    }
+
+    .tuner__year-mark {
+      display: none;
+    }
+
+    .tuner__station {
+      font-size: 0.5625rem;
+    }
+
+    .chapter {
+      min-height: 72vh;
+      padding-block: 48px;
+      scroll-margin-top: calc(60px + 40vh);
+    }
+  }
+
+  @media (max-width: 479px) {
+    .tuner__station {
+      gap: 0;
+      font-size: 0;
+    }
+
+    .tuner__station span {
+      width: 10px;
+      height: 10px;
+    }
+
+    .tuner__readout {
+      right: 10px;
+      bottom: 8px;
+      left: 10px;
+    }
+  }
+</style>

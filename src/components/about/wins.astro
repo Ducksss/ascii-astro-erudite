@@ -1,0 +1,413 @@
+---
+import AsciiObject from '@/components/ascii-object.astro'
+import BinaryField from '@/components/binary-field.astro'
+import { PROFILE } from '@/consts'
+
+// Hackathon wins as a loose stack of tilted cards over a binary field.
+const [entered, ...stats] = PROFILE.hackathonStats
+const TILTS = [-3, 2, -1.5, 3, -2.5, 1.5, -1, 2.5, -2, 1]
+const LIFTS = [0, 18, -10, 12, -4, 22, -14, 6, 16, -8]
+const badge = (award: string) =>
+  /first place|champion/i.test(award)
+    ? '1st'
+    : /second place|runner-up/i.test(award)
+      ? '2nd'
+      : /merit/i.test(award)
+        ? 'Merit'
+        : /best/i.test(award)
+          ? 'Best'
+          : 'Win'
+const wins = PROFILE.hackathonWins.map((entry, index) => {
+  const [event, ...rest] = entry.split(' - ')
+  const year = event.match(/\b20\d\d\b/)?.[0]
+  return {
+    year,
+    event: year ? event.replace(year, '').trim() : event,
+    award: rest.join(' - '),
+    badge: badge(rest.join(' ')),
+    tilt: TILTS[index % TILTS.length],
+    lift: LIFTS[index % LIFTS.length],
+  }
+})
+const years = wins.flatMap((win) => (win.year ? [Number(win.year)] : []))
+---
+
+<section class="wins surface-ink" aria-labelledby="wins-title" data-wins>
+  <div class="wins__backdrop" aria-hidden="true">
+    <BinaryField cols={84} rows={30} seed={11} class="wins__binary" />
+    <div class="wins__orb">
+      <AsciiObject
+        object="coin"
+        tone="ink"
+        cols={96}
+        rows={56}
+        yaw={0.7}
+        zoom={0.98}
+      />
+    </div>
+  </div>
+
+  <div class="site-container wins__head">
+    <p class="t-label t-muted">
+      Hackathons / {Math.min(...years)} – {Math.max(...years)}
+    </p>
+    <div class="wins__headline">
+      <h2 id="wins-title" class="wins__title">
+        <span class="t-poster wins__count">{entered.value}</span>
+        <span class="wins__words"
+          >{entered.label}. These came home with an award.</span
+        >
+      </h2>
+      <div class="wins__aside">
+        <dl class="stat-row wins__stats">
+          {
+            stats.map((stat) => (
+              <div>
+                <dt class="t-label stat__label">{stat.label}</dt>
+                <dd class="stat__value">{stat.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        <p class="wins__note">
+          Devpost snapshot: 14 September 2026. Joined events include
+          registrations, and submission links can reuse the same project.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="wins__strip"
+    role="region"
+    aria-label="Hackathon awards"
+    tabindex="0"
+    data-wins-strip
+  >
+    <ol class="wins__cards">
+      {
+        wins.map((win, index) => (
+          <li
+            class="win-card surface-paper"
+            style={`--tilt: ${win.tilt}deg; --lift: ${win.lift}px; --z: ${index + 1}`}
+          >
+            <p class="bracketed t-label win-card__kicker">
+              {win.year ?? 'Hackathon'}
+            </p>
+            <h3 class="win-card__event">{win.event}</h3>
+            <p class="win-card__award">“{win.award}”</p>
+            <span class="rule-dotted rule-dotted--start" aria-hidden="true" />
+            <div class="win-card__foot">
+              <p class="t-label t-muted">
+                Award {String(index + 1).padStart(2, '0')}
+              </p>
+              <span class="t-poster win-card__badge" aria-hidden="true">
+                {win.badge}
+              </span>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+
+  <div class="site-container wins__track" aria-hidden="true">
+    <span class="rule-dotted rule-dotted--bare"></span>
+    <span class="mark-cross wins__cursor" data-wins-cursor></span>
+    <span class="t-label t-muted wins__hint">Drag / scroll</span>
+  </div>
+</section>
+
+<script>
+  let teardown: (() => void) | undefined
+
+  function setup() {
+    teardown?.()
+    teardown = undefined
+    const root = document.querySelector<HTMLElement>('[data-wins]')
+    const strip = root?.querySelector<HTMLElement>('[data-wins-strip]')
+    const cursor = root?.querySelector<HTMLElement>('[data-wins-cursor]')
+    if (!root || !strip || !cursor) return
+    const controller = new AbortController()
+    const { signal } = controller
+    let drag: { x: number; scroll: number; moved: boolean } | undefined
+
+    const track = () => {
+      const range = strip.scrollWidth - strip.clientWidth
+      cursor.style.setProperty(
+        '--at',
+        String(range > 0 ? strip.scrollLeft / range : 0),
+      )
+    }
+    strip.addEventListener('scroll', track, { passive: true, signal })
+    track()
+
+    // Mouse users can grab the stack; touch keeps native scrolling.
+    strip.addEventListener(
+      'pointerdown',
+      (event) => {
+        if (event.pointerType !== 'mouse' || event.button !== 0) return
+        drag = { x: event.clientX, scroll: strip.scrollLeft, moved: false }
+        strip.setPointerCapture(event.pointerId)
+      },
+      { signal },
+    )
+    strip.addEventListener(
+      'pointermove',
+      (event) => {
+        if (!drag) return
+        const delta = event.clientX - drag.x
+        if (Math.abs(delta) > 4) {
+          drag.moved = true
+          strip.dataset.dragging = ''
+        }
+        strip.scrollLeft = drag.scroll - delta
+      },
+      { signal },
+    )
+    const release = () => {
+      drag = undefined
+      delete strip.dataset.dragging
+    }
+    strip.addEventListener('pointerup', release, { signal })
+    strip.addEventListener('pointercancel', release, { signal })
+    teardown = () => controller.abort()
+  }
+
+  document.addEventListener('astro:page-load', setup)
+  document.addEventListener('astro:before-swap', () => teardown?.())
+</script>
+
+<style>
+  .wins {
+    overflow: hidden;
+    padding-block: var(--section-y);
+  }
+
+  .wins__backdrop {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .wins__backdrop :global(.wins__binary) {
+    --ascii-size: clamp(9px, 1.05vw, 15px);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    letter-spacing: 0.35em;
+    opacity: 0.38;
+    transform: translate(-50%, -38%);
+  }
+
+  .wins__orb {
+    position: absolute;
+    top: 58%;
+    left: 50%;
+    opacity: 0.6;
+    transform: translate(-50%, -50%);
+  }
+
+  .wins__orb :global(.ascii) {
+    --ascii-size: clamp(5px, 0.62vw, 9px);
+  }
+
+  .wins__head {
+    position: relative;
+  }
+
+  .wins__headline {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 32px;
+    margin-top: 24px;
+  }
+
+  .wins__title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 8px 28px;
+  }
+
+  .wins__count {
+    color: #fff;
+    font-size: clamp(7rem, 21vw, 19rem);
+    line-height: 0.78;
+  }
+
+  .wins__words {
+    max-width: 13ch;
+    padding-bottom: 0.2em;
+    font-size: clamp(1.6rem, 3vw, 2.75rem);
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.045em;
+  }
+
+  .wins__aside {
+    max-width: 340px;
+  }
+
+  .wins__stats {
+    min-width: 260px;
+  }
+
+  .wins__note {
+    margin-top: 18px;
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .wins__stats > div {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  .wins__stats dd {
+    color: #fff;
+  }
+
+  .wins__strip {
+    position: relative;
+    overflow-x: auto;
+    margin-top: clamp(40px, 5vw, 72px);
+    cursor: grab;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+
+  .wins__strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .wins__strip[data-dragging] {
+    cursor: grabbing;
+    scroll-snap-type: none;
+    user-select: none;
+  }
+
+  .wins__strip:focus-visible {
+    outline-offset: -4px;
+  }
+
+  .wins__cards {
+    display: flex;
+    width: max-content;
+    padding: 56px var(--gutter) 72px;
+  }
+
+  .win-card {
+    position: relative;
+    z-index: var(--z);
+    display: flex;
+    width: clamp(248px, 23vw, 316px);
+    min-height: 330px;
+    flex-direction: column;
+    margin-left: -16px;
+    padding: 22px 22px 18px;
+    background: var(--paper-raised);
+    box-shadow: 0 0 0 1px #e1e1e1;
+    scroll-snap-align: center;
+    transform: rotate(var(--tilt)) translateY(var(--lift));
+    transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .win-card:first-child {
+    margin-left: 0;
+  }
+
+  .win-card:hover {
+    z-index: 30;
+    transform: rotate(0deg) translateY(calc(var(--lift) - 12px));
+  }
+
+  .win-card__kicker {
+    color: var(--muted-foreground);
+  }
+
+  .win-card__event {
+    margin-top: 26px;
+    font-size: 1.5rem;
+    font-weight: 400;
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  .win-card__award {
+    margin-top: 14px;
+    margin-bottom: 26px;
+    color: #3f3f3f;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .win-card .rule-dotted {
+    margin-top: auto;
+    margin-left: 6px;
+  }
+
+  .win-card__foot {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .win-card__badge {
+    display: grid;
+    width: 56px;
+    height: 56px;
+    place-items: center;
+    background: var(--blue);
+    color: #fff;
+    font-size: 1.15rem;
+    line-height: 1;
+  }
+
+  .wins__track {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .wins__track .rule-dotted {
+    flex: 1;
+  }
+
+  .wins__cursor {
+    --at: 0;
+    position: absolute;
+    left: calc(var(--gutter) + var(--at) * (100% - var(--gutter) * 2 - 130px));
+    color: #fff;
+    background-color: var(--ink);
+    box-shadow: 0 0 0 3px var(--ink);
+  }
+
+  .wins__hint {
+    flex: none;
+    width: 114px;
+    text-align: right;
+  }
+
+  @media (max-width: 767px) {
+    .wins__headline {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .wins__aside,
+    .wins__stats {
+      min-width: 0;
+      max-width: none;
+    }
+
+    .win-card {
+      width: min(78vw, 300px);
+    }
+  }
+</style>

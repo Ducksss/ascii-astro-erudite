@@ -1,0 +1,267 @@
+---
+import AsciiObject from '@/components/ascii-object.astro'
+import { PROFILE } from '@/consts'
+
+// Work beyond the role, behind a door that swings open as the section
+// scrolls past, light spilling across the floor.
+const RANGE: [number, number] = [0.03, 1.05]
+---
+
+<section
+  class="doorway surface-blue"
+  aria-labelledby="doorway-title"
+  data-doorway
+>
+  <div class="site-container doorway__grid">
+    <div class="doorway__copy">
+      <p class="t-label t-muted">
+        Projects / open source, volunteering and client work
+      </p>
+      <h2 id="doorway-title" class="t-title">Building beyond the role.</h2>
+      <p class="t-body doorway__lede">
+        Open-source tools, inclusive hiring and collaborative client work.
+        Projects built alongside communities, partners and other engineers.
+      </p>
+      {
+        PROFILE.initiatives.map((initiative) => (
+          <article class="doorway__case">
+            <span class="rule-dotted" aria-hidden="true" />
+            <p class="t-label t-muted">{initiative.period}</p>
+            <h3 class="doorway__name">{initiative.name}</h3>
+            <p class="doorway__role">{initiative.role}</p>
+            <p class="doorway__summary">{initiative.summary}</p>
+            <ul class="tree tree--text doorway__highlights">
+              {initiative.highlights.map((highlight) => (
+                <li>{highlight}</li>
+              ))}
+            </ul>
+            <ul class="doorway__tags" aria-label="Focus areas">
+              {initiative.tags.map((tag) => (
+                <li class="tag">{tag}</li>
+              ))}
+            </ul>
+          </article>
+        ))
+      }
+    </div>
+
+    <div class="doorway__rail" aria-hidden="true">
+      <div class="doorway__stage frame-brackets">
+        <span class="tag tag--solid doorway__tag"
+          >{String(PROFILE.initiatives.length).padStart(2, '0')} projects</span
+        >
+        <div class="doorway__ascii" data-doorway-ascii>
+          <AsciiObject
+            object="door"
+            tone="blue"
+            cols={92}
+            rows={70}
+            zoom={0.96}
+            range={RANGE}
+          />
+        </div>
+        <p class="t-label doorway__caption">
+          <span data-doorway-state>Closed</span> / scroll to open
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { renderInto } from '@/lib/ascii/motion'
+
+  let teardown: (() => void) | undefined
+
+  function setup() {
+    teardown?.()
+    teardown = undefined
+    const root = document.querySelector<HTMLElement>('[data-doorway]')
+    const ascii = root?.querySelector<HTMLElement>('[data-doorway-ascii] pre')
+    const label = root?.querySelector<HTMLElement>('[data-doorway-state]')
+    if (!root || !ascii) return
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+    const controller = new AbortController()
+    let visible = false
+    let frame = 0
+    let lastKey = ''
+    let lastRender = 0
+
+    const openness = () => {
+      const bounds = root.getBoundingClientRect()
+      const travel = Math.min(bounds.height * 0.55, innerHeight * 0.9)
+      const raw = (innerHeight * 0.7 - bounds.top) / travel
+      const t = Math.min(Math.max(raw, 0), 1)
+      return t * t * (3 - 2 * t)
+    }
+
+    // The door only re-renders when scrolling changes how far it is open.
+    const update = (now: number) => {
+      frame = 0
+      const state = reduce ? (openness() > 0.5 ? 1 : 0) : openness()
+      if (label)
+        label.textContent =
+          state > 0.95 ? 'Open' : state > 0.02 ? 'Opening' : 'Closed'
+      const options = {
+        object: 'door' as const,
+        cols: 92,
+        rows: 70,
+        zoom: 0.96,
+        range: [0.03, 1.05] as [number, number],
+        samples: [1, 2] as [number, number],
+        state: Math.round(state * 200) / 200,
+      }
+      const key = JSON.stringify(options)
+      if (key === lastKey) return
+      if (now - lastRender < 1000 / 15) {
+        frame = requestAnimationFrame(update)
+        return
+      }
+      lastKey = key
+      lastRender = now
+      renderInto(ascii, options)
+    }
+
+    const request = () => {
+      if (visible && !frame) frame = requestAnimationFrame(update)
+    }
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting
+      request()
+    })
+    observer.observe(root)
+    addEventListener('scroll', request, {
+      passive: true,
+      signal: controller.signal,
+    })
+
+    teardown = () => {
+      controller.abort()
+      observer.disconnect()
+      cancelAnimationFrame(frame)
+    }
+  }
+
+  document.addEventListener('astro:page-load', setup)
+  document.addEventListener('astro:before-swap', () => teardown?.())
+</script>
+
+<style>
+  .doorway {
+    overflow: hidden;
+    padding-block: var(--section-y);
+  }
+
+  .doorway__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+    gap: clamp(32px, 6vw, 104px);
+  }
+
+  .doorway__copy .t-title {
+    margin-top: 22px;
+  }
+
+  .doorway__lede {
+    max-width: 38rem;
+    margin-top: 24px;
+    font-size: 1.0625rem;
+  }
+
+  .doorway__case {
+    margin-top: clamp(48px, 6vw, 80px);
+  }
+
+  .doorway__case .rule-dotted {
+    margin-bottom: 32px;
+  }
+
+  .doorway__name {
+    margin-top: 14px;
+    font-size: clamp(2rem, 3.6vw, 3.25rem);
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.05em;
+  }
+
+  .doorway__role {
+    margin-top: 12px;
+    color: var(--muted-foreground);
+  }
+
+  .doorway__summary {
+    margin-top: 26px;
+    font-size: clamp(1.125rem, 1.45vw, 1.3rem);
+    font-weight: 350;
+    line-height: 1.42;
+    letter-spacing: -0.02em;
+  }
+
+  .doorway__highlights,
+  .doorway__tags {
+    margin-top: 26px;
+  }
+
+  .doorway__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .doorway__stage {
+    --bracket-color: rgb(255 255 255 / 0.6);
+    --bracket-top: 10%;
+    --bracket-bottom: 22%;
+    position: sticky;
+    top: 104px;
+    display: grid;
+    justify-items: center;
+    padding: 28px 22px 0;
+  }
+
+  .doorway__stage::after {
+    top: 36%;
+    bottom: 6%;
+  }
+
+  .doorway__tag {
+    position: absolute;
+    top: 0;
+    right: 8%;
+    z-index: 1;
+  }
+
+  .doorway__ascii :global(.ascii) {
+    --ascii-size: clamp(3.4px, 0.62vw, 8.6px);
+  }
+
+  .doorway__caption {
+    margin-top: 10px;
+    color: var(--muted-foreground);
+  }
+
+  @media (max-width: 1023px) {
+    .doorway__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .doorway__rail {
+      order: -1;
+    }
+
+    .doorway__stage {
+      position: relative;
+      top: 0;
+    }
+
+    .doorway__ascii :global(.ascii) {
+      --ascii-size: min(1.05vw, 7px);
+    }
+  }
+
+  @media (max-width: 639px) {
+    .doorway__ascii :global(.ascii) {
+      --ascii-size: calc((100vw - 84px) / 56);
+    }
+  }
+</style>

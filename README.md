@@ -245,10 +245,15 @@ mail: 'chaipinzheng@gmail.com'
   Sans (condensed and expanded) the poster line and footer wordmark, and Geist
   Mono labels, data and code. All fonts are self-hosted.
 - `src/lib/ascii` ray-marches signed-distance models (`duck`, `coin`, `bars`,
-  `padlock`, `chain`, `cursor`) into dithered ASCII at build time.
+  `padlock`, `chain`, `cursor`, `database`, `terminal`, `network`, `door`)
+  into dithered ASCII at build time, including morphs between models and
+  simulated signal loss.
   `<AsciiObject>` renders one as static text; `motion="sway"` or
   `motion="spin"` animates it in a Web Worker while it is on screen, and
   reduced-motion visitors keep the static frame.
+- The About page's scroll experiences (a career tuner, an opening door and a
+  hackathon card wall) live in `src/components/about`; DESIGN.md describes
+  their rules.
 - `src/lib/fields.ts` generates the cross grids, pixel blocks and wordmark
   dissolve as SVG masks, served from `/fields/*.svg`.
 - Favicons and static social assets live in `public/`. Regenerate the social

@@ -88,14 +88,18 @@ Bayer-dithered across the glyph ramp `.:-=+*#%@`, split into four brightness
 classes and optionally given scanline interference trails. Every object
 stands for something real:
 
-| Object    | Meaning                                                  | Where                                  |
-| --------- | -------------------------------------------------------- | -------------------------------------- |
-| `duck`    | Rubber-duck debugging: complex systems explained plainly | Home hero                              |
-| `coin`    | The bracket-C mark as a token                            | Poster "O", 404 "0", footer, hero rule |
-| `bars`    | Forecasting and charts                                   | MetaLearner card                       |
-| `padlock` | Cyber readiness                                          | Singapore Armed Forces card            |
-| `chain`   | Integrations and delivery pipelines                      | GovTech card                           |
-| `cursor`  | The person on the other side of the interface            | About hero                             |
+| Object     | Meaning                                                   | Where                                   |
+| ---------- | --------------------------------------------------------- | --------------------------------------- |
+| `duck`     | Rubber-duck debugging: complex systems explained plainly  | Home hero                               |
+| `coin`     | The bracket-C mark as a token                             | Poster "O", 404 "0", footer, hackathons |
+| `bars`     | Forecasting and charts                                    | MetaLearner card and station            |
+| `padlock`  | Cyber readiness                                           | Singapore Armed Forces card and station |
+| `chain`    | Integrations, connectors and delivery pipelines           | Work cards, Taskade station             |
+| `cursor`   | The person on the other side of the interface             | About hero, fallback for unmapped roles |
+| `database` | Workflow software and the data behind it                  | Associates Consulting station           |
+| `terminal` | Command-line and developer tooling                        | GovTech station                         |
+| `network`  | People and ventures, with one warm-introduction route lit | Reactor School station                  |
+| `door`     | Work beyond the role; `state` swings it open              | About doorway                           |
 
 `<AsciiObject>` renders a frame at build time (cached per option set).
 `motion="sway"` drifts and turns toward the mouse; `motion="spin"` rotates.
@@ -103,6 +107,15 @@ Motion runs in a Web Worker at ~12fps only while the object is on screen,
 backs off on slow devices and is skipped for reduced-motion visitors.
 Tones: `ascii--blue`, `ascii--ink`, `ascii--paper` (use `invert` so dense
 glyphs mark shadow) and `ascii--bright` for type-scale objects on ink.
+
+Render options also take `morph: { to, t }` (blends one object's distance
+field into another's, pose and framing included), `noise` (signal loss:
+corrupted glyphs, static and slipped rows) and `state` (an object's own
+animation, such as the door's swing). Objects may define `glow` for light
+that ignores the lamp; pass a fixed `range` when glow should saturate rather
+than re-expose the frame. Pages drive objects from scroll with
+`renderInto(element, options)` from `src/lib/ascii/motion.ts`, which shares
+the worker and collapses requests while a frame is in flight.
 
 To add an object: write its SDF in `objects.ts` with a `bound` that contains
 it around `center`, give it a resting `pose`, then run `npm test` — the
@@ -125,6 +138,34 @@ them, so the object stays legible.
 Thumbnails and avatars use the `#duotone-blue` SVG filter defined in the
 layout: shadows deep blue, midtones ultramarine, highlights white.
 
+## Experiential patterns
+
+The About page turns the record into something you move through. Each
+pattern keeps the content in normal reading order, uses native scrolling
+(never scroll-jacking), works without JavaScript and settles into a still
+version for reduced motion.
+
+- **Tuner** (`components/about/tuner.astro`): the career as a radio dial. A
+  sticky instrument screen shows one object per role; the scroll position
+  between two chapters sets the morph and the noise, which peaks halfway, so
+  the object breaks into static and locks onto the next station. Readouts
+  (station, frequency, lock, signal bars) and a dial needle follow along; the
+  dial's station links jump to each chapter. Stations come straight from
+  `PROFILE.experience`, sorted by start date; map a new role id to an object
+  in the tuner or it falls back to `cursor`. A locked station holds still, so
+  frames are only rendered while the visitor is tuning. On narrow screens the
+  whole rail sticks under the header and chapters slide beneath it.
+- **Doorway** (`components/about/doorway.astro`): work beyond the role sits
+  behind a door whose `state` follows the section through the viewport; light
+  spills across the floor as it opens. It renders only when scrolling changes
+  how far it is open.
+- **Wins** (`components/about/wins.astro`): hackathon awards as tilted cards
+  over a binary field and a dim coin, after the reference's testimonial
+  board. The strip scrolls natively, can be dragged with a mouse, is a
+  focusable region for the keyboard, and a cross on a dotted rule tracks it.
+- **Scramble** (`lib/scramble.ts`): decorative readouts decode through ASCII
+  glyphs before settling. Only use it on text that is also available plainly.
+
 ## Composition by surface
 
 - **Blue** opens every page. The header lives on it; headlines are white
@@ -137,6 +178,10 @@ Home: blue hero (duck) → paper work (statement + three staggered cards on
 ink, blue and paper panels) → ink proof (poster, metrics, practice tiles) →
 paper notes (bracketed note cards, blue pixel bleed, cross skyline) → ink
 footer (bracketed coin, dissolving wordmark).
+
+About: blue hero (cursor) → ink tuner (every role, 2021 to now) → blue
+doorway (projects beyond the role) → ink wins (hackathon awards) → paper
+record (education, awards, leadership, skills) → ink footer.
 
 ## Don't
 

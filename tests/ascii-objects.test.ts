@@ -87,3 +87,42 @@ test('texture fields are valid, compact SVG masks', () => {
     assert.ok(svg.length < 60_000, `${name} is ${svg.length} bytes`)
   }
 })
+
+test('morphs start and end on each object and blend in between', () => {
+  const base = { cols, rows, seed: 2 }
+  const chain = renderAsciiFrame({ ...base, object: 'chain' })
+  const padlock = renderAsciiFrame({ ...base, object: 'padlock' })
+  const morph = (t: number) =>
+    renderAsciiFrame({ ...base, object: 'chain', morph: { to: 'padlock', t } })
+  assert.deepEqual(morph(0).glyphs, chain.glyphs)
+  assert.deepEqual(morph(1).glyphs, padlock.glyphs)
+  const halfway = morph(0.5).glyphs.join('\n')
+  assert.notEqual(halfway, chain.glyphs.join('\n'))
+  assert.notEqual(halfway, padlock.glyphs.join('\n'))
+})
+
+test('noise corrupts the frame deterministically', () => {
+  const options = { object: 'bars' as const, cols, rows, seed: 5 }
+  const clean = renderAsciiFrame(options)
+  const noisy = renderAsciiFrame({ ...options, noise: 0.8 })
+  assert.deepEqual(renderAsciiFrame({ ...options, noise: 0.8 }), noisy)
+  assert.notDeepEqual(noisy.glyphs, clean.glyphs)
+  assert.ok(noisy.glyphs.every((line) => line.length === cols))
+})
+
+test('the door opens without leaving its frame and lets light out', () => {
+  const range: [number, number] = [0.03, 1.05]
+  const door = (state: number) =>
+    renderAsciiFrame({ object: 'door', cols, rows, state, range })
+  const closed = door(0)
+  const open = door(1)
+  assert.notDeepEqual(open.glyphs, closed.glyphs)
+  const brightest = (frame: typeof open) =>
+    frame.levels.filter((level) => level === 4).length
+  assert.ok(brightest(open) > brightest(closed), 'opening should add light')
+  for (let col = 0; col < cols; col++)
+    assert.ok(
+      !open.levels[col] && !open.levels[(rows - 1) * cols + col],
+      'the open door touches the frame edge',
+    )
+})

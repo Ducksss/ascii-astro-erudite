@@ -503,3 +503,71 @@ test('TOC survives navigation and the ASCII playground renders and exports', asy
     await server.stop()
   }
 })
+
+test('the about page tunes through roles and opens the door as you scroll', async () => {
+  const server = await preview({
+    configFile: false,
+    root: fileURLToPath(new URL('../', import.meta.url)),
+    server: { host: '127.0.0.1', port: 0 },
+    logLevel: 'silent',
+  })
+  let browser
+
+  try {
+    browser = await chromium.launch()
+    const page = await browser.newPage({
+      viewport: { width: 1440, height: 900 },
+    })
+    page.setDefaultTimeout(6000)
+    const errors = []
+    page.on('pageerror', (error) => errors.push(error.message))
+    await page.goto(`http://127.0.0.1:${server.port}/about`)
+
+    const tunedTo = (name) =>
+      page.waitForFunction(
+        (name) =>
+          document.querySelector('[data-tuner-name]')?.textContent === name,
+        name,
+      )
+    const first = await page.locator('[data-tuner-ascii] pre').textContent()
+    await page
+      .locator('#saf')
+      .evaluate((chapter) => chapter.scrollIntoView({ block: 'center' }))
+    await tunedTo('Singapore Armed Forces')
+    await page.waitForFunction(
+      (first) =>
+        document.querySelector('[data-tuner-ascii] pre')?.textContent !== first,
+      first,
+    )
+    assert.equal(await page.locator('#saf').getAttribute('data-active'), '')
+    assert.equal(
+      (
+        await page.locator('[data-tuner-link][aria-current="step"]').innerText()
+      ).trim(),
+      'SAF',
+    )
+
+    await page.locator('[data-tuner-link][href="#metalearner"]').click()
+    await tunedTo('MetaLearner')
+
+    await page.locator('#doorway-title').evaluate((title) => {
+      title.scrollIntoView({ block: 'start' })
+      window.scrollBy(0, 240)
+    })
+    await page.waitForFunction(
+      () =>
+        document.querySelector('[data-doorway-state]')?.textContent === 'Open',
+    )
+
+    const strip = page.getByRole('region', { name: 'Hackathon awards' })
+    await strip.focus()
+    await page.keyboard.press('ArrowRight')
+    await page.waitForFunction(
+      () => document.querySelector('[data-wins-strip]').scrollLeft > 0,
+    )
+    assert.deepEqual(errors, [])
+  } finally {
+    await browser?.close()
+    await server.stop()
+  }
+})
